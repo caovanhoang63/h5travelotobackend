@@ -10,7 +10,9 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"h5travelotobackend/component/appContext"
+	"h5travelotobackend/middleware"
 	"log"
+	"net/http"
 	"os"
 )
 
@@ -50,7 +52,16 @@ func main() {
 
 	r := gin.Default()
 
+	r.Use(middleware.Recover(appCtx))
+
 	v1 := r.Group("/v1")
+
+	v1.GET("/ping", func(context *gin.Context) {
+		context.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
+
 	SetUpRoute(appCtx, v1)
 
 	err = r.Run()
