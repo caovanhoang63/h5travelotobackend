@@ -59,6 +59,21 @@ func (u *UserCreate) Mask(isAdmin bool) {
 	u.GenUID(common.DbTypeUser)
 }
 
+func (u *UserCreate) Validate() error {
+	if !common.IsEmail(u.Email) {
+		return ErrInvalidEmail
+	}
+	if !common.IsValidPassword(u.Password) {
+		return ErrPasswordNotStrong
+	}
+
+	if !common.IsEmpty(u.Firstname) || !common.IsEmpty(u.LastName) {
+		return ErrNameIsEmpty
+	}
+
+	return nil
+}
+
 type UserLogin struct {
 	Email    string `json:"email" form:"email" gorm:"column:email;"`
 	Password string `json:"password" form:"password" gorm:"column:password;"`
@@ -81,6 +96,18 @@ func NewAccount(at, rt *tokenprovider.Token) *Account {
 }
 
 var (
+	ErrNameIsEmpty = common.NewCustomError(
+		errors.New("name is empty"),
+		"name is empty",
+		"ErrNameIsEmpty",
+	)
+
+	ErrInvalidEmail = common.NewCustomError(
+		errors.New("invalid email"),
+		"invalid email",
+		"ErrInvalidEmail",
+	)
+
 	ErrUsernameOrPasswordInvalid = common.NewCustomError(
 		errors.New("username or password invalid"),
 		"username or password invalid",
@@ -97,5 +124,11 @@ var (
 		errors.New("user has been deleted or disabled"),
 		"user has been deleted or disabled",
 		"ErrUserHasDeletedOrDisabled",
+	)
+
+	ErrPasswordNotStrong = common.NewCustomError(
+		errors.New("password is not strong enough"),
+		"password is not strong enough",
+		"ErrPasswordNotStrong",
 	)
 )
