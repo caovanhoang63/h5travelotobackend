@@ -22,8 +22,26 @@ func IsEmpty(str string) bool {
 // Minimum eight characters, at least one letter, one number and one special character
 
 func IsValidPassword(password string) bool {
-	if m, _ := regexp.MatchString(`^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$`, password); !m {
+	// Define the regex pattern
+	// at least 8 characters
+	if len(password) < 8 {
 		return false
 	}
+
+	// at least one letter
+	if matched, _ := regexp.MatchString("[a-zA-Z]", password); !matched {
+		return false
+	}
+
+	// at least one number
+	if matched, _ := regexp.MatchString("[0-9]", password); !matched {
+		return false
+	}
+
+	// at least one special character @$!%*#?&
+	if matched, _ := regexp.MatchString(`[@$!%*#?&]`, password); !matched {
+		return false
+	}
+
 	return true
 }
