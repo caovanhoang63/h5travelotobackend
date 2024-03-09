@@ -2,7 +2,6 @@ package userbiz
 
 import (
 	"context"
-	"fmt"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/component/tokenprovider"
@@ -38,10 +37,6 @@ func (biz *loginBiz) Login(ctx context.Context, data *usermodel.UserLogin) (*use
 	}
 
 	passwordHashed := biz.hasher.Hash(data.Password + user.Salt)
-	fmt.Println("Salt:", user.Salt)
-	fmt.Println("json-password:", data.Password)
-	fmt.Println("db-password:", user.Password)
-	fmt.Println("hashed-password:", passwordHashed)
 
 	if user.Password != passwordHashed {
 		return nil, usermodel.ErrUsernameOrPasswordInvalid
