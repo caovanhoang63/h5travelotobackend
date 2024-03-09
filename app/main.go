@@ -44,7 +44,9 @@ func main() {
 
 	db = db.Debug()
 
-	appCtx := appContext.NewAppContext(db, mongodb)
+	systemSecretKey := os.Getenv("SYSTEM_SECRET_KEY")
+
+	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey)
 
 	r := gin.Default()
 

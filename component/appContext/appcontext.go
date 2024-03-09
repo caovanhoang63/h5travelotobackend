@@ -8,17 +8,20 @@ import (
 type AppContext interface {
 	GetGormDbConnection() *gorm.DB
 	GetMongoConnection() *mongo.Database
+	GetSecretKey() string
 }
 
 type appContext struct {
-	db      *gorm.DB
-	mongodb *mongo.Database
+	db        *gorm.DB
+	mongodb   *mongo.Database
+	secretKey string
 }
 
-func NewAppContext(db *gorm.DB, mongodb *mongo.Database) AppContext {
+func NewAppContext(db *gorm.DB, mongodb *mongo.Database, secretKey string) AppContext {
 	return &appContext{
-		db:      db,
-		mongodb: mongodb,
+		db:        db,
+		mongodb:   mongodb,
+		secretKey: secretKey,
 	}
 }
 
@@ -29,3 +32,5 @@ func (appCtx *appContext) GetGormDbConnection() *gorm.DB {
 func (appCtx *appContext) GetMongoConnection() *mongo.Database {
 	return appCtx.mongodb
 }
+
+func (appCtx *appContext) GetSecretKey() string { return appCtx.secretKey }
