@@ -83,6 +83,43 @@ func (UserLogin) TableName() string {
 	return User{}.TableName()
 }
 
+type UserUpdate struct {
+	LastName  string        `json:"last_name" gorm:"column:last_name;"`
+	Firstname string        `json:"first_name" gorm:"column:first_name;"`
+	Phone     string        `json:"phone" gorm:"column:phone;"`
+	Avatar    *common.Image `json:"avatar,omitempty" gorm:"column:avatar;type:json;"`
+}
+
+func (UserUpdate) TableName() string {
+	return User{}.TableName()
+}
+
+func (u *UserUpdate) Validate() error {
+	if common.IsEmpty(u.Firstname) || common.IsEmpty(u.LastName) {
+		return ErrNameIsEmpty
+	}
+
+	if !common.IsEmpty(u.Phone) && !common.IsPhoneNumber(u.Phone) {
+		return ErrInvalidPhone
+	}
+	return nil
+}
+
+type UserChangePassword struct {
+	Password string `json:"password" gorm:"column:password;"`
+}
+
+func (UserChangePassword) TableName() string {
+	return User{}.TableName()
+}
+
+func (u *UserChangePassword) Validate() error {
+	if !common.IsValidPassword(u.Password) {
+		return ErrPasswordNotStrong
+	}
+	return nil
+}
+
 type Account struct {
 	AccessToken  *tokenprovider.Token `json:"access_token"`
 	RefreshToken *tokenprovider.Token `json:"refresh_token""`
@@ -96,6 +133,12 @@ func NewAccount(at, rt *tokenprovider.Token) *Account {
 }
 
 var (
+	ErrInvalidPhone = common.NewCustomError(
+		errors.New("invalid phone"),
+		"invalid phone",
+		"ErrInvalidPhone",
+	)
+
 	ErrNameIsEmpty = common.NewCustomError(
 		errors.New("name is empty"),
 		"name is empty",

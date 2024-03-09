@@ -10,6 +10,11 @@ import (
 func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	v1.POST("/register", ginuser.RegisterUser(appCtx))
 	v1.POST("/authenticate", ginuser.UserLogin(appCtx))
-	v1.GET("/profile", middleware.RequireAuth(appCtx), ginuser.GetProfile(appCtx))
+
+	users := v1.Group("/users", middleware.RequireAuth(appCtx))
+
+	users.GET("/profile", ginuser.GetProfile(appCtx))
+	users.PATCH("/profile", ginuser.Update(appCtx))
+	users.PATCH("/change-password", ginuser.ChangePassword(appCtx))
 
 }
