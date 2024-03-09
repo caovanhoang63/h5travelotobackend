@@ -67,7 +67,7 @@ func (u *UserCreate) Validate() error {
 		return ErrPasswordNotStrong
 	}
 
-	if !common.IsEmpty(u.Firstname) || !common.IsEmpty(u.LastName) {
+	if common.IsEmpty(u.Firstname) || common.IsEmpty(u.LastName) {
 		return ErrNameIsEmpty
 	}
 
