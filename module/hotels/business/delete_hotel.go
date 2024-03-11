@@ -10,24 +10,24 @@ type DeleteHotelRepo interface {
 	DeleteHotel(ctx context.Context, id int) error
 }
 
-type FindHotelRepo interface {
-	FindHotelBaseInfoWithCondition(ctx context.Context,
+type FindHotelBaseDataRepo interface {
+	FindBaseDataWithCondition(ctx context.Context,
 		condition map[string]interface{},
 		moreKeys ...string) (*hotelmodel.Hotel, error)
 }
 
 type deleteHotelBiz struct {
 	deleteRepo DeleteHotelRepo
-	findRepo   FindHotelRepo
+	findRepo   FindHotelBaseDataRepo
 	requester  common.Requester
 }
 
-func NewDeleteHotelBiz(deleteRepo DeleteHotelRepo, findRepo FindHotelRepo, requester common.Requester) *deleteHotelBiz {
+func NewDeleteHotelBiz(deleteRepo DeleteHotelRepo, findRepo FindHotelBaseDataRepo, requester common.Requester) *deleteHotelBiz {
 	return &deleteHotelBiz{deleteRepo: deleteRepo, findRepo: findRepo, requester: requester}
 }
 
 func (biz *deleteHotelBiz) DeleteHotel(ctx context.Context, id int) error {
-	result, err := biz.findRepo.FindHotelBaseInfoWithCondition(ctx, map[string]interface{}{"id": id})
+	result, err := biz.findRepo.FindBaseDataWithCondition(ctx, map[string]interface{}{"id": id})
 
 	if err != nil {
 		return err

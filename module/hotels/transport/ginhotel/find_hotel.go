@@ -9,28 +9,39 @@ import (
 	hotelmongostorage "h5travelotobackend/module/hotels/storage/mongostorage"
 	hotelmysqlstorage "h5travelotobackend/module/hotels/storage/mysqlstorage"
 	"net/http"
+	"strings"
 )
 
-func DeleteHotel(appCtx appContext.AppContext) gin.HandlerFunc {
-	return func(context *gin.Context) {
-		uid, err := common.FromBase58(context.Param("id"))
+func GetHotelById(appCtx appContext.AppContext) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		uid, err := common.FromBase58(c.Param("id"))
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
 
-		requester := context.MustGet(common.CurrentUser).(common.Requester)
-
 		mongoS := hotelmongostorage.NewMongoStore(appCtx.GetMongoConnection())
 		sqlS := hotelmysqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
+		repo := hotelrepo.NewFindHotelRepo(sqlS, mongoS)
+		biz := hotelbiz.NewFindHotelBiz(repo)
 
-		deleteRepo := hotelrepo.NewDeleteHotelRepo(mongoS, sqlS)
-		findRepo := hotelrepo.NewFindHotelRepo(sqlS, mongoS)
-		biz := hotelbiz.NewDeleteHotelBiz(deleteRepo, findRepo, requester)
+		add := false
+		if v, ok := c.GetQuery("add"); ok {
+			if strings.Compare(strings.TrimSpace(v), "true") == 0 {
+				add = true
+			}
+		}
 
-		if err := biz.DeleteHotel(context.Request.Context(), int(uid.GetLocalID())); err != nil {
+		data, err := biz.GetHotelById(c.Request.Context(), int(uid.GetLocalID()), add)
+		if err != nil {
 			panic(err)
 		}
 
-		context.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
+		if !add {
+			data.HotelAdditionalInfo = nil
+		}
+
+		data.Mask(false)
+
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
 	}
 }

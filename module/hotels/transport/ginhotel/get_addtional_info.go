@@ -11,26 +11,23 @@ import (
 	"net/http"
 )
 
-func DeleteHotel(appCtx appContext.AppContext) gin.HandlerFunc {
-	return func(context *gin.Context) {
-		uid, err := common.FromBase58(context.Param("id"))
+func GetHotelAdditionalInfoById(appCtx appContext.AppContext) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		uid, err := common.FromBase58(c.Param("id"))
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
 
-		requester := context.MustGet(common.CurrentUser).(common.Requester)
-
 		mongoS := hotelmongostorage.NewMongoStore(appCtx.GetMongoConnection())
 		sqlS := hotelmysqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
+		repo := hotelrepo.NewFindHotelRepo(sqlS, mongoS)
+		biz := hotelbiz.NewFindAddInfoHotelBiz(repo)
 
-		deleteRepo := hotelrepo.NewDeleteHotelRepo(mongoS, sqlS)
-		findRepo := hotelrepo.NewFindHotelRepo(sqlS, mongoS)
-		biz := hotelbiz.NewDeleteHotelBiz(deleteRepo, findRepo, requester)
-
-		if err := biz.DeleteHotel(context.Request.Context(), int(uid.GetLocalID())); err != nil {
+		data, err := biz.GetHotelAdditionalInfoById(c.Request.Context(), int(uid.GetLocalID()))
+		if err != nil {
 			panic(err)
 		}
 
-		context.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
 	}
 }

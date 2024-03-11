@@ -22,7 +22,7 @@ type Hotel struct {
 	Lng                 float64              `json:"lng" gorm:"column:lat"`
 	OwnerID             int                  `json:"-"`
 	Rating              float32              `json:"rating" gorm:"rating"`
-	HotelAdditionalInfo *HotelAdditionalInfo `json:"hotel_additional_info" gorm:"-"`
+	HotelAdditionalInfo *HotelAdditionalInfo `json:"hotel_additional_info,omitempty" gorm:"-"`
 }
 
 func (Hotel) TableName() string {
