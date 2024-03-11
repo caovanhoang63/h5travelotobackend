@@ -7,9 +7,14 @@ import (
 )
 
 func (s *mongoStore) Create(ctx context.Context, data *hotelmodel.HotelAdditionalInfo) error {
+
+	data.OnCreate()
+
 	coll := s.db.Collection(hotelmodel.HotelAdditionalInfo{}.CollectionName())
+
 	if _, err := coll.InsertOne(ctx, data); err != nil {
 		return common.ErrDb(err)
 	}
+
 	return nil
 }

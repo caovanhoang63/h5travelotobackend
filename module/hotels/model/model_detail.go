@@ -1,7 +1,6 @@
 package hotelmodel
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"h5travelotobackend/common"
 )
 
@@ -26,13 +25,13 @@ type HotelPolicy struct {
 }
 
 type HotelAdditionalInfo struct {
-	ID             primitive.ObjectID  `json:"_" bson:"_id,omitempty"`
-	HotelID        int                 `json:"_" bson:"hotel_id"`
-	Amenities      map[string][]string `json:"amenities" bson:"amenities,omitempty"`
-	StayPolicies   HotelPolicy         `json:"stay_policies" bson:"stay_policies,omitempty"`
-	AdditionalInfo string              `json:"additional_info" bson:"additional_info,omitempty"`
-	Logo           *common.Image       `json:"logo" bson:"logo,omitempty"`
-	Cover          *common.Images      `json:"cover" bson:"cover,omitempty"`
+	common.MongoModel `bson:",inline" json:",inline"`
+	HotelID           int                 `json:"_" bson:"hotel_id"`
+	Amenities         map[string][]string `json:"amenities" bson:"amenities,omitempty"`
+	StayPolicies      HotelPolicy         `json:"stay_policies" bson:"stay_policies,omitempty"`
+	AdditionalInfo    string              `json:"additional_info" bson:"additional_info,omitempty"`
+	Logo              *common.Image       `json:"logo" bson:"logo,omitempty"`
+	Cover             *common.Images      `json:"cover" bson:"cover,omitempty"`
 }
 
 func (h *HotelAdditionalInfo) SetHotelId(id int) {
