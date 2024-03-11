@@ -23,5 +23,5 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	hotels.DELETE("/:id", ginhotel.DeleteHotel(appCtx))
 	hotels.GET("/:id", ginhotel.GetHotelById(appCtx))
 	hotels.GET(":id/additional", ginhotel.GetHotelAdditionalInfoById(appCtx))
-
+	hotels.GET("/list", ginhotel.ListHotel(appCtx))
 }
