@@ -24,4 +24,6 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	hotels.GET("/:id", ginhotel.GetHotelById(appCtx))
 	hotels.GET(":id/additional", ginhotel.GetHotelAdditionalInfoById(appCtx))
 	hotels.GET("/list", ginhotel.ListHotel(appCtx))
+	hotels.PATCH("/:id", ginhotel.UpdateHotel(appCtx))
+	hotels.PATCH("/:id/additional", ginhotel.UpdateHotelAdditionalInfo(appCtx))
 }

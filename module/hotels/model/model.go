@@ -44,7 +44,7 @@ type HotelCreate struct {
 	Lat                 float64              `json:"lat" gorm:"column:lat"`
 	Lng                 float64              `json:"lng" gorm:"column:lat"`
 	OwnerID             int                  `json:"-" gorm:"column:owner_id"`
-	HotelAdditionalInfo *HotelAdditionalInfo `json:"hotel_additional_info" gorm:"-"`
+	HotelAdditionalInfo *HotelAdditionalInfo `json:"hotel_additional_info,omitempty" gorm:"-"`
 	Logo                *common.Image        `json:"logo" gorm:"logo"`
 	Cover               *common.Images       `json:"cover" gorm:"column:cover"`
 }
@@ -80,6 +80,19 @@ func (HotelUpdate) TableName() string {
 	return "hotels"
 }
 
+func (data *HotelUpdate) Validate() error {
+	if common.IsEmpty(data.Name) {
+		return ErrNameIsEmpty
+	}
+	return nil
+}
+
 var (
-	ErrNameIsEmpty = errors.New("name can not be empty")
+	ErrNameIsEmpty                = errors.New("name can not be empty")
+	ErrCannotUpdateAdditionalData = common.NewErrorResponse(
+		errors.New("cannot update additional data"),
+		"cannot update additional data",
+		"cannot update additional data",
+		"CANNOT_UPDATE_HOTEL_ADDITIONAL_DATA",
+	)
 )
