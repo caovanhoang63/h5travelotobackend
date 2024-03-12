@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"h5travelotobackend/common"
+	"h5travelotobackend/component/uploadprovider"
 	uploadmodel "h5travelotobackend/module/upload/model"
 	"image"
 	"io"
