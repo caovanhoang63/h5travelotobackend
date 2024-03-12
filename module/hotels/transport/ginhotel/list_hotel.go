@@ -18,6 +18,10 @@ func ListHotel(appCtx appContext.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 		}
 
+		if err := filter.Validate(); err != nil {
+			panic(common.ErrInvalidRequest(err))
+		}
+
 		var data []hotelmodel.Hotel
 		var paging common.Paging
 
