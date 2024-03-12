@@ -5,10 +5,12 @@ import (
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/middleware"
 	"h5travelotobackend/module/hotels/transport/ginhotel"
+	"h5travelotobackend/module/upload/transport/ginupload"
 	"h5travelotobackend/module/users/transport/ginuser"
 )
 
 func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
+	v1.POST("/upload", ginupload.UploadImage(appCtx))
 	v1.POST("/register", ginuser.RegisterUser(appCtx))
 	v1.POST("/authenticate", ginuser.UserLogin(appCtx))
 

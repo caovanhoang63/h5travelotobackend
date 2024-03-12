@@ -26,7 +26,7 @@ type HotelPolicy struct {
 
 type HotelAdditionalInfo struct {
 	common.MongoModel `bson:",inline" json:",inline"`
-	HotelID           int                 `json:"_" bson:"hotel_id"`
+	HotelID           int                 `json:"-" bson:"hotel_id"`
 	Amenities         map[string][]string `json:"amenities,omitempty" bson:"amenities,omitempty"`
 	StayPolicies      *HotelPolicy        `json:"stay_policies,omitempty" bson:"stay_policies,omitempty"`
 	AdditionalInfo    string              `json:"additional_info,omitempty" bson:"additional_info,omitempty"`

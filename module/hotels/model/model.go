@@ -19,7 +19,7 @@ type Hotel struct {
 	DistrictID          int                  `json:"district_id" gorm:"column:district_id"`
 	WardID              int                  `json:"ward_id" gorm:"column:ward_id"`
 	Lat                 float64              `json:"lat" gorm:"column:lat"`
-	Lng                 float64              `json:"lng" gorm:"column:lat"`
+	Lng                 float64              `json:"lng" gorm:"column:lng"`
 	OwnerID             int                  `json:"-"`
 	User                *common.SimpleUser   `json:"user" gorm:"foreignKey:OwnerID;preload:false"`
 	Rating              float32              `json:"rating" gorm:"rating"`
@@ -42,7 +42,7 @@ type HotelCreate struct {
 	DistrictID          int                  `json:"district_id" gorm:"column:district_id"`
 	WardID              int                  `json:"ward_id" gorm:"column:ward_id"`
 	Lat                 float64              `json:"lat" gorm:"column:lat"`
-	Lng                 float64              `json:"lng" gorm:"column:lat"`
+	Lng                 float64              `json:"lng" gorm:"column:lng"`
 	OwnerID             int                  `json:"-" gorm:"column:owner_id"`
 	HotelAdditionalInfo *HotelAdditionalInfo `json:"hotel_additional_info,omitempty" gorm:"-"`
 	Logo                *common.Image        `json:"logo" gorm:"logo"`

@@ -10,6 +10,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"h5travelotobackend/component/appContext"
+	"h5travelotobackend/component/uploadprovider"
 	"h5travelotobackend/middleware"
 	"log"
 	"net/http"
@@ -48,7 +49,20 @@ func main() {
 
 	systemSecretKey := os.Getenv("SYSTEM_SECRET_KEY")
 
-	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey)
+	s3BucketName := os.Getenv("S3_BUCKET_NAME")
+	s3Region := os.Getenv("S3_REGION")
+	s3ApiKey := os.Getenv("S3_API_KEY")
+	s3Secret := os.Getenv("S3_SECRET")
+	s3Domain := os.Getenv("S3_DOMAIN")
+	s3Provider := uploadprovider.NewS3Provider(
+		s3BucketName,
+		s3Region,
+		s3ApiKey,
+		s3Secret,
+		s3Domain,
+	)
+
+	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey, s3Provider)
 
 	r := gin.Default()
 
