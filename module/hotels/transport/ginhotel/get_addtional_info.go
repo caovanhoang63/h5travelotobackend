@@ -13,7 +13,7 @@ import (
 
 func GetHotelAdditionalInfoById(appCtx appContext.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		uid, err := common.FromBase58(c.Param("id"))
+		uid, err := common.FromBase58(c.Param("hotel-id"))
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}

@@ -11,7 +11,7 @@ import (
 
 func DeleteRoom(appCtx appContext.AppContext) gin.HandlerFunc {
 	return func(context *gin.Context) {
-		uid, err := common.FromBase58(context.Param("id"))
+		uid, err := common.FromBase58(context.Param("room-id"))
 		if err != nil {
 			panic(err)
 		}

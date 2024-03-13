@@ -6,39 +6,47 @@ import (
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/middleware"
 	"h5travelotobackend/module/hotels/transport/ginhotel"
+	"h5travelotobackend/module/rooms/transport/ginroom"
 	"h5travelotobackend/module/roomtypes/transport/ginroomtype"
 	"h5travelotobackend/module/upload/transport/ginupload"
 	"h5travelotobackend/module/users/transport/ginuser"
 )
 
+// TODO: fix url conflict
+
 func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	v1.POST("/upload", ginupload.UploadImage(appCtx))
 	v1.POST("/register", ginuser.RegisterUser(appCtx))
 	v1.POST("/authenticate", ginuser.UserLogin(appCtx))
-
 	users := v1.Group("/users", middleware.RequireAuth(appCtx))
-
 	users.GET("/profile", ginuser.GetProfile(appCtx))
 	users.PATCH("/profile", ginuser.Update(appCtx))
 	users.PATCH("/change-password", ginuser.ChangePassword(appCtx))
-
 	hotels := v1.Group("hotels", middleware.RequireAuth(appCtx))
-	hotels.POST("/", ginhotel.CreateHotel(appCtx))
-	hotels.GET("/:id", ginhotel.GetHotelById(appCtx))
-	hotels.GET("/:id/additional", ginhotel.GetHotelAdditionalInfoById(appCtx))
+
+	// room type api
+	roomTypes := v1.Group("/")
+	roomTypes.POST("hotels/:hotel-id/room-types", ginroomtype.CreateRoomType(appCtx))
+	roomTypes.DELETE("hotels/:hotel-id/room-types/:room-type-id", ginroomtype.DeleteRoomType(appCtx))
+	roomTypes.PATCH("hotels/:hotel-id/room-types/:room-type-id", ginroomtype.UpdateRoomType(appCtx))
+	roomTypes.GET("/room-types/:room-type-id", ginroomtype.GetRoomTypeById(appCtx))
+	roomTypes.GET("/room-types/list", ginroomtype.ListRoomType(appCtx))
+	// hotel api
+	hotels.POST("/", middleware.RoleRequired(appCtx, common.RoleOwner), ginhotel.CreateHotel(appCtx))
+	hotels.GET("/:hotel-id", ginhotel.GetHotelById(appCtx))
 	hotels.GET("/list", ginhotel.ListHotel(appCtx))
+	hotels.DELETE("/:hotel-id", middleware.RoleRequired(appCtx, common.RoleOwner), middleware.IsHotelWorker(appCtx), ginhotel.DeleteHotel(appCtx))
+	hotels.PATCH("/:hotel-id", middleware.RoleRequired(appCtx, common.RoleOwner, common.RoleManager), middleware.IsHotelWorker(appCtx), ginhotel.UpdateHotel(appCtx))
+	hotels.GET("/:hotel-id/additional", ginhotel.GetHotelAdditionalInfoById(appCtx))
+	hotels.PATCH("/:hotel-id/additional", ginhotel.UpdateHotelAdditionalInfo(appCtx))
 
-	hotelRoomTypes := hotels.Group("/:hotel-id")
-	hotelRoomTypes.DELETE("/", ginhotel.DeleteHotel(appCtx))
-	hotelRoomTypes.PATCH("/", ginhotel.UpdateHotel(appCtx))
-	hotels.PATCH("/additional", ginhotel.UpdateHotelAdditionalInfo(appCtx))
-
-	hotelRoomTypes.POST("/room-types", middleware.CheckWorkerRole(appCtx, common.RoleManager, common.RoleOwner), ginroomtype.CreateRoomType(appCtx))
-	hotelRoomTypes.DELETE("/room-types/:room-type-id", middleware.CheckWorkerRole(appCtx, common.RoleManager, common.RoleOwner), ginroomtype.DeleteRoomType(appCtx))
-	hotelRoomTypes.PATCH("/room-types/:room-type-id", middleware.CheckWorkerRole(appCtx, common.RoleManager, common.RoleOwner), ginroomtype.UpdateRoomType(appCtx))
-
-	roomTypes := v1.Group("room-types")
-	roomTypes.GET("/:id", ginroomtype.GetRoomTypeById(appCtx))
-	roomTypes.GET("/list", ginroomtype.ListRoomType(appCtx))
+	// room api
+	rooms := v1.Group("hotels/:hotel-id/rooms")
+	rooms.Use(middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager, common.RoleStaff), middleware.IsHotelWorker(appCtx))
+	rooms.PATCH("/rooms/:room-id", ginroom.UpdateRoom(appCtx))
+	rooms.DELETE("/rooms/:room-id", ginroom.DeleteRoom(appCtx))
+	rooms.POST("/rooms", ginroom.CreateRoom(appCtx))
+	rooms.GET("/rooms/:room-id", ginroom.GetRoomById(appCtx))
+	rooms.GET("/rooms", ginroom.ListRoomWithCondition(appCtx))
 
 }
