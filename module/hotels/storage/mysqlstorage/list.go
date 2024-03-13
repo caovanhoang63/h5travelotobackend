@@ -40,7 +40,7 @@ func (s *sqlStore) ListHotelWithCondition(
 	}
 
 	if err := db.Count(&paging.Total).Error; err != nil {
-		return nil, err
+		return nil, common.ErrDb(err)
 	}
 
 	for _, item := range moreKeys {

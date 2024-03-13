@@ -1,6 +1,9 @@
 package roomtypemodel
 
-import "h5travelotobackend/common"
+import (
+	"h5travelotobackend/common"
+	"time"
+)
 
 type Filter struct {
 	HotelId int         `json:"hotel_id" gorm:"column:hotel_id;" form:"hotel_id"`
@@ -10,6 +13,14 @@ type Filter struct {
 	FreeCancel bool    `json:"free_cancel" gorm:"column:free_cancel;" form:"free_cancel"`
 	Rating     float64 `json:"rating" gorm:"column:rating;" form:"rating"`
 
-	MaxPrice float64 `json:"price"  form:"max_price"`
+	MaxPrice float64 `json:"max_price"  form:"max_price"`
 	MinPrice float64 `json:"min_price" form:"min_price"`
+
+	StartDate *time.Time `json:"start_date" form:"start_date"`
+	EndDate   *time.Time `json:"end_date" form:"end_date"`
+}
+
+func (f *Filter) SetDefault() {
+	f.MaxPrice = 10000000000
+	f.MinPrice = 0
 }
