@@ -7,7 +7,8 @@ const (
 	DbTypeHotel    = 1
 	DbTypeUser     = 2
 	DbTypeRoomType = 3
-	DbTypeWorker   = 4
+	DbTypeRoom     = 4
+	DbTypeWorker   = 5
 )
 
 const CurrentUser = "user"

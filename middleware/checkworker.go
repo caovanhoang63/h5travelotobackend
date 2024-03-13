@@ -7,7 +7,7 @@ import (
 	workersqlstorage "h5travelotobackend/module/worker/storage/sqlstorage"
 )
 
-func CheckWorkerRole(appCtx appContext.AppContext, workerRoleAllow ...string) func(ctx *gin.Context) {
+func IsHotelWorker(appCtx appContext.AppContext) func(ctx *gin.Context) {
 
 	return func(c *gin.Context) {
 		user := c.MustGet(common.CurrentUser).(common.Requester)
@@ -30,16 +30,9 @@ func CheckWorkerRole(appCtx appContext.AppContext, workerRoleAllow ...string) fu
 			panic(common.ErrNoPermission(err))
 		}
 
-		for _, item := range workerRoleAllow {
-			if item == data.Role {
-				c.Set(common.CurrentUser, user)
-				c.Set(common.CurrentWorker, data)
-				c.Next()
-				return
-			}
-		}
-
-		panic(common.ErrNoPermission(nil))
+		c.Set(common.CurrentUser, user)
+		c.Set(common.CurrentWorker, data)
+		c.Next()
 
 	}
 

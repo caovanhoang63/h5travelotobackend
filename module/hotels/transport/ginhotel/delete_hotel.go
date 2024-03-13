@@ -13,7 +13,7 @@ import (
 
 func DeleteHotel(appCtx appContext.AppContext) gin.HandlerFunc {
 	return func(context *gin.Context) {
-		uid, err := common.FromBase58(context.Param("hotel-id"))
+		uid, err := common.FromBase58(context.Param("id"))
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
