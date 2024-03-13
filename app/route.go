@@ -24,12 +24,16 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 
 	hotels := v1.Group("hotels", middleware.RequireAuth(appCtx))
 	hotels.POST("/", ginhotel.CreateHotel(appCtx))
-	hotels.DELETE("/:id", ginhotel.DeleteHotel(appCtx))
 	hotels.GET("/:id", ginhotel.GetHotelById(appCtx))
-	hotels.GET(":id/additional", ginhotel.GetHotelAdditionalInfoById(appCtx))
+	hotels.GET("/:id/additional", ginhotel.GetHotelAdditionalInfoById(appCtx))
 	hotels.GET("/list", ginhotel.ListHotel(appCtx))
 	hotels.PATCH("/:id", ginhotel.UpdateHotel(appCtx))
 	hotels.PATCH("/:id/additional", ginhotel.UpdateHotelAdditionalInfo(appCtx))
 
-	hotels.POST("/:hotel-id/room-types", middleware.CheckWorkerRole(appCtx, common.RoleManager, common.RoleOwner), ginroomtype.CreateRoomType(appCtx))
+	hotelRoomTypes := hotels.Group("/:hotel-id")
+	hotelRoomTypes.DELETE("/", ginhotel.DeleteHotel(appCtx))
+
+	hotelRoomTypes.POST("/room-types", middleware.CheckWorkerRole(appCtx, common.RoleManager, common.RoleOwner), ginroomtype.CreateRoomType(appCtx))
+	hotelRoomTypes.DELETE("/room-types/:room-type-id", middleware.CheckWorkerRole(appCtx, common.RoleManager, common.RoleOwner), ginroomtype.DeleteRoomType(appCtx))
+
 }
