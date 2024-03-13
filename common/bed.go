@@ -7,6 +7,7 @@ import (
 	"fmt"
 )
 
+// TODO: Dinh nghia loai giuong tu chon
 type Bed struct {
 	Single int `json:"single" gorm:"column:single;"`
 	Double int `json:"double" gorm:"column:double;"`

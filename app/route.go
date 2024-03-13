@@ -27,16 +27,18 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	hotels.GET("/:id", ginhotel.GetHotelById(appCtx))
 	hotels.GET("/:id/additional", ginhotel.GetHotelAdditionalInfoById(appCtx))
 	hotels.GET("/list", ginhotel.ListHotel(appCtx))
-	hotels.PATCH("/:id", ginhotel.UpdateHotel(appCtx))
-	hotels.PATCH("/:id/additional", ginhotel.UpdateHotelAdditionalInfo(appCtx))
 
 	hotelRoomTypes := hotels.Group("/:hotel-id")
 	hotelRoomTypes.DELETE("/", ginhotel.DeleteHotel(appCtx))
+	hotelRoomTypes.PATCH("/", ginhotel.UpdateHotel(appCtx))
+	hotels.PATCH("/additional", ginhotel.UpdateHotelAdditionalInfo(appCtx))
 
 	hotelRoomTypes.POST("/room-types", middleware.CheckWorkerRole(appCtx, common.RoleManager, common.RoleOwner), ginroomtype.CreateRoomType(appCtx))
 	hotelRoomTypes.DELETE("/room-types/:room-type-id", middleware.CheckWorkerRole(appCtx, common.RoleManager, common.RoleOwner), ginroomtype.DeleteRoomType(appCtx))
+	hotelRoomTypes.PATCH("/room-types/:room-type-id", middleware.CheckWorkerRole(appCtx, common.RoleManager, common.RoleOwner), ginroomtype.UpdateRoomType(appCtx))
 
 	roomTypes := v1.Group("room-types")
 	roomTypes.GET("/:id", ginroomtype.GetRoomTypeById(appCtx))
 	roomTypes.GET("/list", ginroomtype.ListRoomType(appCtx))
+
 }
