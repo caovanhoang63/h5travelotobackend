@@ -2,9 +2,11 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/middleware"
 	"h5travelotobackend/module/hotels/transport/ginhotel"
+	"h5travelotobackend/module/roomtypes/transport/ginroomtype"
 	"h5travelotobackend/module/upload/transport/ginupload"
 	"h5travelotobackend/module/users/transport/ginuser"
 )
@@ -28,4 +30,6 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	hotels.GET("/list", ginhotel.ListHotel(appCtx))
 	hotels.PATCH("/:id", ginhotel.UpdateHotel(appCtx))
 	hotels.PATCH("/:id/additional", ginhotel.UpdateHotelAdditionalInfo(appCtx))
+
+	hotels.POST("/:hotel-id/room-types", middleware.CheckWorkerRole(appCtx, common.RoleManager, common.RoleOwner), ginroomtype.CreateRoomType(appCtx))
 }

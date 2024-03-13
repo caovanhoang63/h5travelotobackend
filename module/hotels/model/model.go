@@ -22,6 +22,7 @@ type Hotel struct {
 	Lng                 float64              `json:"lng" gorm:"column:lng"`
 	OwnerID             int                  `json:"-"`
 	User                *common.SimpleUser   `json:"user" gorm:"foreignKey:OwnerID;preload:false"`
+	Star                int                  `json:"star" gorm:"star"`
 	Rating              float32              `json:"rating" gorm:"rating"`
 	HotelAdditionalInfo *HotelAdditionalInfo `json:"hotel_additional_info,omitempty" gorm:"-"`
 }

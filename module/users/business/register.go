@@ -43,7 +43,6 @@ func (biz *registerBiz) Register(ctx context.Context, data *usermodel.UserCreate
 
 	data.Salt = common.GenSalt(50)
 	data.Password = biz.hasher.Hash(data.Password + data.Salt)
-	data.Role = "user"
 	data.Status = 1
 
 	if err := biz.registerStorage.CreateUser(ctx, data); err != nil {

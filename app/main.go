@@ -78,8 +78,7 @@ func main() {
 
 	SetUpRoute(appCtx, v1)
 
-	err = r.Run()
-	if err != nil {
-		log.Fatal("Err")
+	if err := r.Run(); err != nil {
+		log.Fatal(err)
 	}
 }

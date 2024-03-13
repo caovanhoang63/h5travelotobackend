@@ -4,11 +4,23 @@ import "log"
 
 // DbType is a type to represent the type of database
 const (
-	DbTypeHotel = 1
-	DbTypeUser  = 2
+	DbTypeHotel    = 1
+	DbTypeUser     = 2
+	DbTypeRoomType = 3
+	DbTypeWorker   = 4
 )
 
 const CurrentUser = "user"
+const CurrentWorker = "worker"
+
+const (
+	RoleAdmin    = "admin"
+	RoleWorker   = "worker"
+	RoleCustomer = "customer"
+	RoleOwner    = "owner"
+	RoleStaff    = "staff"
+	RoleManager  = "manager"
+)
 
 type Requester interface {
 	GetUserId() int
