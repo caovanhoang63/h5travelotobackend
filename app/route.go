@@ -36,4 +36,6 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	hotelRoomTypes.POST("/room-types", middleware.CheckWorkerRole(appCtx, common.RoleManager, common.RoleOwner), ginroomtype.CreateRoomType(appCtx))
 	hotelRoomTypes.DELETE("/room-types/:room-type-id", middleware.CheckWorkerRole(appCtx, common.RoleManager, common.RoleOwner), ginroomtype.DeleteRoomType(appCtx))
 
+	roomTypes := v1.Group("room-types")
+	roomTypes.GET("/:id", ginroomtype.GetRoomTypeById(appCtx))
 }
