@@ -26,10 +26,10 @@ func NewDeleteRoomBiz(store DeleteRoomStore) *deleteRoomBiz {
 
 func (biz *deleteRoomBiz) DeleteRoom(ctx context.Context, id int) error {
 	if oldData, err := biz.store.FindDataWithCondition(ctx, map[string]interface{}{"id": id}); err != nil {
-		return common.ErrEntityNotFound(hotelmodel.EntityName, err)
+		return common.ErrEntityNotFound(roommodel.EntityName, err)
 	} else {
 		if oldData.Status == 0 {
-			return common.ErrEntityDeleted(hotelmodel.EntityName, nil)
+			return common.ErrEntityDeleted(roommodel.EntityName, nil)
 		}
 	}
 

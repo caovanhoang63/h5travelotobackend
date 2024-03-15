@@ -22,6 +22,13 @@ func UpdateRoom(appCtx appContext.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 		}
 
+		// Check room type id
+		roomTypeUid, err := common.FromBase58(data.RoomTypeFakeId)
+		if err != nil {
+			panic(common.ErrInvalidRequest(err))
+		}
+		data.RoomTypeID = int(roomTypeUid.GetLocalID())
+
 		store := roomstorage.NewSqlStore(appCtx.GetGormDbConnection())
 		biz := roombiz.NewUpdateRoomBiz(store)
 		if err := biz.UpdateRoom(context.Request.Context(), int(roomUid.GetLocalID()), &data); err != nil {

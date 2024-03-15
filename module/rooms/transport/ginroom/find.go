@@ -25,6 +25,7 @@ func GetRoomById(appCtx appContext.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
+		data.Mask(false)
 		context.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
 	}
 }

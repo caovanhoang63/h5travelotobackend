@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -19,9 +20,23 @@ import (
 
 func main() {
 
+	// Get environment variables
+	systemSecretKey := os.Getenv("SYSTEM_SECRET_KEY")
+	s3BucketName := os.Getenv("S3_BUCKET_NAME")
+	s3Region := os.Getenv("S3_REGION")
+	s3ApiKey := os.Getenv("S3_API_KEY")
+	s3Secret := os.Getenv("S3_SECRET")
+	s3Domain := os.Getenv("S3_DOMAIN")
+	mySqlConnString := os.Getenv("MYSQL_CONN_STRING")
+	mongoDbConnString := os.Getenv("MONGODB_CONN_STRING")
+	rabbitMqConnString := os.Getenv("RABBITMQ_CONN_STRING")
+
+	// Set up MongoDb Connection
+	/***************************************************************/
+	/***************************************************************/
 	// Use the SetServerAPIOptions() method to set the version of the Stable API on the client
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-	opts := options.Client().ApplyURI(os.Getenv("MONGODB_CONN_STRING")).SetServerAPIOptions(serverAPI)
+	opts := options.Client().ApplyURI(mongoDbConnString).SetServerAPIOptions(serverAPI)
 	// Create a new client and connect to the server
 	client, err := mongo.Connect(context.TODO(), opts)
 	if err != nil {
@@ -38,22 +53,23 @@ func main() {
 	}
 	fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
 	mongodb := client.Database("h5traveloto")
+	/***************************************************************/
+	/***************************************************************/
 
-	dsn := os.Getenv("MYSQL_CONN_STRING")
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	// Set up Mysql Gorm Connection
+	/***************************************************************/
+	/***************************************************************/
+	db, err := gorm.Open(mysql.Open(mySqlConnString), &gorm.Config{})
 	if err != nil {
 		log.Fatal(db, err)
 	}
-
 	db = db.Debug()
+	/***************************************************************/
+	/***************************************************************/
 
-	systemSecretKey := os.Getenv("SYSTEM_SECRET_KEY")
-
-	s3BucketName := os.Getenv("S3_BUCKET_NAME")
-	s3Region := os.Getenv("S3_REGION")
-	s3ApiKey := os.Getenv("S3_API_KEY")
-	s3Secret := os.Getenv("S3_SECRET")
-	s3Domain := os.Getenv("S3_DOMAIN")
+	// Set up S3 Provider
+	/***************************************************************/
+	/***************************************************************/
 	s3Provider := uploadprovider.NewS3Provider(
 		s3BucketName,
 		s3Region,
@@ -61,13 +77,57 @@ func main() {
 		s3Secret,
 		s3Domain,
 	)
+	/***************************************************************/
+	/***************************************************************/
 
+	// Set up RabbitMq Connection
+	/***************************************************************/
+	/***************************************************************/
+	rabbitConn, err := amqp.Dial(rabbitMqConnString)
+	if err != nil {
+		log.Fatal("Fail to connect rabbitMQ! ", err)
+	}
+	defer rabbitConn.Close()
+	ch, err := rabbitConn.Channel()
+	if err != nil {
+		log.Fatal("Fail to open channel! ", err)
+	}
+
+	q, err := ch.QueueDeclare(
+		"hello", // name
+		false,   // durable
+		false,   // delete when unused
+		false,   // exclusive
+		false,   // no-wait
+		nil,     // arguments
+	)
+	if err != nil {
+		log.Fatal("Fail to declare channel! ", err)
+	}
+
+	body := "Hello World!"
+	err = ch.PublishWithContext(context.Background(),
+		"",     // exchange
+		q.Name, // routing key
+		false,  // mandatory
+		false,  // immediate
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(body),
+		})
+	if err != nil {
+		log.Fatal("Fail to publish message! ", err)
+	}
+	log.Printf(" [x] Sent %s\n", body)
+
+	/***************************************************************/
+	/***************************************************************/
+
+	// Set up App Context
 	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey, s3Provider)
 
 	r := gin.Default()
-
 	r.Use(middleware.Recover(appCtx))
-
 	v1 := r.Group("/v1")
 
 	v1.GET("/ping", func(context *gin.Context) {

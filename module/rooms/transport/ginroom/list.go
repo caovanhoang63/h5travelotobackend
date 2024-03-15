@@ -8,6 +8,7 @@ import (
 	roommodel "h5travelotobackend/module/rooms/model"
 	roomstorage "h5travelotobackend/module/rooms/storage"
 	"net/http"
+	"strconv"
 )
 
 func ListRoomWithCondition(appCtx appContext.AppContext) gin.HandlerFunc {
@@ -16,13 +17,25 @@ func ListRoomWithCondition(appCtx appContext.AppContext) gin.HandlerFunc {
 		var paging common.Paging
 
 		hotelUid, err := common.FromBase58(context.Param("hotel-id"))
-
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
 
-		if err := context.ShouldBindQuery(&filter); err != nil {
-			panic(common.ErrInvalidRequest(err))
+		if str, ok := context.Params.Get("room-type-id"); ok {
+			roomTypeUid, err := common.FromBase58(str)
+			if err != nil {
+				panic(common.ErrInvalidRequest(err))
+			}
+			filter.RoomTypeId = int(roomTypeUid.GetLocalID())
+		}
+
+		if str, ok := context.Params.Get("status"); ok {
+			filter.Status, err = strconv.Atoi(str)
+			if err != nil {
+				panic(common.ErrInvalidRequest(err))
+			}
+		} else {
+			filter.Status = 1
 		}
 
 		filter.HotelId = int(hotelUid.GetLocalID())

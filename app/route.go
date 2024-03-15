@@ -12,8 +12,6 @@ import (
 	"h5travelotobackend/module/users/transport/ginuser"
 )
 
-// TODO: fix url conflict
-
 func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	v1.POST("/upload", ginupload.UploadImage(appCtx))
 	v1.POST("/register", ginuser.RegisterUser(appCtx))
@@ -42,11 +40,13 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 
 	// room api
 	rooms := v1.Group("hotels/:hotel-id/rooms")
-	rooms.Use(middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager, common.RoleStaff), middleware.IsHotelWorker(appCtx))
-	rooms.PATCH("/rooms/:room-id", ginroom.UpdateRoom(appCtx))
-	rooms.DELETE("/rooms/:room-id", ginroom.DeleteRoom(appCtx))
-	rooms.POST("/rooms", ginroom.CreateRoom(appCtx))
-	rooms.GET("/rooms/:room-id", ginroom.GetRoomById(appCtx))
-	rooms.GET("/rooms", ginroom.ListRoomWithCondition(appCtx))
+	rooms.Use(middleware.RequireAuth(appCtx))
+	rooms.Use(middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager, common.RoleStaff))
+	rooms.Use(middleware.IsHotelWorker(appCtx))
+	rooms.PATCH("/:room-id", ginroom.UpdateRoom(appCtx))
+	rooms.DELETE("/:room-id", ginroom.DeleteRoom(appCtx))
+	rooms.POST("/", ginroom.CreateRoom(appCtx))
+	rooms.GET(":room-id", ginroom.GetRoomById(appCtx))
+	rooms.GET("", ginroom.ListRoomWithCondition(appCtx))
 
 }
