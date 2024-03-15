@@ -11,8 +11,10 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"h5travelotobackend/component/appContext"
+	rabbitpubsub "h5travelotobackend/component/pubsub/rabbitmq"
 	"h5travelotobackend/component/uploadprovider"
 	"h5travelotobackend/middleware"
+	"h5travelotobackend/subcriber"
 	"log"
 	"net/http"
 	"os"
@@ -93,38 +95,12 @@ func main() {
 		log.Fatal("Fail to open channel! ", err)
 	}
 
-	q, err := ch.QueueDeclare(
-		"hello", // name
-		false,   // durable
-		false,   // delete when unused
-		false,   // exclusive
-		false,   // no-wait
-		nil,     // arguments
-	)
-	if err != nil {
-		log.Fatal("Fail to declare channel! ", err)
-	}
-
-	body := "Hello World!"
-	err = ch.PublishWithContext(context.Background(),
-		"",     // exchange
-		q.Name, // routing key
-		false,  // mandatory
-		false,  // immediate
-		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(body),
-		})
-	if err != nil {
-		log.Fatal("Fail to publish message! ", err)
-	}
-	log.Printf(" [x] Sent %s\n", body)
-
+	pb := rabbitpubsub.NewRabbitPubSub(ch)
 	/***************************************************************/
 	/***************************************************************/
 
 	// Set up App Context
-	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey, s3Provider)
+	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey, s3Provider, pb)
 
 	r := gin.Default()
 	r.Use(middleware.Recover(appCtx))
@@ -137,6 +113,11 @@ func main() {
 	})
 
 	SetUpRoute(appCtx, v1)
+
+	err = subcriber.NewEngine(appCtx).Start()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	if err := r.Run(); err != nil {
 		log.Fatal(err)

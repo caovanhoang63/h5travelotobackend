@@ -35,7 +35,7 @@ func CreateRoom(appCtx appContext.AppContext) gin.HandlerFunc {
 		store := roomstorage.NewSqlStore(appCtx.GetGormDbConnection())
 		//TODO: use gRPC instead of SQL store
 		findRoomTypeStore := roomtypesqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
-		biz := roombiz.NewCreateRoomBiz(store, findRoomTypeStore)
+		biz := roombiz.NewCreateRoomBiz(store, findRoomTypeStore, appCtx.GetPubSub())
 
 		if err := biz.CreateRoom(context.Request.Context(), &data); err != nil {
 			panic(err)

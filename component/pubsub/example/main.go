@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"h5travelotobackend/component/pubsub"
 	rabbitpubsub "h5travelotobackend/component/pubsub/rabbitmq"
-	hotelmodel "h5travelotobackend/module/hotels/model"
 	"log"
 	"time"
 )
@@ -25,12 +25,10 @@ func main() {
 	pb := rabbitpubsub.NewRabbitPubSub(ch)
 
 	msgs, _ := pb.Subscribe(context.Background(), "topic1")
-	b, _ := pb.Subscribe(context.Background(), "topic1")
+	//b, _ := pb.Subscribe(context.Background(), "topic1")
 	go func() {
-		for i := 0; i < 10; i++ {
-			mess := pubsub.NewMessage(hotelmodel.Hotel{
-				Name: "Hello",
-			})
+		for i := 0; i < 5; i++ {
+			mess := pubsub.NewMessage(1)
 			mess.SetChannel("topic1")
 			time.Sleep(2 * time.Second)
 			pb.Publish(context.Background(), "topic1", mess)
@@ -40,17 +38,19 @@ func main() {
 	go func() {
 		for {
 			d := <-msgs
-			fmt.Println("a:", d.Data)
+			var hotel interface{}
+			json.Unmarshal(d.Data, &hotel)
+			fmt.Printf("Name: %T\n", hotel)
 		}
 
 	}()
 
-	go func() {
-		for {
-			mess := <-b
-			fmt.Println("b:", mess.Data)
-		}
-	}()
+	//go func() {
+	//	for {
+	//		mess := <-b
+	//		fmt.Println("b:", mess.Data)
+	//	}
+	//}()
 
 	time.Sleep(20 * time.Second)
 }

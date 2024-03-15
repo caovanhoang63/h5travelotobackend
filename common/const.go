@@ -23,6 +23,11 @@ const (
 	RoleManager  = "manager"
 )
 
+const (
+	TopicCreateNewRoom = "TopicCreateNewRoom"
+	TopicDeleteRoom    = "TopicDeleteRoom"
+)
+
 type Requester interface {
 	GetUserId() int
 	GetEmail() string

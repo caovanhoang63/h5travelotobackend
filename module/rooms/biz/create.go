@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"h5travelotobackend/common"
+	"h5travelotobackend/component/pubsub"
 	roommodel "h5travelotobackend/module/rooms/model"
 )
 
@@ -16,16 +17,17 @@ type FindRoomTypeStore interface {
 		ctx context.Context,
 		condition map[string]interface{},
 		moreKeys ...string,
-	) (*common.RoomTypeDTO, error)
+	) (*common.DTORoomType, error)
 }
 
 type createRoomBiz struct {
 	store     CreateRoomStore
 	findStore FindRoomTypeStore
+	pb        pubsub.Pubsub
 }
 
-func NewCreateRoomBiz(store CreateRoomStore, findStore FindRoomTypeStore) *createRoomBiz {
-	return &createRoomBiz{store: store, findStore: findStore}
+func NewCreateRoomBiz(store CreateRoomStore, findStore FindRoomTypeStore, pb pubsub.Pubsub) *createRoomBiz {
+	return &createRoomBiz{store: store, findStore: findStore, pb: pb}
 }
 
 func (biz *createRoomBiz) CreateRoom(ctx context.Context, data *roommodel.RoomCreate) error {
@@ -36,6 +38,16 @@ func (biz *createRoomBiz) CreateRoom(ctx context.Context, data *roommodel.RoomCr
 
 	if roomType.HotelId != data.HotelId || roomType.Id != data.RoomTypeID {
 		return common.ErrCannotCreateEntity(roommodel.EntityName, errors.New("room type not exist"))
+	}
+
+	mess := pubsub.NewMessage(roomType)
+	mess.SetChannel(common.TopicCreateNewRoom)
+	err = biz.pb.Publish(ctx, common.TopicCreateNewRoom, mess)
+	if err != nil {
+		return common.NewCustomError(
+			err,
+			"cannot increase total room",
+			"CANNOT_INCREASE_TOTAL_ROOM")
 	}
 
 	if err := biz.store.Create(ctx, data); err != nil {

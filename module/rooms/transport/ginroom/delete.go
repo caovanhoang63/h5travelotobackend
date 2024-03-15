@@ -17,7 +17,7 @@ func DeleteRoom(appCtx appContext.AppContext) gin.HandlerFunc {
 		}
 
 		store := roomstorage.NewSqlStore(appCtx.GetGormDbConnection())
-		biz := roombiz.NewDeleteRoomBiz(store)
+		biz := roombiz.NewDeleteRoomBiz(store, appCtx.GetPubSub())
 		if err := biz.DeleteRoom(context.Request.Context(), int(uid.GetLocalID())); err != nil {
 			panic(err)
 		}

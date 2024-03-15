@@ -2,6 +2,7 @@ package subcriber
 
 import (
 	"context"
+	"fmt"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/component/asyncjob"
@@ -23,7 +24,15 @@ func NewEngine(appCtx appContext.AppContext) *consumerEngine {
 }
 
 func (engine *consumerEngine) Start() error {
+	if err := engine.startSubTopic(common.TopicCreateNewRoom, true,
+		IncreaseTotalRoomWhenCreateNewRoom(engine.appCtx, context.Background())); err != nil {
+		log.Println("Err:", err)
+	}
 
+	if err := engine.startSubTopic(common.TopicDeleteRoom, true,
+		DecreaseTotalRoomWhenCreateNewRoom(engine.appCtx, context.Background())); err != nil {
+		log.Println("Err:", err)
+	}
 	return nil
 }
 
@@ -48,6 +57,7 @@ func (engine *consumerEngine) startSubTopic(topic string, isConcurrent bool, con
 		common.AppRecover()
 		for {
 			msg := <-c
+			fmt.Println("Message: ", string(msg.Data))
 			jobHdlArr := make([]asyncjob.Job, len(consumerJobs))
 
 			for i := range consumerJobs {

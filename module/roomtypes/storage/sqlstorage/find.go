@@ -28,8 +28,8 @@ func (s *sqlStore) FindDTODataWithCondition(
 	ctx context.Context,
 	condition map[string]interface{},
 	moreKeys ...string,
-) (*common.RoomTypeDTO, error) {
-	var data common.RoomTypeDTO
+) (*common.DTORoomType, error) {
+	var data common.DTORoomType
 
 	if err := s.db.Where(condition).First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
