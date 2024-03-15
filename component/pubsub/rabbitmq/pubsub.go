@@ -10,17 +10,14 @@ import (
 )
 
 type rabbitPubSub struct {
-	channel    *amqp.Channel
-	queue      *amqp.Queue
-	mapChannel map[string][]chan *pubsub.Message
-	locker     *sync.RWMutex
+	channel *amqp.Channel
+	locker  *sync.RWMutex
 }
 
 func NewRabbitPubSub(channel *amqp.Channel) *rabbitPubSub {
 	return &rabbitPubSub{
-		channel:    channel,
-		mapChannel: make(map[string][]chan *pubsub.Message),
-		locker:     new(sync.RWMutex),
+		channel: channel,
+		locker:  new(sync.RWMutex),
 	}
 }
 
@@ -31,20 +28,6 @@ func (pb *rabbitPubSub) Publish(ctx context.Context, exchange string, data *pubs
 		if err != nil {
 			panic(err)
 		}
-		//if err := pb.channel.ExchangeDeclarePassive(
-		//	exchange, // name
-		//	"fanout", // type
-		//	true,     // durable
-		//	false,    // auto-deleted
-		//	false,    // internal
-		//	false,    // no-wait
-		//	nil,      // arguments
-		//); err != nil {
-		//	log.Printf("Exchange %s already exists\n", exchange)
-		//} else {
-		//
-		//	log.Println("Create exchange: ", exchange)
-		//}
 
 		err = pb.channel.ExchangeDeclare(
 			"logs",   // name
@@ -70,12 +53,21 @@ func (pb *rabbitPubSub) Publish(ctx context.Context, exchange string, data *pubs
 		if err != nil {
 			panic(err)
 		}
-		log.Println("New event published:", data.String(), "with data", data.Data)
+		log.Println("New event published:", data.String(), "with data", string(data.Data))
 	}()
 	return nil
 }
 
 func (pb *rabbitPubSub) Subscribe(ctx context.Context, exchange string) (<-chan *pubsub.Message, func()) {
+	err := pb.channel.ExchangeDeclare(
+		exchange, // name
+		"fanout", // type
+		true,     // durable
+		false,    // auto-deleted
+		false,    // internal
+		false,    // no-wait
+		nil,      // arguments
+	)
 
 	q, err := pb.channel.QueueDeclare(
 		"",    // name
@@ -109,8 +101,7 @@ func (pb *rabbitPubSub) Subscribe(ctx context.Context, exchange string) (<-chan 
 	ch := make(chan *pubsub.Message)
 
 	go func() {
-		for {
-			d := <-msgs
+		for d := range msgs {
 			var mess pubsub.Message
 			mess.Unmarshal(d.Body)
 			ch <- &mess
