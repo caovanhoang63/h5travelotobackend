@@ -7,18 +7,19 @@ import (
 )
 
 type Message struct {
-	Id        string      `json:"id"`
-	Channel   string      `json:"Channel"`
-	Data      interface{} `json:"data"`
-	CreatedAt time.Time   `json:"created_at"`
+	Id        string    `json:"id"`
+	Channel   string    `json:"channel"`
+	Data      []byte    `json:"data"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func NewMessage(data interface{}) *Message {
 	now := time.Now().UTC()
+	jsonData, _ := json.Marshal(data)
 
 	return &Message{
 		Id:        fmt.Sprintf("%d", now.UnixNano()),
-		Data:      data,
+		Data:      jsonData,
 		CreatedAt: now,
 	}
 }
