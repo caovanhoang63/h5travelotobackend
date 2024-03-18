@@ -13,6 +13,7 @@ import (
 	"h5travelotobackend/module/roomtypes/transport/ginroomtype"
 	"h5travelotobackend/module/upload/transport/ginupload"
 	"h5travelotobackend/module/users/transport/ginuser"
+	"h5travelotobackend/module/ward/transport/ginward"
 )
 
 func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
@@ -68,5 +69,6 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	// VietNam Unit api
 	v1.GET("/provinces", ginprovinces.ListAllProvinces(appCtx))
 	v1.GET("/provinces/:province-code/districts", gindistrict.ListDistrictsByProvinceCode(appCtx))
+	v1.GET("/districts/:district-code/wards", ginward.ListWardsByDistrictCode(appCtx))
 
 }
