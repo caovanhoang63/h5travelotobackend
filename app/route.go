@@ -5,6 +5,7 @@ import (
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/middleware"
+	gindistrict "h5travelotobackend/module/districts/transport/gindistricts"
 	"h5travelotobackend/module/hotels/transport/ginhotel"
 	"h5travelotobackend/module/provinces/transport/ginprovinces"
 	"h5travelotobackend/module/rooms/transport/ginroom"
@@ -66,5 +67,6 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 
 	// VietNam Unit api
 	v1.GET("/provinces", ginprovinces.ListAllProvinces(appCtx))
+	v1.GET("/provinces/:province-code/districts", gindistrict.ListDistrictsByProvinceCode(appCtx))
 
 }
