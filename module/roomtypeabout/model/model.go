@@ -23,6 +23,16 @@ func (r *RoomTypeAbout) Validate() error {
 	return nil
 }
 
+type RoomTypeAboutUpdate struct {
+	common.MongoModel `json:",inline" bson:",inline"`
+	Convenient        *map[string]string `json:"convenient" bson:"convenient"`
+	About             *string            `json:"about" bson:"about"`
+}
+
+func (RoomTypeAboutUpdate) CollectionName() string {
+	return "room_type_about"
+}
+
 var (
 	ErrInvalidRoomType = common.NewCustomError(
 		errors.New("invalid room type"),

@@ -60,7 +60,7 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 
 	roomTypeAbout.POST("/", ginroomtypeabout.CreateRoomTypeAbout(appCtx))
 	roomTypeAbout.DELETE("/", ginroomtypeabout.DeleteByRoomTypeId(appCtx))
-	roomTypeAbout.PATCH("/")
+	roomTypeAbout.PATCH("/", ginroomtypeabout.UpdateByRoomTypeId(appCtx))
 	v1.GET("/hotels/:hotel-id/room-types/:room-type-id/about", ginroomtypeabout.GetAboutByRoomTypeId(appCtx))
 
 }
