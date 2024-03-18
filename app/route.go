@@ -6,6 +6,7 @@ import (
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/middleware"
 	"h5travelotobackend/module/hotels/transport/ginhotel"
+	"h5travelotobackend/module/provinces/transport/ginprovinces"
 	"h5travelotobackend/module/rooms/transport/ginroom"
 	"h5travelotobackend/module/roomtypeabout/transport/ginroomtypeabout"
 	"h5travelotobackend/module/roomtypes/transport/ginroomtype"
@@ -62,5 +63,8 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	roomTypeAbout.DELETE("/", ginroomtypeabout.DeleteByRoomTypeId(appCtx))
 	roomTypeAbout.PATCH("/", ginroomtypeabout.UpdateByRoomTypeId(appCtx))
 	v1.GET("/hotels/:hotel-id/room-types/:room-type-id/about", ginroomtypeabout.GetAboutByRoomTypeId(appCtx))
+
+	// VietNam Unit api
+	v1.GET("/provinces", ginprovinces.ListAllProvinces(appCtx))
 
 }
