@@ -7,6 +7,7 @@ import (
 	"h5travelotobackend/middleware"
 	"h5travelotobackend/module/hotels/transport/ginhotel"
 	"h5travelotobackend/module/rooms/transport/ginroom"
+	"h5travelotobackend/module/roomtypeabout/transport/ginroomtypeabout"
 	"h5travelotobackend/module/roomtypes/transport/ginroomtype"
 	"h5travelotobackend/module/upload/transport/ginupload"
 	"h5travelotobackend/module/users/transport/ginuser"
@@ -28,7 +29,8 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	roomTypes.DELETE("hotels/:hotel-id/room-types/:room-type-id", ginroomtype.DeleteRoomType(appCtx))
 	roomTypes.PATCH("hotels/:hotel-id/room-types/:room-type-id", ginroomtype.UpdateRoomType(appCtx))
 	roomTypes.GET("/room-types/:room-type-id", ginroomtype.GetRoomTypeById(appCtx))
-	roomTypes.GET("/room-types/list", ginroomtype.ListRoomType(appCtx))
+	roomTypes.GET("/room-types", ginroomtype.ListRoomType(appCtx))
+
 	// hotel api
 	hotels.POST("/", middleware.RoleRequired(appCtx, common.RoleOwner), ginhotel.CreateHotel(appCtx))
 	hotels.GET("/:hotel-id", ginhotel.GetHotelById(appCtx))
@@ -48,5 +50,12 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	rooms.POST("/", ginroom.CreateRoom(appCtx))
 	rooms.GET(":room-id", ginroom.GetRoomById(appCtx))
 	rooms.GET("", ginroom.ListRoomWithCondition(appCtx))
+
+	// room type about api
+	roomTypeAbout := v1.Group("hotels/:hotel-id/room-types/:room-type-id/about")
+	roomTypeAbout.Use(middleware.RequireAuth(appCtx))
+	roomTypeAbout.Use(middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager))
+	roomTypeAbout.Use(middleware.IsHotelWorker(appCtx))
+	roomTypeAbout.POST("/", ginroomtypeabout.CreateRoomTypeAbout(appCtx))
 
 }
