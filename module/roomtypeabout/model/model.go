@@ -5,7 +5,7 @@ import (
 	"h5travelotobackend/common"
 )
 
-const EntityName = "RoomType"
+const EntityName = "RoomTypeAbout"
 
 type RoomTypeAbout struct {
 	common.MongoModel `json:",inline" bson:",inline"`
@@ -25,8 +25,8 @@ func (r *RoomTypeAbout) Validate() error {
 
 type RoomTypeAboutUpdate struct {
 	common.MongoModel `json:",inline" bson:",inline"`
-	Convenient        *map[string]string `json:"convenient" bson:"convenient"`
-	About             *string            `json:"about" bson:"about"`
+	Convenient        map[string]string `json:"convenient,omitempty" bson:"convenient,omitempty"`
+	About             string            `json:"about,omitempty" bson:"about,omitempty"`
 }
 
 func (RoomTypeAboutUpdate) CollectionName() string {
@@ -38,4 +38,8 @@ var (
 		errors.New("invalid room type"),
 		"invalid room type",
 		"INVALID_ROOM_TYPE")
+	ErrRoomTypeAboutExisted = common.NewCustomError(
+		errors.New("room type about existed"),
+		"room type about existed",
+		"ROOM_TYPE_ABOUT_EXISTED")
 )

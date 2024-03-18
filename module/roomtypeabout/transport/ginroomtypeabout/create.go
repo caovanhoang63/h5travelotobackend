@@ -25,7 +25,7 @@ func CreateRoomTypeAbout(appCtx appContext.AppContext) gin.HandlerFunc {
 
 		store := roomtypeaboutmongostorage.NewMongoStore(appCtx.GetMongoConnection())
 		findStore := roomtypesqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
-		biz := roomtypeaboutbiz.NewCreateRoomTypeAboutBit(store, findStore)
+		biz := roomtypeaboutbiz.NewCreateRoomTypeAboutBit(store, store, findStore)
 		if err := biz.CreateRoomTypeAbout(c.Request.Context(), &data); err != nil {
 			panic(err)
 		}

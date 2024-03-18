@@ -19,12 +19,13 @@ type FindRoomTypeStore interface {
 }
 
 type createRoomTypeAboutBiz struct {
-	store     CreateRoomTypeAboutStore
-	findStore FindRoomTypeStore
+	store          CreateRoomTypeAboutStore
+	findStore      FindRoomTypeStore
+	findAboutStore FindRoomTypeAboutStore
 }
 
-func NewCreateRoomTypeAboutBit(store CreateRoomTypeAboutStore, findStore FindRoomTypeStore) *createRoomTypeAboutBiz {
-	return &createRoomTypeAboutBiz{store: store, findStore: findStore}
+func NewCreateRoomTypeAboutBit(store CreateRoomTypeAboutStore, findAboutStore FindRoomTypeAboutStore, findStore FindRoomTypeStore) *createRoomTypeAboutBiz {
+	return &createRoomTypeAboutBiz{store: store, findAboutStore: findAboutStore, findStore: findStore}
 }
 
 func (biz *createRoomTypeAboutBiz) CreateRoomTypeAbout(ctx context.Context,
@@ -37,6 +38,11 @@ func (biz *createRoomTypeAboutBiz) CreateRoomTypeAbout(ctx context.Context,
 
 	if roomType.Status == 0 {
 		return roomtypeaboutmodel.ErrInvalidRoomType
+	}
+
+	findResult, _ := biz.findAboutStore.FindWithCondition(ctx, map[string]interface{}{"room_type_id": data.RoomTypeId})
+	if findResult != nil {
+		return roomtypeaboutmodel.ErrRoomTypeAboutExisted
 	}
 
 	if err := data.Validate(); err != nil {
