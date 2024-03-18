@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
-	"h5travelotobackend/module/provinces/biz"
+	"h5travelotobackend/module/provinces/provincesbiz"
 	provincestorage "h5travelotobackend/module/provinces/storage"
 	"net/http"
 )
@@ -12,7 +12,7 @@ import (
 func ListAllProvinces(appCtx appContext.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		store := provincestorage.NewSqlStore(appCtx.GetGormDbConnection())
-		biz := biz.NewListAllProvincesBiz(store)
+		biz := provincesbiz.NewListAllProvincesBiz(store)
 		provinces, err := biz.ListAllProvinces(c.Request.Context())
 		if err != nil {
 			panic(err)
