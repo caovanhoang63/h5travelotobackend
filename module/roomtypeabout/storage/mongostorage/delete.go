@@ -7,13 +7,18 @@ import (
 	roomtypeaboutmodel "h5travelotobackend/module/roomtypeabout/model"
 )
 
-func (s *mongoStore) Delete(ctx context.Context, room_type_id int) error {
-	filter := bson.D{{"room_type_id", room_type_id}, {"status", 1}}
+func (s *mongoStore) Delete(ctx context.Context, roomTypeId int) error {
+	filter := bson.D{{"room_type_id", roomTypeId}}
 
-	if result, err := s.db.Collection(roomtypeaboutmodel.RoomTypeAbout{}.CollectionName()).
-		UpdateMany(ctx, filter, bson.D{{"status", 0}}); err != nil {
+	coll := s.db.Collection(roomtypeaboutmodel.RoomTypeAbout{}.CollectionName())
+
+	result, err := coll.DeleteOne(ctx, filter)
+
+	if err != nil {
 		return common.ErrDb(err)
-	} else if result.ModifiedCount == 0 {
+	}
+
+	if result.DeletedCount == 0 {
 		return common.ErrEntityDeleted(roomtypeaboutmodel.EntityName, nil)
 	}
 

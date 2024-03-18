@@ -2,6 +2,7 @@ package roomtypeaboutbiz
 
 import (
 	"context"
+	"h5travelotobackend/common"
 )
 
 type DeleteRoomTypeAboutStore interface {
@@ -20,7 +21,11 @@ func (biz *deleteRoomTypeAboutBiz) DeleteRoomTypeAbout(ctx context.Context,
 	id int) error {
 
 	if err := biz.store.Delete(ctx, id); err != nil {
-		return err
+		if err == common.ErrEntityDeleted("RoomTypeAbout", nil) {
+			return common.ErrEntityDeleted("RoomTypeAbout", nil)
+		} else {
+			return common.ErrCannotDeleteEntity("RoomTypeAbout", err)
+		}
 	}
 
 	return nil

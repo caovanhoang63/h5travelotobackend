@@ -45,6 +45,7 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	rooms.Use(middleware.RequireAuth(appCtx))
 	rooms.Use(middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager, common.RoleStaff))
 	rooms.Use(middleware.IsHotelWorker(appCtx))
+
 	rooms.PATCH("/:room-id", ginroom.UpdateRoom(appCtx))
 	rooms.DELETE("/:room-id", ginroom.DeleteRoom(appCtx))
 	rooms.POST("/", ginroom.CreateRoom(appCtx))
@@ -56,6 +57,10 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	roomTypeAbout.Use(middleware.RequireAuth(appCtx))
 	roomTypeAbout.Use(middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager))
 	roomTypeAbout.Use(middleware.IsHotelWorker(appCtx))
+
 	roomTypeAbout.POST("/", ginroomtypeabout.CreateRoomTypeAbout(appCtx))
+	roomTypeAbout.DELETE("/", ginroomtypeabout.DeleteByRoomTypeId(appCtx))
+	roomTypeAbout.PATCH("/")
+	v1.GET("/hotels/:hotel-id/room-types/:room-type-id/about", ginroomtypeabout.GetAboutByRoomTypeId(appCtx))
 
 }
