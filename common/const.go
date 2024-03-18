@@ -2,6 +2,8 @@ package common
 
 import "log"
 
+const TimeFormat = "2006-01-02 15:04:05"
+
 // DbType is a type to represent the type of database
 const (
 	DbTypeHotel    = 1

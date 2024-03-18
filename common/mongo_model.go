@@ -14,10 +14,10 @@ type MongoModel struct {
 
 func (m *MongoModel) OnCreate() {
 	m.Status = 1
-	m.CreatedAt = time.Now().UTC()
-	m.UpdatedAt = time.Now().UTC()
+	m.CreatedAt = time.Now()
+	m.UpdatedAt = time.Now()
 }
 
 func (m *MongoModel) OnUpdate() {
-	m.UpdatedAt = time.Now().UTC()
+	m.UpdatedAt = time.Now()
 }

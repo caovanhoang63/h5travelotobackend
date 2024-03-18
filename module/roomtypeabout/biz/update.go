@@ -19,6 +19,7 @@ func NewUpdateRoomTypeAboutBiz(store UpdateRoomTypeAboutStore) *updateRoomTypeAb
 }
 
 func (biz *updateRoomTypeAboutBiz) UpdateRoomTypeAbout(ctx context.Context, roomTypeId int, updateData *roomtypeaboutmodel.RoomTypeAboutUpdate) error {
+	updateData.OnUpdate()
 	if err := biz.store.Update(ctx, roomTypeId, updateData); err != nil {
 		return common.ErrCannotUpdateEntity(roomtypeaboutmodel.EntityName, err)
 	}
