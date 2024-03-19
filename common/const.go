@@ -1,16 +1,18 @@
 package common
 
-import "log"
-
-const TimeFormat = "2006-01-02 15:04:05"
+import (
+	"log"
+)
 
 // DbType is a type to represent the type of database
 const (
-	DbTypeHotel    = 1
-	DbTypeUser     = 2
-	DbTypeRoomType = 3
-	DbTypeRoom     = 4
-	DbTypeWorker   = 5
+	DbTypeHotel           = 1
+	DbTypeUser            = 2
+	DbTypeRoomType        = 3
+	DbTypeRoom            = 4
+	DbTypeWorker          = 5
+	DbTypeBooking         = 6
+	DbTypeBookingRoomType = 7
 )
 
 const CurrentUser = "user"
