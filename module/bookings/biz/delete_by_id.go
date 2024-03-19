@@ -46,7 +46,7 @@ func (biz *deleteBookingBiz) DeleteBooking(ctx context.Context, requester common
 			return common.ErrNoPermission(errors.New("user does not have permission to delete this booking"))
 		}
 	} else if requester.GetRole() != common.RoleAdmin {
-		worker, err := biz.findWorkerStore.FindWithCondition(ctx, map[string]interface{}{"id": requester.GetUserId()})
+		worker, err := biz.findWorkerStore.FindWithCondition(ctx, map[string]interface{}{"user_id": requester.GetUserId()})
 		if err != nil {
 			return common.ErrNoPermission(err)
 		}
