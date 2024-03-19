@@ -76,5 +76,6 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	booking := v1.Group("bookings/", middleware.RequireAuth(appCtx))
 	booking.POST("/", ginbooking.CreateBooking(appCtx))
 	booking.GET("/:booking-id", ginbooking.GetBookingById(appCtx))
+	booking.DELETE("/:booking-id", ginbooking.DeleteBookingById(appCtx))
 
 }

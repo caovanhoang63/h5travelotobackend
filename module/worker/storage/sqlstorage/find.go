@@ -7,7 +7,9 @@ import (
 	workermodel "h5travelotobackend/module/worker/model"
 )
 
-func (s *sqlStore) FindWithCondition(ctx context.Context, condition map[string]interface{}, moreKeys ...string) (*workermodel.Worker, error) {
+func (s *sqlStore) FindWithCondition(ctx context.Context,
+	condition map[string]interface{},
+	moreKeys ...string) (*workermodel.Worker, error) {
 
 	var data workermodel.Worker
 
