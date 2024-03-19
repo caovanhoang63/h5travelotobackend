@@ -28,6 +28,8 @@ func ListRoomType(appCtx appContext.AppContext) gin.HandlerFunc {
 			filter.SetDefault()
 		}
 
+		filter.UnMask()
+
 		store := roomtypesqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
 		biz := roomtypebiz.NewListRoomTypeBiz(store)
 		data, err := biz.ListRoomTypeWithCondition(c.Request.Context(), &filter, &paging)

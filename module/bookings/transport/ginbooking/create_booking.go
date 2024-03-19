@@ -8,6 +8,7 @@ import (
 	bookingbiz "h5travelotobackend/module/bookings/biz"
 	"h5travelotobackend/module/bookings/bookingmodel"
 	bookingsqlstorage "h5travelotobackend/module/bookings/storage"
+	roomtypesqlstorage "h5travelotobackend/module/roomtypes/storage/sqlstorage"
 	"net/http"
 )
 
@@ -26,7 +27,11 @@ func CreateBooking(appCtx appContext.AppContext) gin.HandlerFunc {
 
 		fmt.Println("hotel id ", bookingCreate.HotelId)
 		store := bookingsqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
-		biz := bookingbiz.NewCreateBookingBiz(store)
+
+		// TODO: loai bo phu thuoc doi voi lop roomtype
+		typeStore := roomtypesqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
+
+		biz := bookingbiz.NewCreateBookingBiz(store, typeStore)
 		if err := biz.Create(c.Request.Context(), &bookingCreate); err != nil {
 			panic(err)
 		}

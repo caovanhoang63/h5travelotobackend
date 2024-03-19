@@ -6,8 +6,9 @@ import (
 )
 
 type Filter struct {
-	HotelId int         `json:"hotel_id" gorm:"column:hotel_id;" form:"hotel-id"`
-	Bed     *common.Bed `json:"bed" gorm:"column:bed;" form:"bed"`
+	HotelId     int         `json:"-" gorm:"column:hotel_id;" form:"-"`
+	HotelFakeId common.UID  `json:"hotel_id" gorm:"-" form:"hotel-id"`
+	Bed         *common.Bed `json:"bed" gorm:"column:bed;" form:"bed"`
 
 	BreakFast  bool    `json:"break_fast" gorm:"column:break_fast;" form:"break-fast"`
 	FreeCancel bool    `json:"free_cancel" gorm:"column:free_cancel;" form:"free-cancel"`
@@ -23,4 +24,8 @@ type Filter struct {
 func (f *Filter) SetDefault() {
 	f.MaxPrice = 10000000000
 	f.MinPrice = 0
+}
+
+func (f *Filter) UnMask() {
+	f.HotelId = int(f.HotelFakeId.GetLocalID())
 }

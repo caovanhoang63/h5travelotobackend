@@ -6,7 +6,8 @@ const EntityName = "RoomType"
 
 type RoomType struct {
 	common.SqlModel  `json:",inline"`
-	HotelId          int            `json:"hotel_id" gorm:"column:hotel_id;"`
+	HotelId          int            `json:"-" gorm:"column:hotel_id;"`
+	HotelFakeId      common.UID     `json:"hotel_id" gorm:"-"`
 	Name             string         `json:"name" gorm:"column:name;"`
 	MaxCustomer      int            `json:"max_customer" gorm:"column:max_customer;"`
 	Area             float64        `json:"area" gorm:"column:area;"`
@@ -27,6 +28,7 @@ func (RoomType) TableName() string {
 
 func (r *RoomType) Mask(isAdmin bool) {
 	r.GenUID(common.DbTypeRoomType)
+	r.HotelFakeId = common.NewUID(uint32(r.HotelId), common.DbTypeHotel, 1)
 }
 
 type RoomTypeCreate struct {
