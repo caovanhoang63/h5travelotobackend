@@ -1,4 +1,4 @@
-package districtstorage
+package bookingsqlstorage
 
 import "gorm.io/gorm"
 

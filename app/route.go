@@ -5,6 +5,7 @@ import (
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/middleware"
+	"h5travelotobackend/module/bookings/transport/ginbooking"
 	gindistrict "h5travelotobackend/module/districts/transport/gindistricts"
 	"h5travelotobackend/module/hotels/transport/ginhotel"
 	"h5travelotobackend/module/provinces/transport/ginprovinces"
@@ -70,5 +71,10 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	v1.GET("/provinces", ginprovinces.ListAllProvinces(appCtx))
 	v1.GET("/provinces/:province-code/districts", gindistrict.ListDistrictsByProvinceCode(appCtx))
 	v1.GET("/districts/:district-code/wards", ginward.ListWardsByDistrictCode(appCtx))
+
+	// Booking api
+	booking := v1.Group("bookings/", middleware.RequireAuth(appCtx))
+	booking.POST("/", ginbooking.CreateBooking(appCtx))
+	booking.GET("/:booking-id", ginbooking.GetBookingById(appCtx))
 
 }

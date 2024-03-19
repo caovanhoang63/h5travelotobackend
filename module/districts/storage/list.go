@@ -1,4 +1,4 @@
-package districtstorage
+package dictrictsqlstorage
 
 import (
 	"context"

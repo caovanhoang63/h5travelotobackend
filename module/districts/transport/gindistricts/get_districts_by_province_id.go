@@ -5,7 +5,7 @@ import (
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	districtbiz "h5travelotobackend/module/districts/biz"
-	"h5travelotobackend/module/districts/districtstorage"
+	dictrictsqlstorage "h5travelotobackend/module/districts/storage"
 	"net/http"
 	"strconv"
 )
@@ -17,7 +17,7 @@ func ListDistrictsByProvinceCode(appCtx appContext.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 		}
 
-		store := districtstorage.NewSqlStore(appCtx.GetGormDbConnection())
+		store := dictrictsqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
 		biz := districtbiz.NewListDistrictBiz(store)
 		districts, err := biz.ListDistrictByProvinceCode(c.Request.Context(), provinceCode)
 		if err != nil {
