@@ -9,8 +9,11 @@ import (
 
 // TODO: Dinh nghia loai giuong tu chon
 type Bed struct {
-	Single int `json:"single" gorm:"column:single;"`
-	Double int `json:"double" gorm:"column:double;"`
+	Single int                    `json:"single" gorm:"column:single;"`
+	Double int                    `json:"double" gorm:"column:double;"`
+	King   int                    `json:"king" gorm:"column:king;"`
+	Queen  int                    `json:"queen" gorm:"column:queen;"`
+	Others map[string]interface{} `json:"others" gorm:"column:others;type:jsonb;"`
 }
 
 func (Bed) TableName() string { return "bed" }
