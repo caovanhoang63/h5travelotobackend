@@ -15,6 +15,7 @@ import (
 	"h5travelotobackend/module/upload/transport/ginupload"
 	"h5travelotobackend/module/users/transport/ginuser"
 	"h5travelotobackend/module/ward/transport/ginward"
+	"h5travelotobackend/module/worker/transport/ginworker"
 )
 
 func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
@@ -77,5 +78,18 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	booking.POST("/", ginbooking.CreateBooking(appCtx))
 	booking.GET("/:booking-id", ginbooking.GetBookingById(appCtx))
 	booking.DELETE("/:booking-id", ginbooking.DeleteBookingById(appCtx))
+	v1.GET("/users/:user-id/bookings", middleware.RequireAuth(appCtx),
+		ginbooking.ListBookingByUserId(appCtx))
+	v1.GET("/hotels/:hotel-id/bookings", middleware.RequireAuth(appCtx),
+		middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager), middleware.IsHotelWorker(appCtx),
+		ginbooking.ListBookingHotelId(appCtx))
+
+	// worker api
+	worker := v1.Group("hotels/:hotel-id/workers", middleware.RequireAuth(appCtx))
+	worker.Use(middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager))
+	worker.Use(middleware.IsHotelWorker(appCtx))
+	worker.POST("/", ginworker.CreateWorker(appCtx))
+	worker.DELETE("/:user-id", ginworker.DeleteWorker(appCtx))
+	worker.GET("/", ginworker.ListHotelWorker(appCtx))
 
 }
