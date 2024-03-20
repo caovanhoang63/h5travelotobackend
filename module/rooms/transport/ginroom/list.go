@@ -57,6 +57,6 @@ func ListRoomWithCondition(appCtx appContext.AppContext) gin.HandlerFunc {
 			data[i].Mask(false)
 		}
 
-		context.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
+		context.JSON(http.StatusOK, common.NewSuccessResponse(data, paging, filter))
 	}
 }
