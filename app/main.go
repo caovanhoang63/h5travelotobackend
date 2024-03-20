@@ -22,6 +22,7 @@ import (
 
 func main() {
 
+	RegisterImageFormat()
 	// Get environment variables
 	systemSecretKey := os.Getenv("SYSTEM_SECRET_KEY")
 	s3BucketName := os.Getenv("S3_BUCKET_NAME")
