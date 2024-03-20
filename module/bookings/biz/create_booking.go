@@ -27,7 +27,11 @@ func NewCreateBookingBiz(store CreateBookingStore, typeStore FindRoomTypeStore) 
 	return &createBookingBiz{store: store, findRoomTypeStore: typeStore}
 }
 
-func (biz *createBookingBiz) Create(ctx context.Context, data *bookingmodel.BookingCreate) error {
+func (biz *createBookingBiz) Create(
+	ctx context.Context,
+	data *bookingmodel.BookingCreate,
+	requester common.Requester) error {
+
 	roomType, err := biz.findRoomTypeStore.FindDTODataWithCondition(ctx, map[string]interface{}{"id": data.RoomTypeId})
 	if err != nil {
 		if err == common.RecordNotFound {

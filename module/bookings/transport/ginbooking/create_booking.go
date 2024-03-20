@@ -32,7 +32,7 @@ func CreateBooking(appCtx appContext.AppContext) gin.HandlerFunc {
 		typeStore := roomtypesqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
 
 		biz := bookingbiz.NewCreateBookingBiz(store, typeStore)
-		if err := biz.Create(c.Request.Context(), &bookingCreate); err != nil {
+		if err := biz.Create(c.Request.Context(), &bookingCreate, requester); err != nil {
 			panic(err)
 		}
 
