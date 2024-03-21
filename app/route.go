@@ -6,6 +6,7 @@ import (
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/middleware"
 	"h5travelotobackend/module/bookings/transport/ginbooking"
+	"h5travelotobackend/module/bookingtracking/transport/ginbookingtracking"
 	gindistrict "h5travelotobackend/module/districts/transport/gindistricts"
 	"h5travelotobackend/module/hotels/transport/ginhotel"
 	"h5travelotobackend/module/provinces/transport/ginprovinces"
@@ -92,4 +93,8 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	worker.DELETE("/:user-id", ginworker.DeleteWorker(appCtx))
 	worker.GET("/", ginworker.ListHotelWorker(appCtx))
 
+	// tracking api
+	trackings := v1.Group("hotels/:hotel-id/bookings/:booking-id/tracking", middleware.RequireAuth(appCtx))
+	trackings.GET("/", ginbookingtracking.GetBookingTrackingState(appCtx))
+	trackings.PATCH("/", ginbookingtracking.UpdateTrackingState(appCtx))
 }

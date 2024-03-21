@@ -13,6 +13,7 @@ const (
 	DbTypeWorker          = 5
 	DbTypeBooking         = 6
 	DbTypeBookingRoomType = 7
+	DbTypeBookingTracking = 8
 )
 
 const CurrentUser = "user"
@@ -25,11 +26,6 @@ const (
 	RoleOwner    = "owner"
 	RoleStaff    = "staff"
 	RoleManager  = "manager"
-)
-
-const (
-	TopicCreateNewRoom = "TopicCreateNewRoom"
-	TopicDeleteRoom    = "TopicDeleteRoom"
 )
 
 type Requester interface {

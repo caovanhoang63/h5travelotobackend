@@ -133,4 +133,11 @@ func ErrCannotUpdateEntity(entity string, err error) *AppError {
 		fmt.Sprintf("CANNOT_UPDATE_%s", strings.ToUpper(entity)))
 }
 
+func ErrCannotPublishMessage(topic string, err error) *AppError {
+	return NewCustomError(
+		err,
+		fmt.Sprintf("Cannot publish message to %s", topic),
+		fmt.Sprintf("CANNOT_PUBLISH_%s", strings.ToUpper(topic)))
+}
+
 var RecordNotFound = errors.New("record not found")

@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"h5travelotobackend/common"
+	"h5travelotobackend/component/pubsub"
 	"h5travelotobackend/module/bookings/bookingmodel"
 	workermodel "h5travelotobackend/module/worker/model"
+	"log"
 )
 
 type DeleteBookingStore interface {
@@ -22,12 +24,15 @@ type deleteBookingBiz struct {
 	deleteStore     DeleteBookingStore
 	findStore       FindBookingStore
 	findWorkerStore FindWorkerStore
+	pb              pubsub.Pubsub
 }
 
 func NewDeleteBookingBiz(deleteStore DeleteBookingStore,
 	findStore FindBookingStore,
-	findWorkerStore FindWorkerStore) *deleteBookingBiz {
-	return &deleteBookingBiz{deleteStore: deleteStore, findStore: findStore, findWorkerStore: findWorkerStore}
+	findWorkerStore FindWorkerStore,
+	pb pubsub.Pubsub,
+) *deleteBookingBiz {
+	return &deleteBookingBiz{deleteStore: deleteStore, findStore: findStore, findWorkerStore: findWorkerStore, pb: pb}
 }
 
 func (biz *deleteBookingBiz) DeleteBooking(ctx context.Context, requester common.Requester, id int) error {
@@ -58,5 +63,13 @@ func (biz *deleteBookingBiz) DeleteBooking(ctx context.Context, requester common
 	if err := biz.deleteStore.Delete(ctx, id); err != nil {
 		return common.ErrCannotDeleteEntity(bookingmodel.EntityName, err)
 	}
+
+	var dtoBooking common.DTOBooking
+	dtoBooking.Id = id
+
+	if err := biz.pb.Publish(ctx, common.TopicDeleteBooking, pubsub.NewMessage(dtoBooking)); err != nil {
+		log.Println(common.ErrCannotPublishMessage(common.TopicDeleteBooking, err))
+	}
+
 	return nil
 }

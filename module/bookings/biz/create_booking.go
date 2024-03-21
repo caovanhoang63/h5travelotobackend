@@ -3,7 +3,9 @@ package bookingbiz
 import (
 	"context"
 	"h5travelotobackend/common"
+	"h5travelotobackend/component/pubsub"
 	"h5travelotobackend/module/bookings/bookingmodel"
+	"log"
 )
 
 type CreateBookingStore interface {
@@ -21,10 +23,11 @@ type FindRoomTypeStore interface {
 type createBookingBiz struct {
 	store             CreateBookingStore
 	findRoomTypeStore FindRoomTypeStore
+	pb                pubsub.Pubsub
 }
 
-func NewCreateBookingBiz(store CreateBookingStore, typeStore FindRoomTypeStore) *createBookingBiz {
-	return &createBookingBiz{store: store, findRoomTypeStore: typeStore}
+func NewCreateBookingBiz(store CreateBookingStore, typeStore FindRoomTypeStore, pb pubsub.Pubsub) *createBookingBiz {
+	return &createBookingBiz{store: store, findRoomTypeStore: typeStore, pb: pb}
 }
 
 func (biz *createBookingBiz) Create(
@@ -43,9 +46,18 @@ func (biz *createBookingBiz) Create(
 	if roomType.Status == 0 || roomType.HotelId != data.HotelId {
 		return bookingmodel.ErrInvalidRoomType
 	}
-
-	if err := biz.store.Create(ctx, data); err != nil {
+	err = biz.store.Create(ctx, data)
+	if err != nil {
 		return common.ErrCannotCreateEntity(bookingmodel.EntityName, err)
 	}
+	var dtoBooking common.DTOBooking
+
+	dtoBooking.Id = data.Id
+
+	err = biz.pb.Publish(ctx, common.TopicCreateBooking, pubsub.NewMessage(dtoBooking))
+	if err != nil {
+		log.Println(common.ErrCannotCreateEntity(bookingmodel.EntityName, err))
+	}
 	return nil
+
 }

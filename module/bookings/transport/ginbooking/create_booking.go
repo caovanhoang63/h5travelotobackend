@@ -31,7 +31,7 @@ func CreateBooking(appCtx appContext.AppContext) gin.HandlerFunc {
 		// TODO: loai bo phu thuoc doi voi lop roomtype
 		typeStore := roomtypesqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
 
-		biz := bookingbiz.NewCreateBookingBiz(store, typeStore)
+		biz := bookingbiz.NewCreateBookingBiz(store, typeStore, appCtx.GetPubSub())
 		if err := biz.Create(c.Request.Context(), &bookingCreate, requester); err != nil {
 			panic(err)
 		}

@@ -20,7 +20,7 @@ func DeleteBookingById(appCtx appContext.AppContext) gin.HandlerFunc {
 
 		store := bookingsqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
 		workerStore := workersqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
-		biz := bookingbiz.NewDeleteBookingBiz(store, store, workerStore)
+		biz := bookingbiz.NewDeleteBookingBiz(store, store, workerStore, appCtx.GetPubSub())
 		if err := biz.DeleteBooking(c.Request.Context(), requester, int(uid.GetLocalID())); err != nil {
 			panic(err)
 		}

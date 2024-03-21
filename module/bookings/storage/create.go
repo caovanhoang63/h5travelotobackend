@@ -7,8 +7,10 @@ import (
 )
 
 func (s *sqlStore) Create(ctx context.Context, data *bookingmodel.BookingCreate) error {
+
 	db := s.db
-	if err := db.Create(&data).Error; err != nil {
+	err := db.WithContext(ctx).Create(&data).Error
+	if err != nil {
 		return common.ErrDb(err)
 	}
 	return nil

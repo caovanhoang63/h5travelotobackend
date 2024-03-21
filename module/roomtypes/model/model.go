@@ -39,7 +39,6 @@ type RoomTypeCreate struct {
 	Area            float64     `json:"area" gorm:"column:area;"`
 	Bed             *common.Bed `json:"bed" gorm:"column:bed;"`
 	Price           float64     `json:"price" gorm:"column:price;"`
-	TotalRoom       int         `json:"total_room" gorm:"column:total_room;"`
 	PayInHotel      bool        `json:"pay_in_hotel" gorm:"column:pay_in_hotel;"`
 	BreakFast       bool        `json:"break_fast" gorm:"column:break_fast;"`
 	FreeCancel      bool        `json:"free_cancel" gorm:"column:free_cancel;"`
