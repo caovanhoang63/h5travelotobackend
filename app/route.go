@@ -9,6 +9,7 @@ import (
 	"h5travelotobackend/module/bookingtracking/transport/ginbookingtracking"
 	gindistrict "h5travelotobackend/module/districts/transport/gindistricts"
 	"h5travelotobackend/module/hotels/transport/ginhotel"
+	"h5travelotobackend/module/hoteltypes/transport/ginhoteltype"
 	"h5travelotobackend/module/provinces/transport/ginprovinces"
 	"h5travelotobackend/module/rooms/transport/ginroom"
 	"h5travelotobackend/module/roomtypeabout/transport/ginroomtypeabout"
@@ -97,4 +98,13 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	trackings := v1.Group("hotels/:hotel-id/bookings/:booking-id/tracking", middleware.RequireAuth(appCtx))
 	trackings.GET("/", ginbookingtracking.GetBookingTrackingState(appCtx))
 	trackings.PATCH("/", ginbookingtracking.UpdateTrackingState(appCtx))
+
+	// hotel type api
+	hoteltypes := v1.Group("/hotel-types")
+	hoteltypes.Use(middleware.RequireAuth(appCtx))
+	hoteltypes.POST("/", middleware.RoleRequired(appCtx, common.RoleAdmin), ginhoteltype.CreateHotelType(appCtx))
+	hoteltypes.DELETE("/:hotel-type", middleware.RoleRequired(appCtx, common.RoleAdmin), ginhoteltype.DeleteHotelType(appCtx))
+	hoteltypes.PATCH("/:hotel-type", middleware.RoleRequired(appCtx, common.RoleAdmin), ginhoteltype.UpdateHotelType(appCtx))
+	hoteltypes.GET("/:hotel-type", ginhoteltype.FindHotelTypeById(appCtx))
+	hoteltypes.GET("/", ginhoteltype.ListAllHotelTypes(appCtx))
 }
