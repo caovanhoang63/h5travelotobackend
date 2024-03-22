@@ -14,6 +14,9 @@ const (
 	DbTypeBooking         = 6
 	DbTypeBookingRoomType = 7
 	DbTypeBookingTracking = 8
+	DbTypeBookingDetail   = 9
+	DbTypeHotelType       = 10
+	DbTypeHotelAddInfo    = 11
 )
 
 const CurrentUser = "user"
