@@ -11,6 +11,7 @@ type Room struct {
 	RoomTypeFakeId  *common.UID `json:"room_type_id" gorm:"-"`
 	RoomTypeID      int         `json:"-" gorm:"column:room_type_id;"`
 	Name            string      `json:"name" gorm:"column:name;"`
+	Floor           int         `json:"floor" gorm:"column:floor;"`
 }
 
 func (Room) TableName() string {

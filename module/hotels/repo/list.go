@@ -29,7 +29,9 @@ func (repo *listRestaurantRepo) List(
 	filter *hotelmodel.Filter,
 	paging *common.Paging,
 ) ([]hotelmodel.Hotel, error) {
+
 	restaurants, err := repo.store.ListHotelWithCondition(ctx, filter, paging, "User")
+
 	if err != nil {
 		return nil, common.ErrCannotListEntity(hotelmodel.EntityName, err)
 	}

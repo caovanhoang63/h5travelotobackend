@@ -4,7 +4,7 @@ import (
 	"h5travelotobackend/common"
 )
 
-type HotelPolicy struct {
+type Policies struct {
 	CheckInTime              string  `json:"check_in_time,omitempty" bson:"check_in_time,omitempty"`
 	CheckOutTime             string  `json:"check_out_time,omitempty" bson:"check_out_time,omitempty"`
 	RequiredDocuments        string  `json:"required_documents,omitempty" bson:"required_documents,omitempty"`
@@ -24,12 +24,17 @@ type HotelPolicy struct {
 	AirportTransferFee       float64 `json:"airport_transfer_fee,omitempty" bson:"airport_transfer_fee,omitempty"`
 }
 
+type HotelDescription struct {
+	Location string `json:"location,omitempty" bson:"location,omitempty"`
+	About    string `json:"about,omitempty" bson:"about,omitempty"`
+}
+
 type HotelAdditionalInfo struct {
 	common.MongoModel `bson:",inline" json:",inline"`
 	HotelID           int                 `json:"-" bson:"hotel_id"`
 	Amenities         map[string][]string `json:"amenities,omitempty" bson:"amenities,omitempty"`
-	StayPolicies      *HotelPolicy        `json:"stay_policies,omitempty" bson:"stay_policies,omitempty"`
-	AdditionalInfo    string              `json:"additional_info,omitempty" bson:"additional_info,omitempty"`
+	Policies          *Policies           `json:"policies,omitempty" bson:"policies,omitempty"`
+	HotelDescription  *HotelDescription   `json:"additional_info,omitempty" bson:"additional_info,omitempty"`
 	Logo              *common.Image       `json:"logo,omitempty" bson:"logo,omitempty"`
 	Cover             *common.Images      `json:"cover,omitempty" bson:"cover,omitempty"`
 }

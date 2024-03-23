@@ -62,7 +62,7 @@ func (r *findHotelRepo) FindAllDataWithCondition(ctx context.Context,
 		}
 		return nil, common.ErrEntityNotFound(hotelmodel.EntityName, err)
 	}
-	data.HotelAdditionalInfo, err = r.mongoStore.FindAdditionalInfo(ctx, data.Id)
+	//data.HotelAdditionalInfo, err = r.mongoStore.FindAdditionalInfo(ctx, data.Id)
 
 	if err != nil {
 		return nil, err

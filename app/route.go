@@ -8,6 +8,8 @@ import (
 	"h5travelotobackend/module/bookings/transport/ginbooking"
 	"h5travelotobackend/module/bookingtracking/transport/ginbookingtracking"
 	gindistrict "h5travelotobackend/module/districts/transport/gindistricts"
+	"h5travelotobackend/module/hoteldetails/transport/ginhoteldetail"
+	"h5travelotobackend/module/hotelfacilities/transport/ginhotelfacilities"
 	"h5travelotobackend/module/hotels/transport/ginhotel"
 	"h5travelotobackend/module/hoteltypes/transport/ginhoteltype"
 	"h5travelotobackend/module/provinces/transport/ginprovinces"
@@ -46,6 +48,14 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	hotels.PATCH("/:hotel-id", middleware.RoleRequired(appCtx, common.RoleOwner, common.RoleManager), middleware.IsHotelWorker(appCtx), ginhotel.UpdateHotel(appCtx))
 	hotels.GET("/:hotel-id/additional", ginhotel.GetHotelAdditionalInfoById(appCtx))
 	hotels.PATCH("/:hotel-id/additional", ginhotel.UpdateHotelAdditionalInfo(appCtx))
+
+	// hotel detail api
+	hotelDetails := v1.Group("/hotels/:hotel-id/details")
+	hotelDetails.POST("/", ginhoteldetail.CreateHotelDetail(appCtx))
+
+	// hotel facilities api
+	hotelFacilites := v1.Group("/hotels/facilities")
+	hotelFacilites.GET("/", ginhotelfacilities.ListAllHotelFacilities(appCtx))
 
 	// room api
 	rooms := v1.Group("hotels/:hotel-id/rooms")

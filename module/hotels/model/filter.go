@@ -3,16 +3,19 @@ package hotelmodel
 import (
 	"errors"
 	"github.com/asaskevich/govalidator"
+	"h5travelotobackend/common"
 )
 
 type Filter struct {
-	OwnerId    int     `json:"owner_id" form:"owner"`
-	ProvinceID int     `json:"province_id" gorm:"column:province_id" form:"province"`
-	DistrictID int     `json:"district_id" gorm:"column:district_id" form:"district"`
-	WardID     int     `json:"ward_id" gorm:"column:ward_id" form:"ward"`
-	Distance   float64 `json:"distance" form:"distance"`
-	Lat        float64 `json:"lat" form:"lat"`
-	Lng        float64 `json:"lng" form:"lng"`
+	OwnerId         int         `json:"owner_id" form:"owner"`
+	ProvinceID      int         `json:"province_id" gorm:"column:province_id" form:"province"`
+	DistrictID      int         `json:"district_id" gorm:"column:district_id" form:"district"`
+	HotelType       int         `json:"-" gorm:"column:hotel_type"`
+	HotelTypeFakeId *common.UID `json:"hotel_type" gorm:"-"`
+	WardID          int         `json:"ward_id" gorm:"column:ward_id" form:"ward"`
+	Distance        float64     `json:"distance" form:"distance"`
+	Lat             float64     `json:"lat" form:"lat"`
+	Lng             float64     `json:"lng" form:"lng"`
 }
 
 func (f *Filter) Validate() error {

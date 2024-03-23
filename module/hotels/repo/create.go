@@ -31,15 +31,15 @@ func (repo *createHotelRepo) Create(ctx context.Context, data *hotelmodel.HotelC
 		return common.ErrCannotCreateEntity(hotelmodel.EntityName, err)
 	}
 
-	if data.HotelAdditionalInfo == nil {
-		return nil
-	}
-
-	data.HotelAdditionalInfo.HotelID = data.Id
-
-	if err := repo.mongoStore.Create(ctx, data.HotelAdditionalInfo); err != nil {
-		return common.ErrCannotCreateEntity(hotelmodel.EntityName, err)
-	}
+	//if data.HotelAdditionalInfo == nil {
+	//	return nil
+	//}
+	//
+	//data.HotelAdditionalInfo.HotelID = data.Id
+	//
+	//if err := repo.mongoStore.Create(ctx, data.HotelAdditionalInfo); err != nil {
+	//	return common.ErrCannotCreateEntity(hotelmodel.EntityName, err)
+	//}
 
 	return nil
 }

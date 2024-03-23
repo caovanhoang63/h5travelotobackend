@@ -37,7 +37,7 @@ func GetHotelById(appCtx appContext.AppContext) gin.HandlerFunc {
 		}
 
 		if !add {
-			data.HotelAdditionalInfo = nil
+			//data.HotelAdditionalInfo = nil
 		}
 
 		data.Mask(false)
