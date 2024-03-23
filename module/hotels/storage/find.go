@@ -1,4 +1,4 @@
-package hotelmysqlstorage
+package hotelstorage
 
 import (
 	"context"

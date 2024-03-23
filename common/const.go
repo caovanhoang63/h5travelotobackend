@@ -19,6 +19,17 @@ const (
 	DbTypeHotelDetail     = 11
 )
 
+// RecordStatus is a type to represent the status of a record
+const (
+	StatusDeleted     = 0
+	StatusActive      = 1
+	StatusInactive    = 2
+	StatusUncompleted = 3
+	StatusPending     = 4
+	StatusRejected    = 5
+	StatusProhibited  = 6
+)
+
 const CurrentUser = "user"
 const CurrentWorker = "worker"
 
