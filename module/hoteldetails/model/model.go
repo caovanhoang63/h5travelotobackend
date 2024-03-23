@@ -50,10 +50,16 @@ const EntityName = "HotelDetail"
 type HotelDetail struct {
 	common.MongoModel `bson:",inline" json:",inline"`
 	HotelId           int            `json:"-" bson:"hotel_id"`
-	Logo              *common.Image  `json:"logo,omitempty" bson:"logo,omitempty" form:"logo"`
-	Covers            *common.Images `json:"covers,omitempty" bson:"covers,omitempty" form:"covers"`
-	Policies          *Policies      `json:"policies,omitempty" bson:"policies,omitempty" form:"policies"`
-	Facilities        *FacilityList  `json:"facilities,omitempty" bson:"facilities,omitempty" form:"facilities"`
+	Logo              *common.Image  `json:"logo,omitempty" bson:"logo,omitempty" `
+	Covers            *common.Images `json:"covers,omitempty" bson:"covers,omitempty" `
+	Policies          *Policies      `json:"policies,omitempty" bson:"policies,omitempty"`
+	Facilities        *FacilityList  `json:"facilities,omitempty" bson:"facilities,omitempty"`
+	Description       *Description   `bson:"description" json:"description"`
+}
+
+type Description struct {
+	LocationDetails string `json:"location_details" bson:"location_details"`
+	About           string `bson:"about" json:"about"`
 }
 
 func (HotelDetail) CollectionName() string {
