@@ -42,7 +42,6 @@ import (
 	  ]
 	}
 
-
 */
 
 const EntityName = "HotelDetail"

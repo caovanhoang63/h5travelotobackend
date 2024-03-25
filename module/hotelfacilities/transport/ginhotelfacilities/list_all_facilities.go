@@ -5,7 +5,7 @@ import (
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	hotelfacilitiesbiz "h5travelotobackend/module/hotelfacilities/biz"
-	hotelfacilitiesstorage "h5travelotobackend/module/hotelfacilities/storage"
+	hotelfacilitiesstorage "h5travelotobackend/module/hotelfacilities/storage/mongoStore"
 	"net/http"
 )
 

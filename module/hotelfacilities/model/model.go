@@ -7,5 +7,5 @@ const EntityName = "HotelFacilities"
 type HotelFacility common.Facility
 
 func (HotelFacility) CollectionName() string {
-	return "hotel_facilities"
+	return "hotel_facility_details"
 }

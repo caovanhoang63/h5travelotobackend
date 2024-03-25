@@ -20,9 +20,9 @@ type Hotel struct {
 	NumberOfFloors       int                `json:"number_of_floors" gorm:"column:number_of_floors"`
 	DistanceToCenterCity int                `json:"distance_to_center_city" gorm:"column:distance_to_center_city"`
 	Hotline              string             `json:"hotline" gorm:"column:hotline"`
-	ProvinceID           int                `json:"province_id" gorm:"column:province_id"`
-	DistrictID           int                `json:"district_id" gorm:"column:district_id"`
-	WardID               int                `json:"ward_id" gorm:"column:ward_id"`
+	ProvinceCode         int                `json:"province_code" gorm:"column:province_code"`
+	DistrictCode         int                `json:"district_code" gorm:"column:district_code"`
+	WardCode             int                `json:"ward_Code" gorm:"column:ward_code"`
 	Lat                  float64            `json:"lat" gorm:"column:lat"`
 	Lng                  float64            `json:"lng" gorm:"column:lng"`
 	Star                 int                `json:"star" gorm:"star"`
@@ -43,20 +43,20 @@ func (data *Hotel) UnMask() {
 
 type HotelCreate struct {
 	common.SqlModel      `json:",inline"`
-	Name                 string             `json:"name" gorm:"column:name"`
-	Address              string             `json:"address" gorm:"column:address"`
+	Name                 string             `json:"name,omitempty" gorm:"column:name"`
+	Address              string             `json:"address,omitempty" gorm:"column:address"`
 	HotelType            int                `json:"-" gorm:"column:hotel_type"`
-	HotelTypeFakeId      *common.UID        `json:"hotel_type" gorm:"-"`
+	HotelTypeFakeId      *common.UID        `json:"hotel_type,omitempty" gorm:"-"`
 	OwnerID              int                `json:"-"`
 	User                 *common.SimpleUser `json:"user" gorm:"foreignKey:OwnerID;preload:false"`
-	NumberOfFloors       int                `json:"number_of_floors" gorm:"column:number_of_floors"`
-	DistanceToCenterCity int                `json:"distance_to_center_city" gorm:"column:distance_to_center_city"`
-	Hotline              string             `json:"hotline" gorm:"column:hotline"`
-	ProvinceID           int                `json:"province_id" gorm:"column:province_id"`
-	DistrictID           int                `json:"district_id" gorm:"column:district_id"`
-	WardID               int                `json:"ward_id" gorm:"column:ward_id"`
-	Lat                  float64            `json:"lat" gorm:"column:lat"`
-	Lng                  float64            `json:"lng" gorm:"column:lng"`
+	NumberOfFloors       int                `json:"number_of_floors,omitempty" gorm:"column:number_of_floors"`
+	DistanceToCenterCity int                `json:"distance_to_center_city,omitempty" gorm:"column:distance_to_center_city"`
+	Hotline              string             `json:"hotline,omitempty" gorm:"column:hotline"`
+	ProvinceCode         int                `json:"province_code,omitempty" gorm:"column:province_code"`
+	DistrictCode         int                `json:"district_code,omitempty" gorm:"column:district_code"`
+	WardCode             int                `json:"ward_Code,omitempty" gorm:"column:ward_code"`
+	Lat                  float64            `json:"lat,omitempty" gorm:"column:lat"`
+	Lng                  float64            `json:"lng,omitempty" gorm:"column:lng"`
 }
 
 func (HotelCreate) TableName() string {
@@ -72,6 +72,7 @@ func (data *HotelCreate) UnMask() {
 }
 
 func (data *HotelCreate) Validate() error {
+	// TODO Validate data here
 	if common.IsEmpty(data.Name) {
 		return ErrNameIsEmpty
 	}

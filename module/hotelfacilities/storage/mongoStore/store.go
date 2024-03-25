@@ -1,4 +1,4 @@
-package hotelfacilitiesstorage
+package mongoStore
 
 import "go.mongodb.org/mongo-driver/mongo"
 

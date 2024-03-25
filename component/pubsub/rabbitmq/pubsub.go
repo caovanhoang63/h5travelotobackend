@@ -24,6 +24,9 @@ func NewRabbitPubSub(channel *amqp.Channel) *rabbitPubSub {
 func (pb *rabbitPubSub) Publish(ctx context.Context, exchange string, data *pubsub.Message) error {
 	go func() {
 		defer common.AppRecover()
+
+		data.SetChannel(exchange)
+
 		bdata, err := data.Marshal()
 		if err != nil {
 			panic(err)
