@@ -2,6 +2,7 @@ package common
 
 import (
 	"database/sql/driver"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/btcsuite/btcutil/base58"
@@ -131,5 +132,31 @@ func (uid *UID) Scan(value interface{}) error {
 
 	*uid = NewUID(i, 0, 1)
 
+	return nil
+}
+
+type UIDS []UID
+
+func (uids UIDS) MarshalJSON() ([]byte, error) {
+	var strUIDs []string
+	for _, uid := range uids {
+		strUIDs = append(strUIDs, uid.String())
+	}
+	return json.Marshal(strUIDs)
+}
+
+func (uids *UIDS) UnmarshalJSON(data []byte) error {
+	var strUIDs []string
+	if err := json.Unmarshal(data, &strUIDs); err != nil {
+		return err
+	}
+
+	for _, strUID := range strUIDs {
+		uid, err := FromBase58(strUID)
+		if err != nil {
+			return err
+		}
+		*uids = append(*uids, uid)
+	}
 	return nil
 }

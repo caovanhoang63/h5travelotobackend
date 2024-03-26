@@ -11,6 +11,10 @@ func IsHotelWorker(appCtx appContext.AppContext) func(ctx *gin.Context) {
 
 	return func(c *gin.Context) {
 		user := c.MustGet(common.CurrentUser).(common.Requester)
+		if user.GetRole() == common.RoleAdmin {
+			c.Set(common.CurrentUser, user)
+			c.Next()
+		}
 
 		hotelUid, err := common.FromBase58(c.Param("hotel-id"))
 		if err != nil {

@@ -35,6 +35,7 @@ func (Hotel) TableName() string {
 
 func (data *Hotel) Mask(isAdmin bool) {
 	data.GenUID(common.DbTypeHotel)
+	data.HotelTypeFakeId = common.NewUID(uint32(data.HotelType), common.DbTypeHotelType, 1)
 }
 
 func (data *Hotel) UnMask() {
@@ -73,6 +74,10 @@ func (data *HotelCreate) UnMask() {
 
 func (data *HotelCreate) Validate() error {
 	// TODO Validate data here
+	if data.HotelType == 0 {
+		return ErrInvalidHotelType
+	}
+
 	if common.IsEmpty(data.Name) {
 		return ErrNameIsEmpty
 	}
@@ -115,4 +120,6 @@ var (
 		"cannot update additional data",
 		"CANNOT_UPDATE_HOTEL_ADDITIONAL_DATA",
 	)
+
+	ErrInvalidHotelType = errors.New("invalid hotel type")
 )

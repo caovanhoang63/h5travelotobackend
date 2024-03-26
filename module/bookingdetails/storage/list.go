@@ -1,8 +1,9 @@
-package bookingtrackingstorage
+package bookingdetailstorage
 
 import (
 	"fmt"
 	"github.com/btcsuite/btcutil/base58"
+	"golang.org/x/net/context"
 	"h5travelotobackend/common"
 	bookingdetailmodel "h5travelotobackend/module/bookingdetails/model"
 	"time"
@@ -57,8 +58,6 @@ func (s *sqlStore) ListBookingRoomsWithCondition(
 		return nil, common.ErrDb(err)
 	}
 
-	fmt.Println("result", len(result))
-
 	if len(result) > 0 {
 		cursorStr := base58.Encode([]byte(fmt.Sprintf("%v", result[len(result)-1].CreatedAt.Format(timeLayout))))
 		paging.NextCursor = cursorStr
@@ -66,4 +65,23 @@ func (s *sqlStore) ListBookingRoomsWithCondition(
 
 	return result, nil
 
+}
+
+func (s *sqlStore) CountRoomOfBooking(ctx context.Context, bookingId int) (int, error) {
+	var count int64
+	db := s.db.Table(bookingdetailmodel.BookingDetail{}.TableName()).Where("booking_id = ?", bookingId)
+	if err := db.Count(&count).Error; err != nil {
+		return 0, common.ErrDb(err)
+	}
+	return int(count), nil
+}
+
+func (s sqlStore) ListRoomOfBooking(ctx context.Context, bookingId int) ([]int, error) {
+	var ids []int
+	db := s.db.Table(bookingdetailmodel.BookingDetail{}.TableName()).Where("booking_id = ?", bookingId)
+	if err := db.Pluck("room_id", &ids).Order("room_id desc").Error; err != nil {
+		return nil, common.ErrDb(err)
+	}
+
+	return ids, nil
 }

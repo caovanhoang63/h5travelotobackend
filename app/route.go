@@ -5,6 +5,7 @@ import (
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/middleware"
+	"h5travelotobackend/module/bookingdetails/transport/ginbookingdetail"
 	"h5travelotobackend/module/bookings/transport/ginbooking"
 	"h5travelotobackend/module/bookingtracking/transport/ginbookingtracking"
 	gindistrict "h5travelotobackend/module/districts/transport/gindistricts"
@@ -115,4 +116,12 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	hoteltypes.PATCH("/:hotel-type", middleware.RoleRequired(appCtx, common.RoleAdmin), ginhoteltype.UpdateHotelType(appCtx))
 	hoteltypes.GET("/:hotel-type", ginhoteltype.FindHotelTypeById(appCtx))
 	hoteltypes.GET("/", ginhoteltype.ListAllHotelTypes(appCtx))
+
+	// booking detail api
+	bookingdetail := v1.Group("hotels/:hotel-id/bookings/:booking-id/details")
+	bookingdetail.Use(middleware.RequireAuth(appCtx))
+	bookingdetail.Use(middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager, common.RoleStaff))
+	bookingdetail.Use(middleware.IsHotelWorker(appCtx))
+
+	bookingdetail.POST("/", ginbookingdetail.CreateBookingDetails(appCtx))
 }

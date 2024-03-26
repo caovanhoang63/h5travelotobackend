@@ -23,3 +23,32 @@ func (s *sqlStore) FindDataWithCondition(
 
 	return &data, nil
 }
+
+func (s *sqlStore) FindRoomDTOById(
+	ctx context.Context,
+	condition map[string]interface{},
+) (*common.DTORoom, error) {
+	var data common.DTORoom
+
+	if err := s.db.Where(condition).First(&data).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, common.RecordNotFound
+		}
+		return nil, common.ErrDb(err)
+	}
+
+	return &data, nil
+}
+
+func (s *sqlStore) FindRoomsDTOByIds(
+	ctx context.Context,
+	ids []int,
+) ([]common.DTORoom, error) {
+	var data []common.DTORoom
+
+	if err := s.db.Where("id IN ?", ids).Find(&data).Error; err != nil {
+		return nil, common.ErrDb(err)
+	}
+
+	return data, nil
+}

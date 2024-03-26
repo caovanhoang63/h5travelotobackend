@@ -1,4 +1,4 @@
-package bookingtrackingstorage
+package bookingdetailstorage
 
 import "gorm.io/gorm"
 

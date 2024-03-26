@@ -1,6 +1,8 @@
 package bookingdetailmodel
 
 import (
+	"errors"
+	"fmt"
 	"h5travelotobackend/common"
 	"time"
 )
@@ -31,9 +33,50 @@ func (b *BookingDetail) UnMask() {
 	b.RoomId = int(b.RoomFakeId.GetLocalID())
 }
 
-type BookingDetailCreate BookingDetail
+type BookingDetailCreate struct {
+	BookingId int `json:"booking_id" gorm:"column:booking_id"`
+	RoomId    int `json:"room_id" gorm:"column:room_id"`
+}
+
+func (BookingDetailCreate) TableName() string {
+	return BookingDetail{}.TableName()
+}
+
+type BookingDetailRequest struct {
+	BookingId     int         `json:"-"`
+	BookingFakeId common.UID  `json:"booking_id" gorm:"-"`
+	RoomIds       []int       `json:"-" `
+	RoomFakeIds   common.UIDS `json:"room_ids" gorm:"-"`
+}
+
+func (b *BookingDetailRequest) UnMask() {
+	b.RoomIds = make([]int, len(b.RoomFakeIds))
+	for i := range b.RoomFakeIds {
+		fmt.Println("RoomFakeIds: ", b.RoomFakeIds[i].GetLocalID())
+		b.RoomIds[i] = int(b.RoomFakeIds[i].GetLocalID())
+	}
+}
+
+func (b *BookingDetailRequest) ToCreate() []BookingDetailCreate {
+	var result []BookingDetailCreate
+	for i := range b.RoomIds {
+		result = append(result, BookingDetailCreate{
+			BookingId: b.BookingId,
+			RoomId:    b.RoomIds[i],
+		})
+	}
+	return result
+
+}
 
 type BookingDetailUpdate struct {
 	RoomFakeId common.UID `json:"room_id" gorm:"-"`
 	RoomId     int        `json:"-" gorm:"column:room_id"`
 }
+
+var (
+	ErrBookingNotFound      = errors.New("Booking not found")
+	ErrRoomNotFound         = errors.New("Room not found")
+	ErrRoomQuantityExceeded = errors.New("Room quantity exceeded")
+	ErrRoomHasBooked        = errors.New("Room has been booked")
+)
