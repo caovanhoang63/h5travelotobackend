@@ -46,7 +46,7 @@ type HotelCreate struct {
 	common.SqlModel      `json:",inline"`
 	Name                 string             `json:"name,omitempty" gorm:"column:name"`
 	Address              string             `json:"address,omitempty" gorm:"column:address"`
-	HotelType            int                `json:"-" gorm:"column:hotel_type"`
+	HotelType            int                `json:"" gorm:"column:hotel_type"`
 	HotelTypeFakeId      *common.UID        `json:"hotel_type,omitempty" gorm:"-"`
 	OwnerID              int                `json:"-"`
 	User                 *common.SimpleUser `json:"user" gorm:"foreignKey:OwnerID;preload:false"`

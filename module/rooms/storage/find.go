@@ -42,11 +42,12 @@ func (s *sqlStore) FindRoomDTOById(
 
 func (s *sqlStore) FindRoomsDTOByIds(
 	ctx context.Context,
+	condition map[string]interface{},
 	ids []int,
 ) ([]common.DTORoom, error) {
 	var data []common.DTORoom
 
-	if err := s.db.Where("id IN ?", ids).Find(&data).Error; err != nil {
+	if err := s.db.Where(condition).Where("id IN ?", ids).Find(&data).Error; err != nil {
 		return nil, common.ErrDb(err)
 	}
 

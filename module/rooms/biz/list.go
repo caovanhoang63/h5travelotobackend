@@ -13,6 +13,11 @@ type ListRoomStore interface {
 		paging *common.Paging,
 		moreKeys ...string,
 	) ([]roommodel.Room, error)
+	ListRoomsNotInIds(
+		ctx context.Context,
+		condition map[string]interface{},
+		ids []int,
+	) ([]roommodel.Room, error)
 }
 
 type listRoomBiz struct {

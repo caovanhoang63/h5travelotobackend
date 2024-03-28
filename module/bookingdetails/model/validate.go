@@ -1,6 +1,9 @@
 package bookingdetailmodel
 
-import "h5travelotobackend/common"
+import (
+	"fmt"
+	"h5travelotobackend/common"
+)
 
 func (b *BookingDetailRequest) CheckInvalidBooking(booking *common.DTOBooking) error {
 	if booking == nil {
@@ -25,8 +28,13 @@ func (b *BookingDetailRequest) CheckInvalidRoom(rooms []common.DTORoom, RoomType
 
 	for i := range rooms {
 		if rooms[i].RoomTypeID != RoomTypeId {
+			fmt.Println("Room_id", rooms[i].Id)
+			fmt.Println("rooms[i].RoomTypeID: ", rooms[i].RoomTypeID)
+
 			return ErrRoomNotFound
+
 		}
+
 	}
 
 	return nil

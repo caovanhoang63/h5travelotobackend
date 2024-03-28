@@ -118,10 +118,11 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	hoteltypes.GET("/", ginhoteltype.ListAllHotelTypes(appCtx))
 
 	// booking detail api
-	bookingdetail := v1.Group("hotels/:hotel-id/bookings/:booking-id/details")
+	bookingdetail := v1.Group("hotels/:hotel-id/bookings/:booking-id")
 	bookingdetail.Use(middleware.RequireAuth(appCtx))
 	bookingdetail.Use(middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager, common.RoleStaff))
 	bookingdetail.Use(middleware.IsHotelWorker(appCtx))
 
-	bookingdetail.POST("/", ginbookingdetail.CreateBookingDetails(appCtx))
+	bookingdetail.POST("/details", ginbookingdetail.CreateBookingDetails(appCtx))
+	bookingdetail.GET("/available-rooms", ginroom.GetAvailableRoom(appCtx))
 }

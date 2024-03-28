@@ -2,6 +2,7 @@ package roomstorage
 
 import (
 	"context"
+	"fmt"
 	"h5travelotobackend/common"
 	roommodel "h5travelotobackend/module/rooms/model"
 )
@@ -21,6 +22,7 @@ func (s *sqlStore) ListRoomWithCondition(
 			db = db.Where("hotel_id = ?", f.HotelId)
 		}
 		if f.RoomTypeId > 0 {
+			fmt.Println("room type ", f.RoomTypeId)
 			db = db.Where("room_type_id = ?", f.RoomTypeId)
 		}
 	}
@@ -52,6 +54,20 @@ func (s *sqlStore) ListRoomWithCondition(
 		last := data[len(data)-1]
 		last.Mask(false)
 		paging.NextCursor = last.FakeId.String()
+	}
+
+	return data, nil
+}
+
+func (s *sqlStore) ListRoomsNotInIds(
+	ctx context.Context,
+	condition map[string]interface{},
+	ids []int,
+) ([]roommodel.Room, error) {
+	var data []roommodel.Room
+
+	if err := s.db.Where(condition).Where("id NOT IN ?", ids).Find(&data).Error; err != nil {
+		return nil, common.ErrDb(err)
 	}
 
 	return data, nil

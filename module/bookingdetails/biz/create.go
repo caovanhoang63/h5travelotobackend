@@ -1,7 +1,6 @@
 package bookingdetailbiz
 
 import (
-	"fmt"
 	"golang.org/x/net/context"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/pubsub"
@@ -22,6 +21,7 @@ type FindBookingStore interface {
 type FindRoomStore interface {
 	FindRoomsDTOByIds(
 		ctx context.Context,
+		condition map[string]interface{},
 		ids []int,
 	) ([]common.DTORoom, error)
 }
@@ -44,35 +44,30 @@ func (biz *createBookingDetailBiz) CreateBookingDetail(ctx context.Context, data
 	}
 	// Validate booking
 	if err := data.CheckInvalidBooking(booking); err != nil {
-		fmt.Println("err1: ", err)
-		fmt.Println("err1: ", len(data.RoomIds))
+
 		return common.ErrCannotCreateEntity(bookingdetailmodel.EntityName, err)
 	}
 
 	// Validate room
-	rooms, err := biz.roomStore.FindRoomsDTOByIds(ctx, data.RoomIds)
+	rooms, err := biz.roomStore.FindRoomsDTOByIds(ctx, nil, data.RoomIds)
+
 	if err != nil {
-		fmt.Println("err2:", err)
 
 		return common.ErrCannotCreateEntity(bookingdetailmodel.EntityName, err)
 	}
-	if data.CheckInvalidRoom(rooms, booking.RoomTypeId) != nil {
-		fmt.Println("err3: ", err)
-
+	if err := data.CheckInvalidRoom(rooms, booking.RoomTypeId); err != nil {
 		return common.ErrCannotCreateEntity(bookingdetailmodel.EntityName, err)
 	}
 
 	// Get old data
 	oldIds, err := biz.store.ListRoomOfBooking(ctx, data.BookingId)
 	if err != nil {
-		fmt.Println("err4: ", err)
 
 		return common.ErrEntityNotFound("BookingDetail", err)
 	}
 
 	// Create booking detail
 	if err := biz.store.Create(ctx, data.ToCreate(), oldIds); err != nil {
-		fmt.Println("err5: ", err)
 
 		return common.ErrCannotCreateEntity(bookingdetailmodel.EntityName, err)
 	}

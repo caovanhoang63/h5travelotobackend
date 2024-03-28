@@ -76,12 +76,26 @@ func (s *sqlStore) CountRoomOfBooking(ctx context.Context, bookingId int) (int, 
 	return int(count), nil
 }
 
-func (s sqlStore) ListRoomOfBooking(ctx context.Context, bookingId int) ([]int, error) {
+func (s *sqlStore) ListRoomOfBooking(ctx context.Context, bookingId int) ([]int, error) {
 	var ids []int
+
 	db := s.db.Table(bookingdetailmodel.BookingDetail{}.TableName()).Where("booking_id = ?", bookingId)
 	if err := db.Pluck("room_id", &ids).Order("room_id desc").Error; err != nil {
 		return nil, common.ErrDb(err)
 	}
 
+	return ids, nil
+}
+
+func (s *sqlStore) ListRoomIdsBooked(ctx context.Context, booking *common.DTOBooking) ([]int, error) {
+	db := s.db.Table(bookingdetailmodel.BookingDetail{}.TableName())
+	var ids []int
+	db = db.InnerJoins("JOIN bookings ON booking_details.booking_id = bookings.id")
+	db = db.Where("bookings.status = ?", common.StatusActive)
+	db = db.Where("bookings.room_type_id = ?", booking.RoomTypeId)
+	db = db.Not("bookings.end_date < ? and  bookings.start_date > ?", booking.StartDate, booking.EndDate)
+	if err := db.Pluck("room_id", &ids).Error; err != nil {
+		return nil, common.ErrDb(err)
+	}
 	return ids, nil
 }
