@@ -21,7 +21,7 @@ func (b *BookingDetailRequest) CheckInvalidBooking(booking *common.DTOBooking) e
 	return nil
 }
 
-func (b *BookingDetailRequest) CheckInvalidRoom(rooms []common.DTORoom, RoomTypeId int) error {
+func (b *BookingDetailRequest) CheckInvalidRoom(rooms []common.DTORoom, bookedRoom []int, RoomTypeId int) error {
 	if len(rooms) != len(b.RoomIds) {
 		return ErrRoomNotFound
 	}
@@ -35,6 +35,13 @@ func (b *BookingDetailRequest) CheckInvalidRoom(rooms []common.DTORoom, RoomType
 
 		}
 
+	}
+	for i := range b.RoomIds {
+		for j := range bookedRoom {
+			if b.RoomIds[i] == bookedRoom[j] {
+				return ErrRoomBooked
+			}
+		}
 	}
 
 	return nil

@@ -6,6 +6,7 @@ import (
 	"h5travelotobackend/component/appContext"
 	bookingdetailbiz "h5travelotobackend/module/bookingdetails/biz"
 	bookingdetailmodel "h5travelotobackend/module/bookingdetails/model"
+	bookingdetailrepo "h5travelotobackend/module/bookingdetails/repo"
 	bookingdetailstorage "h5travelotobackend/module/bookingdetails/storage"
 	bookingsqlstorage "h5travelotobackend/module/bookings/storage"
 	roomstorage "h5travelotobackend/module/rooms/storage"
@@ -23,8 +24,9 @@ func CreateBookingDetails(appCtx appContext.AppContext) gin.HandlerFunc {
 		bookingStore := bookingsqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
 		roomStore := roomstorage.NewSqlStore(appCtx.GetGormDbConnection())
 		bookingDetailStore := bookingdetailstorage.NewSqlStore(appCtx.GetGormDbConnection())
+		repo := bookingdetailrepo.NewGetRoomBookedRepo(bookingDetailStore)
 		ps := appCtx.GetPubSub()
-		biz := bookingdetailbiz.NewCreateBookingDetailBiz(bookingDetailStore, bookingStore, roomStore, ps)
+		biz := bookingdetailbiz.NewCreateBookingDetailBiz(bookingDetailStore, bookingStore, roomStore, repo, ps)
 
 		var data bookingdetailmodel.BookingDetailRequest
 

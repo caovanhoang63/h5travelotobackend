@@ -26,15 +26,20 @@ type FindRoomStore interface {
 	) ([]common.DTORoom, error)
 }
 
+type ListRoomBookedRepo interface {
+	GetRoomIdsBooked(ctx context.Context, booking *common.DTOBooking) ([]int, error)
+}
+
 type createBookingDetailBiz struct {
 	store        CreateBookingDetailStorage
 	bookingStore FindBookingStore
 	roomStore    FindRoomStore
+	repo         ListRoomBookedRepo
 	ps           pubsub.Pubsub
 }
 
-func NewCreateBookingDetailBiz(store CreateBookingDetailStorage, bookingStore FindBookingStore, roomStore FindRoomStore, ps pubsub.Pubsub) *createBookingDetailBiz {
-	return &createBookingDetailBiz{store: store, bookingStore: bookingStore, roomStore: roomStore, ps: ps}
+func NewCreateBookingDetailBiz(store CreateBookingDetailStorage, bookingStore FindBookingStore, roomStore FindRoomStore, repo ListRoomBookedRepo, ps pubsub.Pubsub) *createBookingDetailBiz {
+	return &createBookingDetailBiz{store: store, bookingStore: bookingStore, roomStore: roomStore, repo: repo, ps: ps}
 }
 
 func (biz *createBookingDetailBiz) CreateBookingDetail(ctx context.Context, data *bookingdetailmodel.BookingDetailRequest) error {
@@ -50,12 +55,12 @@ func (biz *createBookingDetailBiz) CreateBookingDetail(ctx context.Context, data
 
 	// Validate room
 	rooms, err := biz.roomStore.FindRoomsDTOByIds(ctx, nil, data.RoomIds)
-
+	bookedRooms, err := biz.repo.GetRoomIdsBooked(ctx, booking)
 	if err != nil {
 
 		return common.ErrCannotCreateEntity(bookingdetailmodel.EntityName, err)
 	}
-	if err := data.CheckInvalidRoom(rooms, booking.RoomTypeId); err != nil {
+	if err := data.CheckInvalidRoom(rooms, bookedRooms, booking.RoomTypeId); err != nil {
 		return common.ErrCannotCreateEntity(bookingdetailmodel.EntityName, err)
 	}
 

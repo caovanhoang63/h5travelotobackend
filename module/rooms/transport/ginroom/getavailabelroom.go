@@ -1,7 +1,6 @@
 package ginroom
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
@@ -35,7 +34,6 @@ func GetAvailableRoom(appCtx appContext.AppContext) gin.HandlerFunc {
 		}
 
 		for i := range data {
-			fmt.Println("data[i]: ", data[i].FakeId)
 			data[i].Mask(false)
 		}
 

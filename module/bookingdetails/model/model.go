@@ -78,5 +78,5 @@ var (
 	ErrBookingNotFound      = errors.New("Booking not found")
 	ErrRoomNotFound         = errors.New("Room not found")
 	ErrRoomQuantityExceeded = errors.New("Room quantity exceeded")
-	ErrRoomHasBooked        = errors.New("Room has been booked")
+	ErrRoomBooked           = errors.New("Room has been booked")
 )
