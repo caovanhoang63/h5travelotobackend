@@ -17,9 +17,12 @@ func CreateHotel(appCtx appContext.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 		}
 
+		data.UnMask()
+
+		requester := c.MustGet(common.CurrentUser).(common.Requester)
 		store := hotelstorage.NewSqlStore(appCtx.GetGormDbConnection())
 		biz := hotelbiz.NewCreateHotelBiz(store, appCtx.GetPubSub())
-		if err := biz.CreateHotel(c.Request.Context(), &data); err != nil {
+		if err := biz.CreateHotel(c.Request.Context(), requester, &data); err != nil {
 			panic(err)
 		}
 

@@ -43,6 +43,11 @@ func (engine *consumerEngine) Start() error {
 		log.Println("Err:", err)
 	}
 
+	if err := engine.startSubTopic(common.TopicCreateHotel, true,
+		CreateOwnerWorker(engine.appCtx, context.Background())); err != nil {
+		log.Println("Err:", err)
+	}
+
 	return nil
 }
 
