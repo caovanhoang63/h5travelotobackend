@@ -16,18 +16,13 @@ func ListRoomWithCondition(appCtx appContext.AppContext) gin.HandlerFunc {
 		var filter roommodel.Filter
 		var paging common.Paging
 
-		hotelUid, err := common.FromBase58(context.Param("hotel-id"))
-		if err != nil {
+		if err := context.ShouldBind(&filter); err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
 
-		if str, ok := context.Params.Get("room-type-id"); ok {
-			roomTypeUid, err := common.FromBase58(str)
-			if err != nil {
-				panic(common.ErrInvalidRequest(err))
-			}
-			filter.RoomTypeId = int(roomTypeUid.GetLocalID())
-		}
+		var err error
+
+		filter.UnMask()
 
 		if str, ok := context.Params.Get("status"); ok {
 			filter.Status, err = strconv.Atoi(str)
@@ -37,8 +32,6 @@ func ListRoomWithCondition(appCtx appContext.AppContext) gin.HandlerFunc {
 		} else {
 			filter.Status = 1
 		}
-
-		filter.HotelId = int(hotelUid.GetLocalID())
 
 		if err := context.ShouldBindQuery(&paging); err != nil {
 			panic(common.ErrInvalidRequest(err))
