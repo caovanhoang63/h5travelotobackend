@@ -5,6 +5,7 @@ import (
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/pubsub"
 	bookingdetailmodel "h5travelotobackend/module/bookingdetails/model"
+	"log"
 )
 
 type CreateBookingDetailStorage interface {
@@ -76,6 +77,12 @@ func (biz *createBookingDetailBiz) CreateBookingDetail(ctx context.Context, data
 
 		return common.ErrCannotCreateEntity(bookingdetailmodel.EntityName, err)
 	}
-
+	// confirm
+	// Publish event
+	// TODO: confirm tracking
+	mess := pubsub.NewMessage(&booking)
+	if err := biz.ps.Publish(ctx, common.TopicConfirmBookingWhenSelectEnoughRoom, mess); err != nil {
+		log.Println(common.ErrCannotPublishMessage(common.TopicConfirmBookingWhenSelectEnoughRoom, err))
+	}
 	return nil
 }
