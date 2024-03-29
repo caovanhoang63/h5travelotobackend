@@ -66,7 +66,11 @@ func (s *sqlStore) ListRoomsNotInIds(
 ) ([]roommodel.Room, error) {
 	var data []roommodel.Room
 
-	if err := s.db.Where(condition).Where("id NOT IN ?", ids).Find(&data).Error; err != nil {
+	db := s.db.Table(roommodel.Room{}.TableName()).Where(condition)
+	if len(ids) > 0 {
+		db = db.Where("id NOT IN ?", ids)
+	}
+	if err := db.Find(&data).Error; err != nil {
 		return nil, common.ErrDb(err)
 	}
 
