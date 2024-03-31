@@ -22,7 +22,9 @@ func ListReviews(appCtx appContext.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 		}
 
-		filter.UnMask()
+		if err := filter.UnMask(); err != nil {
+			panic(common.ErrInvalidRequest(err))
+		}
 		paging.FullFill()
 
 		store := reviewstorage.NewMongoStore(appCtx.GetMongoConnection())
@@ -35,6 +37,7 @@ func ListReviews(appCtx appContext.AppContext) gin.HandlerFunc {
 		for i := range data {
 			data[i].Mask(false)
 		}
+
 		c.JSON(http.StatusOK, common.NewSuccessResponse(data, paging, filter))
 	}
 

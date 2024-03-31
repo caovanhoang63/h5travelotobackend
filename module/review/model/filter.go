@@ -6,20 +6,20 @@ import (
 )
 
 type Filter struct {
-	UserId         int         `json:"-" bson:"user_id"`
-	UserFakeId     *common.UID `json:"user_id" bson:"-"`
-	HotelId        int         `json:"-" bson:"hotel_id"`
-	HotelFakeId    *common.UID `json:"hotel_id" bson:"-"`
-	BookingId      int         `json:"-" bson:"booking_id"`
-	BookingFakeId  *common.UID `json:"booking_id" bson:"-"`
-	RoomTypeId     int         `json:"-" bson:"room_type_id"`
-	RoomTypeFakeId *common.UID `json:"room_type_id" bson:"-"`
-	Rating         int         `json:"rating" bson:"rating"`
+	UserId         int         `json:"-" bson:"user_id" form:"-" `
+	UserFakeId     *common.UID `json:"user_id" bson:"-" form:"user_id"`
+	HotelId        int         `json:"-" bson:"hotel_id" form:"-"`
+	HotelFakeId    *common.UID `json:"hotel_id" bson:"-" form:"hotel_id"`
+	BookingId      int         `json:"-" bson:"booking_id" form:"-"`
+	BookingFakeId  *common.UID `json:"booking_id" bson:"-" form:"booking_id"`
+	RoomTypeId     int         `json:"-" bson:"room_type_id" form:"-"`
+	RoomTypeFakeId *common.UID `json:"room_type_id" bson:"-" form:"room_type_id"`
+	Rating         int         `json:"rating" bson:"rating" form:"rating"`
 }
 
-func (f *Filter) UnMask() {
+func (f *Filter) UnMask() error {
 	if f.UserFakeId != nil {
-		f.UserId = int(f.HotelFakeId.GetLocalID())
+		f.UserId = int(f.UserFakeId.GetLocalID())
 	}
 	if f.HotelFakeId != nil {
 		f.HotelId = int(f.HotelFakeId.GetLocalID())
@@ -30,6 +30,7 @@ func (f *Filter) UnMask() {
 	if f.RoomTypeFakeId != nil {
 		f.RoomTypeId = int(f.RoomTypeFakeId.GetLocalID())
 	}
+	return nil
 }
 
 func (f *Filter) ToBsonD() (bson.D, error) {

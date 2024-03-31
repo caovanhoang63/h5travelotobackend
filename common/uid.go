@@ -77,6 +77,14 @@ func FromBase58(s string) (UID, error) {
 	return DecomposeUID(string(base58.Decode(s)))
 }
 
+func GetLocalIDFromBase58(s string) (int, error) {
+	uid, err := FromBase58(s)
+	if err != nil {
+		return 0, err
+	}
+	return int(uid.localID), nil
+}
+
 func (uid UID) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%s\"", uid.String())), nil
 }
