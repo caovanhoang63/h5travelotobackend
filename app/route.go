@@ -131,4 +131,5 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	reviews := v1.Group("/reviews")
 	reviews.Use(middleware.RequireAuth(appCtx))
 	reviews.POST("/", ginreview.CreateReview(appCtx))
+	reviews.GET("", ginreview.ListReviews(appCtx))
 }

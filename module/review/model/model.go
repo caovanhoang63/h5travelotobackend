@@ -25,13 +25,23 @@ func (Review) CollectionName() string {
 }
 
 func (r *Review) Mask(isAdmin bool) {
-	*r.HotelFakeId = common.NewUID(uint32(r.HotelId), common.DbTypeHotel, 1)
-	*r.BookingFakeId = common.NewUID(uint32(r.BookingId), common.DbTypeBooking, 1)
-	*r.RoomTypeFakeId = common.NewUID(uint32(r.RoomTypeId), common.DbTypeRoomType, 1)
+	r.UserFakeId = common.NewUIDP(uint32(r.UserId), common.DbTypeUser, 1)
+	r.HotelFakeId = common.NewUIDP(uint32(r.HotelId), common.DbTypeHotel, 1)
+	r.BookingFakeId = common.NewUIDP(uint32(r.BookingId), common.DbTypeBooking, 1)
+	r.RoomTypeFakeId = common.NewUIDP(uint32(r.RoomTypeId), common.DbTypeRoomType, 1)
 }
 
-func (r *Review) UnMask() {
-	r.HotelId = int(r.HotelFakeId.GetLocalID())
-	r.BookingId = int(r.BookingFakeId.GetLocalID())
-	r.RoomTypeId = int(r.RoomTypeFakeId.GetLocalID())
+func (f *Review) UnMask() {
+	if f.UserFakeId != nil {
+		f.UserId = int(f.HotelFakeId.GetLocalID())
+	}
+	if f.HotelFakeId != nil {
+		f.HotelId = int(f.HotelFakeId.GetLocalID())
+	}
+	if f.BookingFakeId != nil {
+		f.BookingId = int(f.BookingFakeId.GetLocalID())
+	}
+	if f.RoomTypeFakeId != nil {
+		f.RoomTypeId = int(f.RoomTypeFakeId.GetLocalID())
+	}
 }
