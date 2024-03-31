@@ -6,7 +6,7 @@ import (
 )
 
 type MongoModel struct {
-	ID        primitive.ObjectID `json:"-" bson:"_id,omitempty"`
+	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Status    int                `json:"status" bson:"status,,omitempty" default:"1"`
 	CreatedAt time.Time          `json:"created_at" bson:"created_at"`
 	UpdatedAt time.Time          `json:"updated_at" bson:"updated_at"`

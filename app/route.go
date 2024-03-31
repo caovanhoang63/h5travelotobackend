@@ -14,6 +14,7 @@ import (
 	"h5travelotobackend/module/hotels/transport/ginhotel"
 	"h5travelotobackend/module/hoteltypes/transport/ginhoteltype"
 	"h5travelotobackend/module/provinces/transport/ginprovinces"
+	"h5travelotobackend/module/review/transport/ginreview"
 	"h5travelotobackend/module/rooms/transport/ginroom"
 	"h5travelotobackend/module/roomtypeabout/transport/ginroomtypeabout"
 	"h5travelotobackend/module/roomtypes/transport/ginroomtype"
@@ -125,4 +126,9 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 
 	bookingdetail.POST("/details", ginbookingdetail.CreateBookingDetails(appCtx))
 	bookingdetail.GET("/available-rooms", ginroom.GetAvailableRoom(appCtx))
+
+	// review api
+	reviews := v1.Group("/reviews")
+	reviews.Use(middleware.RequireAuth(appCtx))
+	reviews.POST("/", ginreview.CreateReview(appCtx))
 }
