@@ -5,20 +5,24 @@ import (
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	hotelfacilitiesbiz "h5travelotobackend/module/hotelfacilities/biz"
-	hotelfacilitiesstorage "h5travelotobackend/module/hotelfacilities/storage/mongoStore"
+	hotelfacilityrepo "h5travelotobackend/module/hotelfacilities/repo"
+	hotelfacilitysqlstore "h5travelotobackend/module/hotelfacilities/storage/sqlstore"
 	"net/http"
 )
 
 func ListAllHotelFacilities(appCtx appContext.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		store := hotelfacilitiesstorage.NewMongoStore(appCtx.GetMongoConnection())
-		biz := hotelfacilitiesbiz.NewListHotelFacilities(store)
+		store := hotelfacilitysqlstore.NewSqlStore(appCtx.GetGormDbConnection())
+		repo := hotelfacilityrepo.NewListFacilityTypesRepo(store, store)
+		biz := hotelfacilitiesbiz.NewListHotelFacilities(repo)
 		data, err := biz.ListAllHotelFacilities(c.Request.Context())
 		if err != nil {
 			panic(err)
 		}
 
+		for i := range data {
+			data[i].Mask(false)
+		}
 		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
-
 	}
 }

@@ -6,17 +6,19 @@ import (
 
 // DbType is a type to represent the type of database
 const (
-	DbTypeHotel           = 1
-	DbTypeUser            = 2
-	DbTypeRoomType        = 3
-	DbTypeRoom            = 4
-	DbTypeWorker          = 5
-	DbTypeBooking         = 6
-	DbTypeBookingRoomType = 7
-	DbTypeBookingTracking = 8
-	DbTypeBookingDetail   = 9
-	DbTypeHotelType       = 10
-	DbTypeHotelDetail     = 11
+	DbTypeHotel             = 1
+	DbTypeUser              = 2
+	DbTypeRoomType          = 3
+	DbTypeRoom              = 4
+	DbTypeWorker            = 5
+	DbTypeBooking           = 6
+	DbTypeBookingRoomType   = 7
+	DbTypeBookingTracking   = 8
+	DbTypeBookingDetail     = 9
+	DbTypeHotelType         = 10
+	DbTypeHotelDetail       = 11
+	DbTypeHotelFacilityType = 12
+	DbTypeHotelFacility     = 13
 )
 
 // RecordStatus is a type to represent the status of a record
