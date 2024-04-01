@@ -8,16 +8,17 @@ const EntityName = "Review"
 
 type Review struct {
 	common.MongoModel `json:",inline" bson:",inline"`
-	UserId            int         `json:"-" bson:"user_id"`
-	UserFakeId        *common.UID `json:"user_id" bson:"-"`
-	HotelId           int         `json:"-" bson:"hotel_id"`
-	HotelFakeId       *common.UID `json:"hotel_id" bson:"-"`
-	BookingId         int         `json:"-" bson:"booking_id"`
-	BookingFakeId     *common.UID `json:"booking_id" bson:"-"`
-	RoomTypeId        int         `json:"-" bson:"room_type_id"`
-	RoomTypeFakeId    *common.UID `json:"room_type_id" bson:"-"`
-	Rating            int         `json:"rating" bson:"rating"`
-	Comment           string      `json:"comment" bson:"comment"`
+	UserId            int           `json:"-" bson:"user_id"`
+	UserFakeId        *common.UID   `json:"user_id" bson:"-"`
+	HotelId           int           `json:"-" bson:"hotel_id"`
+	HotelFakeId       *common.UID   `json:"hotel_id" bson:"-"`
+	BookingId         int           `json:"-" bson:"booking_id,omitempty"`
+	BookingFakeId     *common.UID   `json:"booking_id,omitempty" bson:"-"`
+	RoomTypeId        int           `json:"-" bson:"room_type_id,omitempty"`
+	RoomTypeFakeId    *common.UID   `json:"room_type_id,omitempty" bson:"-"`
+	Rating            int           `json:"rating" bson:"rating"`
+	Comment           string        `json:"comment" bson:"comment"`
+	Image             common.Images `json:"images,omitempty" bson:"images,omitempty"`
 }
 
 func (Review) CollectionName() string {
