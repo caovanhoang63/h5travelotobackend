@@ -44,12 +44,14 @@ func (engine *consumerEngine) Start() error {
 	}
 
 	if err := engine.startSubTopic(common.TopicCreateHotel, true,
-		CreateOwnerWorker(engine.appCtx, context.Background())); err != nil {
+		CreateOwnerWorker(engine.appCtx, context.Background()),
+		CreateHotelFacilityDetails(engine.appCtx, context.Background())); err != nil {
 		log.Println("Err:", err)
 	}
 
 	if err := engine.startSubTopic(common.TopicConfirmBookingWhenSelectEnoughRoom, true,
-		ConfirmBookingTracking(engine.appCtx, context.Background())); err != nil {
+		ConfirmBookingTracking(engine.appCtx, context.Background()),
+	); err != nil {
 		log.Println("Err:", err)
 	}
 

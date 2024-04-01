@@ -58,6 +58,7 @@ type HotelCreate struct {
 	WardCode             int                `json:"ward_Code,omitempty" gorm:"column:ward_code"`
 	Lat                  float64            `json:"lat,omitempty" gorm:"column:lat"`
 	Lng                  float64            `json:"lng,omitempty" gorm:"column:lng"`
+	FacilityIds          []string           `json:"facility_ids" gorm:"-"`
 }
 
 func (HotelCreate) TableName() string {

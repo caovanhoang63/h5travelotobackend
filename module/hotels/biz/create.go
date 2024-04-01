@@ -39,7 +39,7 @@ func (biz *createHotelBiz) CreateHotel(ctx context.Context, requester common.Req
 	if err := biz.store.Create(ctx, data); err != nil {
 		return common.ErrCannotCreateEntity(hotelmodel.EntityName, err)
 	}
-	mess := pubsub.NewMessage(&common.DTOHotel{Id: data.Id, OwnerId: data.OwnerID})
+	mess := pubsub.NewMessage(&common.DTOHotel{Id: data.Id, OwnerId: data.OwnerID, FacilitiesIds: data.FacilityIds})
 
 	if err := biz.ps.Publish(ctx, common.TopicCreateHotel, mess); err != nil {
 		log.Println(common.ErrCannotPublishMessage(common.TopicCreateHotel, err))

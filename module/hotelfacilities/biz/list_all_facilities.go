@@ -6,20 +6,20 @@ import (
 	hotelfacilitymodel "h5travelotobackend/module/hotelfacilities/model"
 )
 
-type ListHotelFacilitiesStore interface {
-	ListAllRoomFacilities(ctx context.Context) ([]hotelfacilitymodel.HotelFacility, error)
+type ListHotelFacilitiesRepo interface {
+	ListAllHotelFacilityType(ctx context.Context) ([]hotelfacilitymodel.HotelFacilityType, error)
 }
 
 type listHotelFacilitiesBiz struct {
-	store ListHotelFacilitiesStore
+	repo ListHotelFacilitiesRepo
 }
 
-func NewListHotelFacilities(store ListHotelFacilitiesStore) *listHotelFacilitiesBiz {
-	return &listHotelFacilitiesBiz{store: store}
+func NewListHotelFacilities(repo ListHotelFacilitiesRepo) *listHotelFacilitiesBiz {
+	return &listHotelFacilitiesBiz{repo: repo}
 }
 
-func (biz *listHotelFacilitiesBiz) ListAllHotelFacilities(ctx context.Context) ([]hotelfacilitymodel.HotelFacility, error) {
-	data, err := biz.store.ListAllRoomFacilities(ctx)
+func (biz *listHotelFacilitiesBiz) ListAllHotelFacilities(ctx context.Context) ([]hotelfacilitymodel.HotelFacilityType, error) {
+	data, err := biz.repo.ListAllHotelFacilityType(ctx)
 	if err != nil {
 		return nil, common.ErrCannotListEntity(hotelfacilitymodel.EntityName, err)
 	}
