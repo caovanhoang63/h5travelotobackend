@@ -12,6 +12,8 @@ const (
 	TopicUpdateHotel       = "TopicUpdateHotel"
 	TopicUpdateHotelDetail = "TopicUpdateHotelDetail"
 
+	TopicCreateRoomType = "TopicCreateRoomType"
+
 	TopicConfirmBookingWhenSelectEnoughRoom   = "TopicConfirmBookingWhenSelectEnoughRoom"
 	TopicUnConfirmBookingWhenDeleteRoomDetail = "TopicUnConfirmBookingWhenDeleteRoomDetail"
 )

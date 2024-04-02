@@ -55,6 +55,11 @@ func (engine *consumerEngine) Start() error {
 		log.Println("Err:", err)
 	}
 
+	if err := engine.startSubTopic(common.TopicCreateRoomType, true,
+		CreateRoomFacilityDetails(engine.appCtx, context.Background())); err != nil {
+		log.Println("Err:", err)
+	}
+
 	return nil
 }
 

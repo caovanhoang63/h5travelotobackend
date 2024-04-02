@@ -42,6 +42,7 @@ type RoomTypeCreate struct {
 	PayInHotel      bool        `json:"pay_in_hotel" gorm:"column:pay_in_hotel;"`
 	BreakFast       bool        `json:"break_fast" gorm:"column:break_fast;"`
 	FreeCancel      bool        `json:"free_cancel" gorm:"column:free_cancel;"`
+	FacilityIds     []string    `json:"facility_ids" gorm:"-"`
 }
 
 func (RoomTypeCreate) TableName() string {

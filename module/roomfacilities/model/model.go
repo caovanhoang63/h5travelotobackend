@@ -38,5 +38,5 @@ type RoomFacilityDetail struct {
 }
 
 func (RoomFacilityDetail) TableName() string {
-	return "Room_facility_details"
+	return "room_facility_details"
 }

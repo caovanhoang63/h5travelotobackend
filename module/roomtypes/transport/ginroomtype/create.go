@@ -26,7 +26,7 @@ func CreateRoomType(appCtx appContext.AppContext) gin.HandlerFunc {
 		}
 		data.HotelId = hotelId
 		store := roomtypesqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
-		biz := roomtypebiz.NewRoomTypeBiz(store)
+		biz := roomtypebiz.NewRoomTypeBiz(store, appCtx.GetPubSub())
 		if err := biz.CreateRoomType(context.Request.Context(), &data); err != nil {
 			panic(err)
 		}
