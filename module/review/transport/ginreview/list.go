@@ -1,6 +1,7 @@
 package ginreview
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
@@ -12,6 +13,7 @@ import (
 
 func ListReviews(appCtx appContext.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		fmt.Println("Called")
 		var filter reviewmodel.Filter
 		if err := c.ShouldBind(&filter); err != nil {
 			panic(common.ErrInvalidRequest(err))

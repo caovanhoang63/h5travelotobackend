@@ -15,6 +15,7 @@ import (
 	"h5travelotobackend/module/hoteltypes/transport/ginhoteltype"
 	"h5travelotobackend/module/provinces/transport/ginprovinces"
 	"h5travelotobackend/module/review/transport/ginreview"
+	ginroomfacilities "h5travelotobackend/module/roomfacilities/transport/ginhotelfacilities"
 	"h5travelotobackend/module/rooms/transport/ginroom"
 	"h5travelotobackend/module/roomtypeabout/transport/ginroomtypeabout"
 	"h5travelotobackend/module/roomtypes/transport/ginroomtype"
@@ -54,8 +55,12 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	hotelDetails.POST("/", ginhoteldetail.CreateHotelDetail(appCtx))
 
 	// hotel facilities api
-	hotelFacilites := v1.Group("/hotels/facilities")
-	hotelFacilites.GET("/", ginhotelfacilities.ListAllHotelFacilities(appCtx))
+	hotelFacilities := v1.Group("/hotels/facilities")
+	hotelFacilities.GET("/", ginhotelfacilities.ListAllHotelFacilities(appCtx))
+
+	// room facilities api
+	roomFacilities := v1.Group("/rooms/facilities")
+	roomFacilities.GET("/", ginroomfacilities.ListAllRoomFacilities(appCtx))
 
 	// room api
 	rooms := v1.Group("hotels/:hotel-id/rooms")
