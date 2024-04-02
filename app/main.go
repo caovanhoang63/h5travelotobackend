@@ -103,11 +103,19 @@ func main() {
 	// Set up App Context
 	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey, s3Provider, pb)
 
-	r := gin.Default()
+	r := gin.New()
 	r.Use(middleware.Recover(appCtx))
+	r.Use(middleware.CORSMiddleware())
+
 	v1 := r.Group("/v1")
 
 	v1.GET("/ping", func(context *gin.Context) {
+		context.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
+
+	v1.OPTIONS("/ping", func(context *gin.Context) {
 		context.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
