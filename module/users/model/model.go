@@ -174,4 +174,10 @@ var (
 		"password is not strong enough",
 		"ErrPasswordNotStrong",
 	)
+
+	ErrUserBanned = common.NewCustomError(
+		errors.New("user has been banned"),
+		"user has been banned",
+		"ErrUserBanned",
+	)
 )
