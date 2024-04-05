@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+type TokenType int
+
 type Provider interface {
 	Generate(data TokenPayload, expiry int) (*Token, error)
 	Validate(token string) (*TokenPayload, error)
@@ -38,4 +40,5 @@ type Token struct {
 type TokenPayload struct {
 	UserId int    `json:"user_id"`
 	Role   string `json:"role"`
+	Expiry int
 }

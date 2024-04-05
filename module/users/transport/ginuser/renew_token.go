@@ -24,7 +24,7 @@ func RenewToken(appCtx appContext.AppContext) gin.HandlerFunc {
 		tokenProvider := jwt.NewJWTProvider(appCtx.GetSecretKey()) //appctx.SecretKey()
 		store := userstorage.NewSqlStore(db)
 		sha256Hasher := hasher.NewSha256Hash()
-		biz := userbiz.NewLoginBiz(appCtx, store, tokenProvider, sha256Hasher, 60*60, 60*60*24*30)
+		biz := userbiz.NewLoginBiz(appCtx, store, tokenProvider, sha256Hasher, common.AccessTokenAliveTime, common.RefreshTokenAliveTime)
 
 		token, err := biz.Renew(c.Request.Context(), &refreshToken)
 		if err != nil {

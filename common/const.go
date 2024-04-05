@@ -52,6 +52,9 @@ type Requester interface {
 	GetRole() string
 }
 
+const RefreshTokenAliveTime = 24 * 30 * 60 * 60
+const AccessTokenAliveTime = 15 * 60
+
 // AppRecover is an intelligent function to recover from panic
 func AppRecover() {
 	if err := recover(); err != nil {

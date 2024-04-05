@@ -60,6 +60,10 @@ func (j *jwtProvider) Validate(token string) (*tokenprovider.TokenPayload, error
 		return nil, tokenprovider.ErrInvalidToken
 	}
 
+	expiry := int(claims.ExpiresAt - claims.IssuedAt)
+
+	claims.Payload.Expiry = expiry
+
 	return &claims.Payload, nil
 }
 

@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
+	"h5travelotobackend/component/tokenprovider"
 	"h5travelotobackend/component/tokenprovider/jwt"
 	userstorage "h5travelotobackend/module/users/storage"
 	"strings"
@@ -52,6 +53,10 @@ func RequireAuth(appCtx appContext.AppContext) func(ctx *gin.Context) {
 
 		if err != nil {
 			panic(err)
+		}
+
+		if payload.Expiry != common.AccessTokenAliveTime {
+			panic(tokenprovider.ErrInvalidToken)
 		}
 
 		user, err := store.FindUser(c.Request.Context(), map[string]interface{}{"id": payload.UserId})
