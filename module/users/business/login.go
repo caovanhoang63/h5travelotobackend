@@ -17,16 +17,18 @@ type loginBiz struct {
 	loginStorage  LoginStorage
 	tokenProvider tokenprovider.Provider
 	hasher        Hasher
-	expiry        int
+	accessExpiry  int
+	refreshExpiry int
 }
 
-func NewLoginBiz(appCtx appContext.AppContext, loginStorage LoginStorage, tokenProvider tokenprovider.Provider, hasher Hasher, expiry int) *loginBiz {
+func NewLoginBiz(appCtx appContext.AppContext, loginStorage LoginStorage, tokenProvider tokenprovider.Provider, hasher Hasher, accessExpiry, refreshExpiry int) *loginBiz {
 	return &loginBiz{
 		appCtx:        appCtx,
 		loginStorage:  loginStorage,
 		tokenProvider: tokenProvider,
 		hasher:        hasher,
-		expiry:        expiry,
+		accessExpiry:  accessExpiry,
+		refreshExpiry: refreshExpiry,
 	}
 }
 
@@ -47,15 +49,15 @@ func (biz *loginBiz) Login(ctx context.Context, data *usermodel.UserLogin) (*use
 		Role:   user.Role,
 	}
 
-	//biz.tokenConfig.GetAtExp() ===> biz.expiry
+	//biz.tokenConfig.GetAtExp() ===> biz.accessExpiry
 
-	accessToken, err := biz.tokenProvider.Generate(payload, biz.expiry)
+	accessToken, err := biz.tokenProvider.Generate(payload, biz.accessExpiry)
 
 	if err != nil {
 		return nil, common.ErrInternal(err)
 	}
 
-	refreshToken, err := biz.tokenProvider.Generate(payload, biz.expiry)
+	refreshToken, err := biz.tokenProvider.Generate(payload, biz.refreshExpiry)
 
 	if err != nil {
 		return nil, common.ErrInternal(err)

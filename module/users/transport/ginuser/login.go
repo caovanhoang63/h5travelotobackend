@@ -24,7 +24,7 @@ func UserLogin(appCtx appContext.AppContext) gin.HandlerFunc {
 		tokenProvider := jwt.NewJWTProvider(appCtx.GetSecretKey()) //appctx.SecretKey()
 		store := userstorage.NewSqlStore(db)
 		sha256Hasher := hasher.NewSha256Hash()
-		biz := userbiz.NewLoginBiz(appCtx, store, tokenProvider, sha256Hasher, 60*60*24*30)
+		biz := userbiz.NewLoginBiz(appCtx, store, tokenProvider, sha256Hasher, 60*60, 60*60*24*30)
 
 		account, err := biz.Login(c.Request.Context(), &userLogin)
 

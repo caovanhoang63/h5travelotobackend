@@ -12,6 +12,8 @@ import (
 
 func RegisterUser(appctx appContext.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		//a, _ := c.GetRawData()
+		//fmt.Println(string(a))
 		var data usermodel.UserCreate
 
 		if err := c.ShouldBind(&data); err != nil {
