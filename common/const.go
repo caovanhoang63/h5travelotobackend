@@ -61,3 +61,5 @@ func AppRecover() {
 		log.Println("Recovery error:", err)
 	}
 }
+
+const IsDebug = false

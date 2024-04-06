@@ -55,8 +55,10 @@ func RequireAuth(appCtx appContext.AppContext) func(ctx *gin.Context) {
 			panic(err)
 		}
 
-		if payload.Expiry != common.AccessTokenAliveTime {
-			panic(tokenprovider.ErrInvalidToken)
+		if common.IsDebug {
+			if payload.Expiry != common.AccessTokenAliveTime {
+				panic(tokenprovider.ErrInvalidToken)
+			}
 		}
 
 		user, err := store.FindUser(c.Request.Context(), map[string]interface{}{"id": payload.UserId})
