@@ -3,6 +3,7 @@ package hotelmodel
 import (
 	"errors"
 	"h5travelotobackend/common"
+	hoteldetailmodel "h5travelotobackend/module/hoteldetails/model"
 )
 
 const (
@@ -10,23 +11,26 @@ const (
 )
 
 type Hotel struct {
-	common.SqlModel      `json:",inline"`
-	Name                 string             `json:"name" gorm:"column:name"`
-	Address              string             `json:"address" gorm:"column:address"`
-	HotelType            int                `json:"-" gorm:"column:hotel_type"`
-	HotelTypeFakeId      common.UID         `json:"hotel_type" gorm:"-"`
-	OwnerID              int                `json:"-"`
-	User                 *common.SimpleUser `json:"user" gorm:"foreignKey:OwnerID;preload:false"`
-	NumberOfFloors       int                `json:"number_of_floors" gorm:"column:number_of_floors"`
-	DistanceToCenterCity int                `json:"distance_to_center_city" gorm:"column:distance_to_center_city"`
-	Hotline              string             `json:"hotline" gorm:"column:hotline"`
-	ProvinceCode         int                `json:"province_code" gorm:"column:province_code"`
-	DistrictCode         int                `json:"district_code" gorm:"column:district_code"`
-	WardCode             int                `json:"ward_Code" gorm:"column:ward_code"`
-	Lat                  float64            `json:"lat" gorm:"column:lat"`
-	Lng                  float64            `json:"lng" gorm:"column:lng"`
-	Star                 int                `json:"star" gorm:"star"`
-	Rating               float32            `json:"rating" gorm:"rating"`
+	common.SqlModel `json:",inline"`
+	OwnerID         int                `json:"-" gorm:"column:owner_id"`
+	User            *common.SimpleUser `json:"user" gorm:"foreignKey:OwnerID;preload:false"`
+	Name            string             `json:"name" gorm:"column:name"`
+	Address         string             `json:"address" gorm:"column:address"`
+	HotelType       int                `json:"-" gorm:"column:hotel_type"`
+	HotelTypeFakeId *common.UID        `json:"hotel_type" gorm:"-"`
+	Hotline         string             `json:"hotline" gorm:"column:hotline"`
+	Logo            *common.Image      `json:"logo" gorm:"column:logo"`
+	Images          *common.Images     `json:"images" gorm:"column:images"`
+	ProvinceCode    int                `json:"province_code" gorm:"column:province_code"`
+	DistrictCode    int                `json:"district_code" gorm:"column:district_code"`
+	WardCode        int                `json:"ward_Code" gorm:"column:ward_code"`
+	Lat             float64            `json:"lat" gorm:"column:lat"`
+	Lng             float64            `json:"lng" gorm:"column:lng"`
+	Star            int                `json:"star" gorm:"star"`
+	Rating          float32            `json:"rating" gorm:"rating"`
+	TotalRating     int                `json:"total_rating" gorm:"total_rating"`
+	TotalRoomType   int                `json:"total_room_type" gorm:"total_room_type"`
+	AvgPrice        float64            `json:"avg_price" gorm:"avg_price"`
 }
 
 func (Hotel) TableName() string {
@@ -35,7 +39,7 @@ func (Hotel) TableName() string {
 
 func (data *Hotel) Mask(isAdmin bool) {
 	data.GenUID(common.DbTypeHotel)
-	data.HotelTypeFakeId = common.NewUID(uint32(data.HotelType), common.DbTypeHotelType, 1)
+	data.HotelTypeFakeId = common.NewUIDP(uint32(data.HotelType), common.DbTypeHotelType, 1)
 }
 
 func (data *Hotel) UnMask() {
@@ -43,22 +47,21 @@ func (data *Hotel) UnMask() {
 }
 
 type HotelCreate struct {
-	common.SqlModel      `json:",inline"`
-	Name                 string             `json:"name,omitempty" gorm:"column:name"`
-	Address              string             `json:"address,omitempty" gorm:"column:address"`
-	HotelType            int                `json:"" gorm:"column:hotel_type"`
-	HotelTypeFakeId      *common.UID        `json:"hotel_type,omitempty" gorm:"-"`
-	OwnerID              int                `json:"-"`
-	User                 *common.SimpleUser `json:"user" gorm:"foreignKey:OwnerID;preload:false"`
-	NumberOfFloors       int                `json:"number_of_floors,omitempty" gorm:"column:number_of_floors"`
-	DistanceToCenterCity int                `json:"distance_to_center_city,omitempty" gorm:"column:distance_to_center_city"`
-	Hotline              string             `json:"hotline,omitempty" gorm:"column:hotline"`
-	ProvinceCode         int                `json:"province_code,omitempty" gorm:"column:province_code"`
-	DistrictCode         int                `json:"district_code,omitempty" gorm:"column:district_code"`
-	WardCode             int                `json:"ward_Code,omitempty" gorm:"column:ward_code"`
-	Lat                  float64            `json:"lat,omitempty" gorm:"column:lat"`
-	Lng                  float64            `json:"lng,omitempty" gorm:"column:lng"`
-	FacilityIds          []string           `json:"facility_ids" gorm:"-"`
+	common.SqlModel `json:",inline"`
+	OwnerID         int                                 `json:"-" gorm:"column:owner_id"`
+	Name            string                              `json:"name" gorm:"column:name"`
+	Address         string                              `json:"address" gorm:"column:address"`
+	HotelType       int                                 `json:"-" gorm:"column:hotel_type"`
+	HotelTypeFakeId *common.UID                         `json:"hotel_type" gorm:"-"`
+	Hotline         string                              `json:"hotline" gorm:"column:hotline"`
+	ProvinceCode    int                                 `json:"province_code" gorm:"column:province_code"`
+	DistrictCode    int                                 `json:"district_code" gorm:"column:district_code"`
+	WardCode        int                                 `json:"ward_Code" gorm:"column:ward_code"`
+	Lat             float64                             `json:"lat" gorm:"column:lat"`
+	Lng             float64                             `json:"lng" gorm:"column:lng"`
+	Star            int                                 `json:"star" gorm:"star"`
+	FacilityIds     []string                            `json:"facility_ids" gorm:"-"`
+	HotelDetail     *hoteldetailmodel.HotelDetailCreate `json:"hotel_detail" gorm:"foreignKey:HotelID;association_foreignkey:ID"`
 }
 
 func (HotelCreate) TableName() string {
@@ -86,16 +89,19 @@ func (data *HotelCreate) Validate() error {
 }
 
 type HotelUpdate struct {
-	Name                 string      `json:"name" gorm:"column:name"`
-	HotelType            int         `json:"-" gorm:"column:hotel_type"`
-	HotelTypeFakeId      *common.UID `json:"hotel_type" gorm:"-"`
-	Address              string      `json:"address" gorm:"column:address"`
-	NumberOfFloors       int         `json:"number_of_floors" gorm:"column:number_of_floors"`
-	DistanceToCenterCity int         `json:"distance_to_center_city" gorm:"column:distance_to_center_city"`
-	Hotline              string      `json:"hotline" gorm:"column:hotline"`
-	ProvinceCode         int         `json:"province_code" gorm:"column:province_code"`
-	DistrictCode         int         `json:"district_code" gorm:"column:district_code"`
-	WardCode             int         `json:"ward_id" gorm:"column:ward_code"`
+	Name            string         `json:"name" gorm:"column:name"`
+	Address         string         `json:"address" gorm:"column:address"`
+	HotelType       int            `json:"-" gorm:"column:hotel_type"`
+	HotelTypeFakeId *common.UID    `json:"hotel_type" gorm:"-"`
+	Hotline         string         `json:"hotline" gorm:"column:hotline"`
+	Logo            *common.Image  `json:"logo" gorm:"column:logo"`
+	Images          *common.Images `json:"images" gorm:"column:images"`
+	ProvinceCode    int            `json:"province_code" gorm:"column:province_code"`
+	DistrictCode    int            `json:"district_code" gorm:"column:district_code"`
+	WardCode        int            `json:"ward_Code" gorm:"column:ward_code"`
+	Lat             float64        `json:"lat" gorm:"column:lat"`
+	Lng             float64        `json:"lng" gorm:"column:lng"`
+	Star            int            `json:"star" gorm:"star"`
 }
 
 func (data HotelUpdate) UnMask() {
