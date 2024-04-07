@@ -20,7 +20,7 @@ func CreateReview(appCtx appContext.AppContext) gin.HandlerFunc {
 		}
 
 		store := reviewstorage.NewMongoStore(appCtx.GetMongoConnection())
-		biz := reviewbiz.NewCreateReviewBiz(store)
+		biz := reviewbiz.NewCreateReviewBiz(store, appCtx.GetPubSub())
 		requester := c.MustGet(common.CurrentUser).(common.Requester)
 		data.UserId = requester.GetUserId()
 
