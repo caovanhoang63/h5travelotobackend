@@ -56,7 +56,8 @@ func (engine *consumerEngine) Start() error {
 	}
 
 	if err := engine.startSubTopic(common.TopicCreateRoomType, true,
-		CreateRoomFacilityDetails(engine.appCtx, context.Background())); err != nil {
+		CreateRoomFacilityDetails(engine.appCtx, context.Background()),
+		CalAvgHotelPrice(engine.appCtx, context.Background())); err != nil {
 		log.Println("Err:", err)
 	}
 

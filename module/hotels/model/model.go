@@ -102,6 +102,10 @@ type HotelUpdate struct {
 	Lat             float64        `json:"lat" gorm:"column:lat"`
 	Lng             float64        `json:"lng" gorm:"column:lng"`
 	Star            int            `json:"star" gorm:"star"`
+	Rating          float32        `json:"rating" gorm:"rating"`
+	TotalRating     int            `json:"total_rating" gorm:"total_rating"`
+	TotalRoomType   int            `json:"total_room_type" gorm:"total_room_type"`
+	AvgPrice        float64        `json:"avg_price" gorm:"avg_price"`
 }
 
 func (data HotelUpdate) UnMask() {

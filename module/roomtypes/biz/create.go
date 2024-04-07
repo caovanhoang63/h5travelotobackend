@@ -32,6 +32,7 @@ func (biz *createRoomTypeBiz) CreateRoomType(ctx context.Context, data *roomtype
 		Name:        data.Name,
 		HotelId:     data.HotelId,
 		Status:      data.Status,
+		Price:       data.Price,
 		FacilityIds: data.FacilityIds,
 	}
 	mess := pubsub.NewMessage(&dto)
