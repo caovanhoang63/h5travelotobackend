@@ -52,8 +52,8 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	hotels.PATCH("/:hotel-id", middleware.RoleRequired(appCtx, common.RoleOwner, common.RoleManager), middleware.IsHotelWorker(appCtx), ginhotel.UpdateHotel(appCtx))
 
 	// hotel detail api
-	hotelDetails := v1.Group("/hotels/:hotel-id/details")
-	hotelDetails.POST("/", ginhoteldetail.CreateHotelDetail(appCtx))
+	hotelDetails := v1.Group("/hotels/:hotel-id/detail")
+	hotelDetails.GET("/", ginhoteldetail.GetHotelDetailById(appCtx))
 
 	// hotel facilities api
 	hotelFacilities := v1.Group("/hotels/facilities")

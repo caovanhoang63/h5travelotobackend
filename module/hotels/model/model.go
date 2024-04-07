@@ -61,7 +61,7 @@ type HotelCreate struct {
 	Lng             float64                             `json:"lng" gorm:"column:lng"`
 	Star            int                                 `json:"star" gorm:"star"`
 	FacilityIds     []string                            `json:"facility_ids" gorm:"-"`
-	HotelDetail     *hoteldetailmodel.HotelDetailCreate `json:"hotel_detail" gorm:"foreignKey:HotelID;association_foreignkey:ID"`
+	HotelDetail     *hoteldetailmodel.HotelDetailCreate `json:"hotel_detail" gorm:"foreignKey:HotelId;references:Id"`
 }
 
 func (HotelCreate) TableName() string {
