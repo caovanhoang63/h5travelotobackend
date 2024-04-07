@@ -6,7 +6,6 @@ import (
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/component/pubsub"
-	hotelmodel "h5travelotobackend/module/hotels/model"
 	hotelstorage "h5travelotobackend/module/hotels/storage"
 )
 
@@ -23,19 +22,7 @@ func UpdateHotelReviewWhenUserReview(appCtx appContext.AppContext, ctx context.C
 
 			store := hotelstorage.NewSqlStore(appCtx.GetGormDbConnection())
 
-			hotel, err := store.FindDataWithCondition(ctx, map[string]interface{}{"id": review.HotelId})
-			if err != nil {
-				return err
-			}
-
-			rating := float32((hotel.Rating*float32(hotel.TotalRating) + float32(review.Rating)) / float32(hotel.TotalRating+1))
-			totalRating := hotel.TotalRating + 1
-			update := hotelmodel.HotelUpdate{
-				Rating:      rating,
-				TotalRating: totalRating,
-			}
-
-			return store.Update(ctx, review.HotelId, &update)
+			return store.UpdateReviewWhenUserReview(ctx, &review)
 		},
 	}
 }

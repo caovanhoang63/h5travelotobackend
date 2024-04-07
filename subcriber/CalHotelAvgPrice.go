@@ -6,7 +6,6 @@ import (
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/component/pubsub"
-	hotelmodel "h5travelotobackend/module/hotels/model"
 	hotelstorage "h5travelotobackend/module/hotels/storage"
 	"log"
 )
@@ -21,14 +20,8 @@ func CalAvgHotelPrice(appCtx appContext.AppContext, ctx context.Context) consume
 				log.Println(err)
 			}
 			store := hotelstorage.NewSqlStore(appCtx.GetGormDbConnection())
-			hotel, err := store.FindDataWithCondition(ctx, map[string]interface{}{"id": Room.HotelId})
-			avg := (hotel.AvgPrice*float64(hotel.TotalRoomType) + Room.Price) / float64(hotel.TotalRoomType+1)
-			total := hotel.TotalRoomType + 1
-			update := hotelmodel.HotelUpdate{
-				AvgPrice:      avg,
-				TotalRoomType: total,
-			}
-			return store.Update(ctx, Room.HotelId, &update)
+
+			return store.UpdateTotalRoomTypeAndAvgPrice(ctx, &Room)
 		},
 	}
 }
