@@ -18,6 +18,11 @@ type ListRoomStore interface {
 		condition map[string]interface{},
 		ids []int,
 	) ([]roommodel.Room, error)
+	ListRoomInIds(
+		ctx context.Context,
+		condition map[string]interface{},
+		ids []int,
+	) ([]roommodel.Room, error)
 }
 
 type listRoomBiz struct {

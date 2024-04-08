@@ -76,3 +76,21 @@ func (s *sqlStore) ListRoomsNotInIds(
 
 	return data, nil
 }
+
+func (s *sqlStore) ListRoomInIds(
+	ctx context.Context,
+	condition map[string]interface{},
+	ids []int,
+) ([]roommodel.Room, error) {
+	var data []roommodel.Room
+
+	db := s.db.Table(roommodel.Room{}.TableName()).Where(condition)
+	if len(ids) > 0 {
+		db = db.Where("id IN ?", ids)
+	}
+	if err := db.Find(&data).Error; err != nil {
+		return nil, common.ErrDb(err)
+	}
+
+	return data, nil
+}

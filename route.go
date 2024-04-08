@@ -64,19 +64,20 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	roomFacilities.GET("/", ginroomfacilities.ListAllRoomFacilities(appCtx))
 
 	// room api
-	rooms := v1.Group("hotels/:hotel-id/rooms")
+	rooms := v1.Group("hotels/:hotel-id/")
 	rooms.Use(middleware.RequireAuth(appCtx))
 	rooms.Use(middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager, common.RoleStaff))
 	rooms.Use(middleware.IsHotelWorker(appCtx))
 
-	rooms.PATCH("/:room-id", ginroom.UpdateRoom(appCtx))
-	rooms.DELETE("/:room-id", ginroom.DeleteRoom(appCtx))
-	rooms.POST("/", ginroom.CreateRoom(appCtx))
-	rooms.GET(":room-id", ginroom.GetRoomById(appCtx))
-	rooms.GET("", ginroom.ListRoomWithCondition(appCtx))
-	// {{}}/v1/hotels/:hotel-id/available-room?start-date=2021-07-01&&end-date=2021-07-02
+	rooms.PATCH("rooms/:room-id", ginroom.UpdateRoom(appCtx))
+	rooms.DELETE("rooms/:room-id", ginroom.DeleteRoom(appCtx))
+	rooms.POST("rooms/", ginroom.CreateRoom(appCtx))
+	rooms.GET("rooms/:room-id", ginroom.GetRoomById(appCtx))
+	rooms.GET("rooms/", ginroom.ListRoomWithCondition(appCtx))
 
-	v1.GET("hotels/:hotel-id/available-rooms", ginroom.GetAvailableRoomByDate(appCtx))
+	rooms.GET("/available-rooms", ginroom.GetAvailableRoomByDate(appCtx))
+	rooms.GET("rooms/bookings/:booking-id", ginroom.ListRoomOfBooking(appCtx))
+	rooms.GET("rooms/bookings/:booking-id/available", ginroom.GetAvailableRoomForBooking(appCtx))
 
 	// room type about api
 	roomTypeAbout := v1.Group("hotels/:hotel-id/room-types/:room-type-id/about")
@@ -134,7 +135,6 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	bookingdetail.Use(middleware.IsHotelWorker(appCtx))
 
 	bookingdetail.POST("/details", ginbookingdetail.CreateBookingDetails(appCtx))
-	bookingdetail.GET("/available-rooms", ginroom.GetAvailableRoomForBooking(appCtx))
 
 	// review api
 	reviews := v1.Group("/reviews")
