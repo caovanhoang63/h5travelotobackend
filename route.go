@@ -138,4 +138,5 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	reviews.Use(middleware.RequireAuth(appCtx))
 	reviews.POST("/", ginreview.CreateReview(appCtx))
 	reviews.GET("", ginreview.ListReviews(appCtx))
+	reviews.DELETE("/:id", ginreview.DeleteReviewById(appCtx))
 }

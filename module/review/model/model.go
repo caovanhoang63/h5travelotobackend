@@ -19,7 +19,7 @@ type Review struct {
 	RoomTypeFakeId    *common.UID        `json:"room_type_id,omitempty" bson:"-"`
 	Rating            int                `json:"rating" bson:"rating"`
 	Comment           string             `json:"comment" bson:"comment"`
-	Image             common.Images      `json:"images,omitempty" bson:"images,omitempty"`
+	Image             *common.Images     `json:"images,omitempty" bson:"images,omitempty"`
 }
 
 func (Review) CollectionName() string {
