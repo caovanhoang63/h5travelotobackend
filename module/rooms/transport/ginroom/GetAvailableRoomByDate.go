@@ -10,17 +10,27 @@ import (
 	bookingdetailbiz "h5travelotobackend/module/rooms/biz"
 	roomstorage "h5travelotobackend/module/rooms/storage"
 	"net/http"
+	"time"
 )
 
 // GetAvailableRoomForBooking url
-// {{}}/v1/hotels/:hotel-id/booking/:booking-id/available-room
+// {{}}/v1/hotels/:hotel-id/available-room?start-date=2021-07-01&&end-date=2021-07-02&room-type-id=1
 
-func GetAvailableRoomForBooking(appCtx appContext.AppContext) gin.HandlerFunc {
+const layout = "2006-01-02"
+
+func GetAvailableRoomByDate(appCtx appContext.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		uid, err := common.FromBase58(c.Param("booking-id"))
+
+		StartDate, err := time.Parse(layout, c.Query("start-date"))
+		EndDate, err := time.Parse(layout, c.Query("end-date"))
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
+		uid, err := common.FromBase58(c.Param("hotel-id"))
+		if err != nil {
+			panic(common.ErrInvalidRequest(err))
+		}
+		hotelId := int(uid.GetLocalID())
 
 		roomStore := roomstorage.NewSqlStore(appCtx.GetGormDbConnection())
 		store := bookingdetailstorage.NewSqlStore(appCtx.GetGormDbConnection())
@@ -28,7 +38,7 @@ func GetAvailableRoomForBooking(appCtx appContext.AppContext) gin.HandlerFunc {
 		repo := bookingdetailrepo.NewGetRoomBookedRepo(store)
 		biz := bookingdetailbiz.NewListAvailableRoom(repo, roomStore, bookingStore)
 
-		data, err := biz.ListAvailableRoomForBooking(c.Request.Context(), int(uid.GetLocalID()))
+		data, err := biz.ListAvailableRoomByDate(c.Request.Context(), &StartDate, &EndDate, hotelId)
 		if err != nil {
 			panic(err)
 		}
@@ -38,5 +48,6 @@ func GetAvailableRoomForBooking(appCtx appContext.AppContext) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
+
 	}
 }

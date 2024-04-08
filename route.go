@@ -74,6 +74,9 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	rooms.POST("/", ginroom.CreateRoom(appCtx))
 	rooms.GET(":room-id", ginroom.GetRoomById(appCtx))
 	rooms.GET("", ginroom.ListRoomWithCondition(appCtx))
+	// {{}}/v1/hotels/:hotel-id/available-room?start-date=2021-07-01&&end-date=2021-07-02
+
+	v1.GET("hotels/:hotel-id/available-rooms", ginroom.GetAvailableRoomByDate(appCtx))
 
 	// room type about api
 	roomTypeAbout := v1.Group("hotels/:hotel-id/room-types/:room-type-id/about")
@@ -131,7 +134,7 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	bookingdetail.Use(middleware.IsHotelWorker(appCtx))
 
 	bookingdetail.POST("/details", ginbookingdetail.CreateBookingDetails(appCtx))
-	bookingdetail.GET("/available-rooms", ginroom.GetAvailableRoom(appCtx))
+	bookingdetail.GET("/available-rooms", ginroom.GetAvailableRoomForBooking(appCtx))
 
 	// review api
 	reviews := v1.Group("/reviews")

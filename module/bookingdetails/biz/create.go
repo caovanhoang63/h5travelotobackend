@@ -6,6 +6,7 @@ import (
 	"h5travelotobackend/component/pubsub"
 	bookingdetailmodel "h5travelotobackend/module/bookingdetails/model"
 	"log"
+	"time"
 )
 
 type CreateBookingDetailStorage interface {
@@ -28,7 +29,7 @@ type FindRoomStore interface {
 }
 
 type ListRoomBookedRepo interface {
-	GetRoomIdsBooked(ctx context.Context, booking *common.DTOBooking) ([]int, error)
+	GetRoomIdsBooked(ctx context.Context, startDate *time.Time, endDate *time.Time, condition map[string]interface{}) ([]int, error)
 }
 
 type createBookingDetailBiz struct {
@@ -56,7 +57,9 @@ func (biz *createBookingDetailBiz) CreateBookingDetail(ctx context.Context, data
 
 	// Validate room
 	rooms, err := biz.roomStore.FindRoomsDTOByIds(ctx, nil, data.RoomIds)
-	bookedRooms, err := biz.repo.GetRoomIdsBooked(ctx, booking)
+
+	bookedRooms, err := biz.repo.GetRoomIdsBooked(ctx, booking.StartDate, booking.EndDate, map[string]interface{}{"bookings.room_type_id": booking.RoomTypeId})
+
 	if err != nil {
 
 		return common.ErrCannotCreateEntity(bookingdetailmodel.EntityName, err)
@@ -77,9 +80,7 @@ func (biz *createBookingDetailBiz) CreateBookingDetail(ctx context.Context, data
 
 		return common.ErrCannotCreateEntity(bookingdetailmodel.EntityName, err)
 	}
-	// confirm
-	// Publish event
-	// TODO: confirm tracking
+
 	mess := pubsub.NewMessage(&booking)
 	if err := biz.ps.Publish(ctx, common.TopicConfirmBookingWhenSelectEnoughRoom, mess); err != nil {
 		log.Println(common.ErrCannotPublishMessage(common.TopicConfirmBookingWhenSelectEnoughRoom, err))

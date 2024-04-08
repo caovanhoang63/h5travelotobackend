@@ -87,13 +87,17 @@ func (s *sqlStore) ListRoomOfBooking(ctx context.Context, bookingId int) ([]int,
 	return ids, nil
 }
 
-func (s *sqlStore) ListRoomIdsBooked(ctx context.Context, booking *common.DTOBooking) ([]int, error) {
+func (s *sqlStore) ListRoomIdsBooked(ctx context.Context,
+	startDate *time.Time,
+	endDate *time.Time,
+	condition map[string]interface{}) ([]int, error) {
 	db := s.db.Table(bookingdetailmodel.BookingDetail{}.TableName())
 	var ids []int
 	db = db.InnerJoins("JOIN bookings ON booking_details.booking_id = bookings.id")
+	db = db.Where(condition)
 	db = db.Where("bookings.status = ?", common.StatusActive)
-	db = db.Where("bookings.room_type_id = ?", booking.RoomTypeId)
-	db = db.Not("bookings.end_date < ? and  bookings.start_date > ?", booking.StartDate, booking.EndDate)
+	db = db.Where("bookings.end_date >= ? and  bookings.end_date <= ? ", startDate, endDate).
+		Or("bookings.start_date >= ? and bookings.start_date <= ?", startDate, endDate)
 	if err := db.Pluck("room_id", &ids).Error; err != nil {
 		return nil, common.ErrDb(err)
 	}
