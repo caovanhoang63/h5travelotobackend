@@ -6,22 +6,20 @@ import (
 	reviewmodel "h5travelotobackend/module/review/model"
 )
 
-type ListReviewsStore interface {
-	ListReviewWithCondition(
+type ListReviewsRepo interface {
+	ListReviewsWithCondition(
 		ctx context.Context,
 		filter *reviewmodel.Filter,
 		paging *common.Paging,
-		cond map[string]interface{},
-		moreKeys ...string,
 	) ([]reviewmodel.Review, error)
 }
 
 type listReviewsBiz struct {
-	store ListReviewsStore
+	repo ListReviewsRepo
 }
 
-func NewListReviewsBiz(store ListReviewsStore) *listReviewsBiz {
-	return &listReviewsBiz{store: store}
+func NewListReviewsBiz(repo ListReviewsRepo) *listReviewsBiz {
+	return &listReviewsBiz{repo: repo}
 }
 
 func (biz *listReviewsBiz) ListReviews(
@@ -29,9 +27,20 @@ func (biz *listReviewsBiz) ListReviews(
 	filter *reviewmodel.Filter,
 	paging *common.Paging,
 ) ([]reviewmodel.Review, error) {
-	data, err := biz.store.ListReviewWithCondition(ctx, filter, paging, nil)
+	var data []reviewmodel.Review
+
+	data, err := biz.repo.ListReviewsWithCondition(ctx, filter, paging)
+
 	if err != nil {
 		return nil, common.ErrCannotListEntity(reviewmodel.EntityName, err)
 	}
+
+	for i := range data {
+		if data[i].User.Status == common.StatusDeleted && data[i].Status == common.StatusDeleted {
+			data = append(data[:i], data[i+1:]...)
+			i--
+		}
+	}
+
 	return data, nil
 }

@@ -7,7 +7,9 @@ import (
 	"h5travelotobackend/component/appContext"
 	reviewbiz "h5travelotobackend/module/review/biz"
 	reviewmodel "h5travelotobackend/module/review/model"
+	reviewrepo "h5travelotobackend/module/review/repo"
 	reviewstorage "h5travelotobackend/module/review/storage"
+	userstorage "h5travelotobackend/module/users/storage"
 	"net/http"
 )
 
@@ -30,7 +32,9 @@ func ListReviews(appCtx appContext.AppContext) gin.HandlerFunc {
 		paging.FullFill()
 
 		store := reviewstorage.NewMongoStore(appCtx.GetMongoConnection())
-		biz := reviewbiz.NewListReviewsBiz(store)
+		userStore := userstorage.NewSqlStore(appCtx.GetGormDbConnection())
+		repo := reviewrepo.NewListReviewsRepo(store, userStore)
+		biz := reviewbiz.NewListReviewsBiz(repo)
 		data, err := biz.ListReviews(c.Request.Context(), &filter, &paging)
 		if err != nil {
 			panic(err)
