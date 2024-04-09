@@ -89,7 +89,7 @@ func (data *HotelCreate) Validate() error {
 }
 
 type HotelUpdate struct {
-	Name            string         `json:"name" gorm:"column:name"`
+	Name            string         `json:"name,omitempty" gorm:"column:name"`
 	Address         string         `json:"address" gorm:"column:address"`
 	HotelType       int            `json:"-" gorm:"column:hotel_type"`
 	HotelTypeFakeId *common.UID    `json:"hotel_type" gorm:"-"`
@@ -117,9 +117,6 @@ func (HotelUpdate) TableName() string {
 }
 
 func (data *HotelUpdate) Validate() error {
-	if common.IsEmpty(data.Name) {
-		return ErrNameIsEmpty
-	}
 	return nil
 }
 
