@@ -19,11 +19,12 @@ func ConfirmBookingTracking(appCtx appContext.AppContext, ctx context.Context) c
 			if err != nil {
 				return err
 			}
-			data := bookingtrackingmodel.BookingTrackingUpdate{
-				State: "confirmed",
+			data := bookingtrackingmodel.BookingTrackingCreate{
+				BookingId: booking.Id,
+				State:     "confirmed",
 			}
 			store := bookingtrackingstorage.NewSqlStore(appCtx.GetGormDbConnection())
-			return store.Update(ctx, booking.Id, &data)
+			return store.Create(ctx, &data)
 		},
 	}
 }

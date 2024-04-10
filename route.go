@@ -116,8 +116,7 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 
 	// tracking api
 	trackings := v1.Group("hotels/:hotel-id/bookings/:booking-id/tracking", middleware.RequireAuth(appCtx))
-	trackings.GET("/", ginbookingtracking.GetBookingTrackingState(appCtx))
-	trackings.PATCH("/", ginbookingtracking.UpdateTrackingState(appCtx))
+	trackings.GET("/", ginbookingtracking.GetStatesOfBooking(appCtx))
 
 	// hotel type api
 	hoteltypes := v1.Group("/hotel-types")

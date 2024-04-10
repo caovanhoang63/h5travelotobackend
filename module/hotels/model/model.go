@@ -121,13 +121,6 @@ func (data *HotelUpdate) Validate() error {
 }
 
 var (
-	ErrNameIsEmpty                = errors.New("name can not be empty")
-	ErrCannotUpdateAdditionalData = common.NewErrorResponse(
-		errors.New("cannot update additional data"),
-		"cannot update additional data",
-		"cannot update additional data",
-		"CANNOT_UPDATE_HOTEL_ADDITIONAL_DATA",
-	)
-
+	ErrNameIsEmpty      = errors.New("name can not be empty")
 	ErrInvalidHotelType = errors.New("invalid hotel type")
 )
