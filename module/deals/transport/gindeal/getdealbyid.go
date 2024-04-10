@@ -9,20 +9,23 @@ import (
 	"net/http"
 )
 
-func DeleteDealById(appCtx appContext.AppContext) gin.HandlerFunc {
+func GetDealById(appCtx appContext.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-
 		uid, err := common.FromBase58(c.Param("deal-id"))
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
 
 		store := dealsqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
-		biz := dealbiz.NewDeleteDealBiz(store)
-		if err := biz.DeleteDeal(c.Request.Context(), int(uid.GetLocalID())); err != nil {
+		biz := dealbiz.NewFindDealBiz(store)
+		deal, err := biz.FindDealById(c.Request.Context(), int(uid.GetLocalID()))
+		if err != nil {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
+		deal.Mask(false)
+
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(deal))
+
 	}
 }

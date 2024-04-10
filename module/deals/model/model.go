@@ -23,7 +23,7 @@ type Deal struct {
 	DiscountPercent   float64           `json:"discount_percent" gorm:"column:discount_percent;"`
 	StartDate         *common.CivilTime `json:"start_date" gorm:"column:start_date;"`
 	ExpiryDate        *common.CivilTime `json:"expiry_date" gorm:"column:expiry_date;"`
-	State             string            `json:"state" gorm:"column:state;"` // active, inactive
+	IsUnlimited       bool              `json:"is_unlimited" gorm:"column:is_unlimited;"`
 }
 
 func (Deal) TableName() string {
@@ -72,7 +72,7 @@ type DealUpdate struct {
 	DiscountPercent   float64       `json:"discount_percent" gorm:"column:discount_percent;"`
 	StartDate         *time.Time    `json:"start_date" gorm:"column:start_date;"`
 	ExpiryDate        *time.Time    `json:"expiry_date" gorm:"column:expiry_date;"`
-	State             string        `json:"state" gorm:"column:state;"` // active, inactive
+	IsUnlimited       bool          `json:"is_unlimited" gorm:"column:is_unlimited;"`
 }
 
 func (DealUpdate) TableName() string {

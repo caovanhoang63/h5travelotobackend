@@ -10,28 +10,24 @@ import (
 	"net/http"
 )
 
-func CreateDeal(appCtx appContext.AppContext) gin.HandlerFunc {
+func UpdateDeal(appCtx appContext.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-
-		var deal dealmodel.DealCreate
-		if err := c.ShouldBind(&deal); err != nil {
-			panic(common.ErrInvalidRequest(err))
-		}
-		hotelUid, err := common.FromBase58(c.Param("hotel-id"))
+		uid, err := common.FromBase58(c.Param("deal-id"))
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
-		deal.HotelId = int(hotelUid.GetLocalID())
+
+		var data dealmodel.DealUpdate
+		if err := c.ShouldBind(&data); err != nil {
+			panic(common.ErrInvalidRequest(err))
+		}
 
 		store := dealsqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
-		biz := dealbiz.NewCreateDealBiz(store)
-		if biz.CreateDeal(c.Request.Context(), &deal); err != nil {
+		biz := dealbiz.NewUpdateDealBiz(store)
+		if err := biz.UpdateDeal(c.Request.Context(), int(uid.GetLocalID()), &data); err != nil {
 			panic(err)
 		}
 
-		deal.Mask(false)
-
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(deal.FakeId))
-
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
 	}
 }

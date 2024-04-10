@@ -23,9 +23,6 @@ func (s *sqlStore) ListWithCondition(
 		if filter.HotelId > 0 {
 			db = db.Where("hotel_id = ?", f.HotelId)
 		}
-		if filter.State != nil {
-			db = db.Where("state = ?", f.State)
-		}
 	}
 
 	if err := db.Count(&paging.Total).Error; err != nil {

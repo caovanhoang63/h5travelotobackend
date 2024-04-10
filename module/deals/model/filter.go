@@ -9,7 +9,6 @@ type Filter struct {
 	HotelId        int               `json:"-" form:"-" gorm:"column:hotel_id;"`
 	RoomTypeFakeId *common.UID       `json:"room_type_id" form:"room_type_id" gorm:"-"`
 	RoomTypeId     int               `json:"-" form:"-" gorm:"column:room_type_id;"`
-	State          *string           `json:"state" form:"state" gorm:"column:state;"`
 	StartDate      *common.CivilTime `json:"start_date" form:"start_date" gorm:"column:start_date;"`
 	ExpiryDate     *common.CivilTime `json:"expiry_date" form:"expiry_date" gorm:"column:expiry_date;"`
 }
@@ -20,6 +19,10 @@ func (f *Filter) Mask() {
 }
 
 func (f *Filter) UnMask() {
-	f.HotelId = int(f.HotelFakeId.GetLocalID())
-	f.RoomTypeId = int(f.RoomTypeFakeId.GetLocalID())
+	if f.HotelFakeId != nil {
+		f.HotelId = int(f.HotelFakeId.GetLocalID())
+	}
+	if f.RoomTypeFakeId != nil {
+		f.RoomTypeId = int(f.RoomTypeFakeId.GetLocalID())
+	}
 }

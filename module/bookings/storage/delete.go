@@ -3,7 +3,7 @@ package bookingsqlstorage
 import (
 	"context"
 	"h5travelotobackend/common"
-	"h5travelotobackend/module/bookings/bookingmodel"
+	"h5travelotobackend/module/bookings/model"
 )
 
 func (s *sqlStore) Delete(ctx context.Context, id int) error {

@@ -3,7 +3,7 @@ package bookingbiz
 import (
 	"context"
 	"h5travelotobackend/common"
-	"h5travelotobackend/module/bookings/bookingmodel"
+	"h5travelotobackend/module/bookings/model"
 )
 
 func (biz *listBookingBiz) ListBookingByHotelId(

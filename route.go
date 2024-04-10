@@ -150,4 +150,9 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	dealModifications.Use(middleware.IsHotelWorker(appCtx))
 	dealModifications.POST("/", gindeal.CreateDeal(appCtx))
 	dealModifications.DELETE("/:deal-id", gindeal.DeleteDealById(appCtx))
+	dealModifications.PATCH("/:deal-id", gindeal.UpdateDeal(appCtx))
+
+	dealRead := v1.Group("deals")
+	dealRead.GET("/:deal-id", gindeal.GetDealById(appCtx))
+	dealRead.GET("/", gindeal.ListDeal(appCtx))
 }

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/pubsub"
-	"h5travelotobackend/module/bookings/bookingmodel"
+	"h5travelotobackend/module/bookings/model"
 	workermodel "h5travelotobackend/module/worker/model"
 	"log"
 )

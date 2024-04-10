@@ -4,7 +4,7 @@ import (
 	"context"
 	"gorm.io/gorm"
 	"h5travelotobackend/common"
-	"h5travelotobackend/module/bookings/bookingmodel"
+	"h5travelotobackend/module/bookings/model"
 )
 
 func (s *sqlStore) FindWithCondition(ctx context.Context,

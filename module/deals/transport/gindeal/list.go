@@ -10,28 +10,33 @@ import (
 	"net/http"
 )
 
-func CreateDeal(appCtx appContext.AppContext) gin.HandlerFunc {
+func ListDeal(appCtx appContext.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		var paging common.Paging
+		if err := c.ShouldBind(&paging); err != nil {
+			panic(common.ErrInvalidRequest(err))
+		}
 
-		var deal dealmodel.DealCreate
-		if err := c.ShouldBind(&deal); err != nil {
+		var filter dealmodel.Filter
+
+		if err := c.ShouldBind(&filter); err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
-		hotelUid, err := common.FromBase58(c.Param("hotel-id"))
-		if err != nil {
-			panic(common.ErrInvalidRequest(err))
-		}
-		deal.HotelId = int(hotelUid.GetLocalID())
+
+		filter.UnMask()
+		paging.FullFill()
 
 		store := dealsqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
-		biz := dealbiz.NewCreateDealBiz(store)
-		if biz.CreateDeal(c.Request.Context(), &deal); err != nil {
+		biz := dealbiz.NewListDealBiz(store)
+		deals, err := biz.ListDeal(c.Request.Context(), &filter, &paging)
+		if err != nil {
 			panic(err)
 		}
 
-		deal.Mask(false)
+		for i := range deals {
+			deals[i].Mask(false)
+		}
 
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(deal.FakeId))
-
+		c.JSON(http.StatusOK, common.NewSuccessResponse(deals, paging, filter))
 	}
 }

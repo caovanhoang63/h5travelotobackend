@@ -5,7 +5,7 @@ import (
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	bookingbiz "h5travelotobackend/module/bookings/biz"
-	"h5travelotobackend/module/bookings/bookingmodel"
+	"h5travelotobackend/module/bookings/model"
 	bookingsqlstorage "h5travelotobackend/module/bookings/storage"
 	"net/http"
 )
