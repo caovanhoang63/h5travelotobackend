@@ -19,7 +19,7 @@ func NewCreateDealBiz(store CreateDealStore) *createDealBiz {
 }
 
 func (biz *createDealBiz) CreateDeal(ctx context.Context, deal *dealmodel.DealCreate) error {
-
+	deal.AvailableQuantity = deal.TotalQuantity
 	if err := biz.store.Create(ctx, deal); err != nil {
 		return common.ErrCannotCreateEntity(dealmodel.EntityName, err)
 	}

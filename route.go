@@ -8,6 +8,7 @@ import (
 	"h5travelotobackend/module/bookingdetails/transport/ginbookingdetail"
 	"h5travelotobackend/module/bookings/transport/ginbooking"
 	"h5travelotobackend/module/bookingtracking/transport/ginbookingtracking"
+	"h5travelotobackend/module/deals/transport/gindeal"
 	gindistrict "h5travelotobackend/module/districts/transport/gindistricts"
 	"h5travelotobackend/module/hoteldetails/transport/ginhoteldetail"
 	"h5travelotobackend/module/hotelfacilities/transport/ginhotelfacilities"
@@ -143,5 +144,10 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	reviews.DELETE("/:id", ginreview.DeleteReviewById(appCtx))
 
 	//deal
-
+	dealModifications := v1.Group("hotels/:hotel-id/deals")
+	dealModifications.Use(middleware.RequireAuth(appCtx))
+	dealModifications.Use(middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager))
+	dealModifications.Use(middleware.IsHotelWorker(appCtx))
+	dealModifications.POST("/", gindeal.CreateDeal(appCtx))
+	dealModifications.DELETE("/:deal-id", gindeal.DeleteDealById(appCtx))
 }

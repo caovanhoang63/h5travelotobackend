@@ -18,7 +18,7 @@ func CreateDeal(appCtx appContext.AppContext) gin.HandlerFunc {
 		if err := c.ShouldBind(&deal); err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
-		hotelUid, err := common.FromBase58(c.Param("hotel_id"))
+		hotelUid, err := common.FromBase58(c.Param("hotel-id"))
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
