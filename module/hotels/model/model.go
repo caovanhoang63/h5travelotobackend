@@ -57,6 +57,8 @@ type HotelCreate struct {
 	ProvinceCode    int                                 `json:"province_code" gorm:"column:province_code"`
 	DistrictCode    int                                 `json:"district_code" gorm:"column:district_code"`
 	WardCode        int                                 `json:"ward_Code" gorm:"column:ward_code"`
+	Logo            *common.Image                       `json:"logo" gorm:"column:logo"`
+	Images          *common.Images                      `json:"images" gorm:"column:images"`
 	Lat             float64                             `json:"lat" gorm:"column:lat"`
 	Lng             float64                             `json:"lng" gorm:"column:lng"`
 	Star            int                                 `json:"star" gorm:"star"`

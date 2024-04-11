@@ -33,16 +33,17 @@ func (r *RoomType) Mask(isAdmin bool) {
 
 type RoomTypeCreate struct {
 	common.SqlModel `json:",inline"`
-	HotelId         int         `json:"hotel_id" gorm:"column:hotel_id;"`
-	Name            string      `json:"name" gorm:"column:name;"`
-	MaxCustomer     int         `json:"max_customer" gorm:"column:max_customer;"`
-	Area            float64     `json:"area" gorm:"column:area;"`
-	Bed             *common.Bed `json:"bed" gorm:"column:bed;"`
-	Price           float64     `json:"price" gorm:"column:price;"`
-	PayInHotel      bool        `json:"pay_in_hotel" gorm:"column:pay_in_hotel;"`
-	BreakFast       bool        `json:"break_fast" gorm:"column:break_fast;"`
-	FreeCancel      bool        `json:"free_cancel" gorm:"column:free_cancel;"`
-	FacilityIds     []string    `json:"facility_ids" gorm:"-"`
+	HotelId         int            `json:"hotel_id" gorm:"column:hotel_id;"`
+	Name            string         `json:"name" gorm:"column:name;"`
+	MaxCustomer     int            `json:"max_customer" gorm:"column:max_customer;"`
+	Area            float64        `json:"area" gorm:"column:area;"`
+	Bed             *common.Bed    `json:"bed" gorm:"column:bed;"`
+	Price           float64        `json:"price" gorm:"column:price;"`
+	PayInHotel      bool           `json:"pay_in_hotel" gorm:"column:pay_in_hotel;"`
+	Images          *common.Images `json:"images" gorm:"column:images;"`
+	BreakFast       bool           `json:"break_fast" gorm:"column:break_fast;"`
+	FreeCancel      bool           `json:"free_cancel" gorm:"column:free_cancel;"`
+	FacilityIds     []string       `json:"facility_ids" gorm:"-"`
 }
 
 func (RoomTypeCreate) TableName() string {
