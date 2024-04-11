@@ -7,7 +7,7 @@ import (
 )
 
 func (s *sqlStore) Update(ctx context.Context, id int, update *hoteltypemodel.HotelTypeUpdate) error {
-	if err := s.db.Updates(update).Where("id = ?", id).Error; err != nil {
+	if err := s.db.Where("id = ?", id).Updates(update).Error; err != nil {
 		return common.ErrDb(err)
 	}
 	return nil
