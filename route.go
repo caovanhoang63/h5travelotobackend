@@ -59,6 +59,8 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	// hotel facilities api
 	hotelFacilities := v1.Group("/hotels/facilities")
 	hotelFacilities.GET("/", ginhotelfacilities.ListAllHotelFacilities(appCtx))
+	hotelFacilitiesWithId := v1.Group("/hotels/:hotel-id/facilities")
+	hotelFacilitiesWithId.GET("/", ginhotelfacilities.GetFacilitiesOfAHotel(appCtx))
 
 	// room facilities api
 	roomFacilities := v1.Group("/rooms/facilities")
@@ -125,8 +127,10 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	hoteltypes.POST("/", middleware.RoleRequired(appCtx, common.RoleAdmin), ginhoteltype.CreateHotelType(appCtx))
 	hoteltypes.DELETE("/:hotel-type", middleware.RoleRequired(appCtx, common.RoleAdmin), ginhoteltype.DeleteHotelType(appCtx))
 	hoteltypes.PATCH("/:hotel-type", middleware.RoleRequired(appCtx, common.RoleAdmin), ginhoteltype.UpdateHotelType(appCtx))
-	hoteltypes.GET("/:hotel-type", ginhoteltype.FindHotelTypeById(appCtx))
-	hoteltypes.GET("/", ginhoteltype.ListAllHotelTypes(appCtx))
+
+	hotelTypesRead := v1.Group("/hotel-types")
+	hotelTypesRead.GET("/:hotel-type", ginhoteltype.FindHotelTypeById(appCtx))
+	hotelTypesRead.GET("/", ginhoteltype.ListAllHotelTypes(appCtx))
 
 	// booking detail api
 	bookingdetail := v1.Group("hotels/:hotel-id/bookings/:booking-id")
