@@ -22,6 +22,7 @@ const (
 	DbTypeRoomFacilityType  = 14
 	DbTypeRoomFacility      = 15
 	DbTypeDeal              = 16
+	DbTypeInvoice           = 17
 )
 
 // RecordStatus is a type to represent the status of a record
@@ -64,3 +65,8 @@ func AppRecover() {
 }
 
 const IsDebug = false
+
+// Currency
+const (
+	VND = "VND"
+)
