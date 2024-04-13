@@ -56,7 +56,9 @@ func (s *mongoStore) ListReviewWithCondition(
 		return nil, common.ErrDb(err)
 	}
 
-	paging.NextCursor = result[len(result)-1].ID.Hex()
+	if len(result) > 0 {
+		paging.NextCursor = result[len(result)-1].ID.Hex()
+	}
 
 	return result, nil
 }
