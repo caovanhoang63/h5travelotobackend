@@ -2,6 +2,7 @@ package reviewstorage
 
 import (
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/net/context"
 	"h5travelotobackend/common"
@@ -20,13 +21,20 @@ func (s *mongoStore) ListReviewWithCondition(
 	filterB = append(filterB, bson.E{Key: "status", Value: 1})
 
 	option := &options.FindOptions{}
-	if v := paging.FakeCursor; v != "" {
-		filterB = append(filterB, bson.E{Key: "_id", Value: bson.M{"$lt": v}})
-	} else {
+
+	if v := paging.FakeCursor; v == "" {
 		option.SetSkip(int64(paging.GetOffSet()))
+	} else {
+		cursor := primitive.ObjectID{}
+		err := cursor.UnmarshalText([]byte(v))
+		if err != nil {
+			filterB = append(filterB, bson.E{Key: "_id", Value: bson.M{"$lt": cursor}})
+		} else {
+			option.SetSkip(int64(paging.GetOffSet()))
+		}
 	}
 
-	option.SetLimit(int64(paging.Limit))
+	option.SetLimit(int64(paging.Limit)).SetSort(bson.D{{Key: "_id", Value: -1}})
 
 	coll := s.db.Collection(reviewmodel.Review{}.CollectionName())
 	if count, err := coll.CountDocuments(ctx, filterB); err != nil {
