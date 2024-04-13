@@ -44,7 +44,7 @@ func (s *sqlStore) ListBookingWithCondition(
 		db = db.Offset(paging.GetOffSet())
 	}
 
-	if err := db.Limit(paging.Limit).Find(&result).Order("id desc").Error; err != nil {
+	if err := db.Limit(paging.Limit).Order("id desc").Find(&result).Error; err != nil {
 		return nil, err
 	}
 

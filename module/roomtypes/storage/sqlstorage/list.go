@@ -60,7 +60,7 @@ func (s *sqlStore) ListRoomTypeWithCondition(
 		db = db.Offset(paging.GetOffSet())
 	}
 
-	if err := db.Limit(paging.Limit).Find(&data).Order("id desc").Error; err != nil {
+	if err := db.Limit(paging.Limit).Order("id desc").Find(&data).Error; err != nil {
 		return nil, err
 	}
 

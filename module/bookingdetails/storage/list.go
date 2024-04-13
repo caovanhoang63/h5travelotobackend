@@ -80,7 +80,7 @@ func (s *sqlStore) ListRoomOfBooking(ctx context.Context, bookingId int) ([]int,
 	var ids []int
 
 	db := s.db.Table(bookingdetailmodel.BookingDetail{}.TableName()).Where("booking_id = ?", bookingId)
-	if err := db.Pluck("room_id", &ids).Order("room_id desc").Error; err != nil {
+	if err := db.Order("room_id desc").Pluck("room_id", &ids).Error; err != nil {
 		return nil, common.ErrDb(err)
 	}
 
