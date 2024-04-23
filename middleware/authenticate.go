@@ -64,6 +64,9 @@ func RequireAuth(appCtx appContext.AppContext) func(ctx *gin.Context) {
 		user, err := store.FindUser(c.Request.Context(), map[string]interface{}{"id": payload.UserId})
 
 		if err != nil {
+			if err == common.RecordNotFound {
+				panic(common.ErrNoPermission(errors.New("user not found")))
+			}
 			//c.AbortWithStatusJSON(http.StatusUnauthorized, err)
 			panic(err)
 		}
