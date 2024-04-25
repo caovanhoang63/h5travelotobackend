@@ -24,7 +24,7 @@ func NewListHotelBiz(store ListHotelStore) *listHotelBiz {
 }
 
 func (biz *listHotelBiz) ListHotel(ctx context.Context, filter *hotelmodel.Filter, paging *common.Paging) ([]hotelmodel.Hotel, error) {
-	data, err := biz.store.ListHotelWithCondition(ctx, filter, paging)
+	data, err := biz.store.ListHotelWithCondition(ctx, filter, paging, "Province", "District", "Ward")
 	if err != nil {
 		return nil, common.ErrCannotListEntity(hotelmodel.EntityName, err)
 	}

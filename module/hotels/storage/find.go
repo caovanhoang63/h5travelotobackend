@@ -13,8 +13,12 @@ func (s *sqlStore) FindDataWithCondition(
 	moreKeys ...string,
 ) (*hotelmodel.Hotel, error) {
 	var data hotelmodel.Hotel
+	db := s.db.Table(hotelmodel.Hotel{}.TableName())
 
-	if err := s.db.Where(condition).First(&data).Error; err != nil {
+	for i := range moreKeys {
+		db = db.Preload(moreKeys[i])
+	}
+	if err := db.Where(condition).First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, common.RecordNotFound
 		}

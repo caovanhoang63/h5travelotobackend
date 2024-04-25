@@ -21,9 +21,12 @@ type Hotel struct {
 	Hotline         string             `json:"hotline" gorm:"column:hotline"`
 	Logo            *common.Image      `json:"logo" gorm:"column:logo"`
 	Images          *common.Images     `json:"images" gorm:"column:images"`
-	ProvinceCode    int                `json:"province_code" gorm:"column:province_code"`
-	DistrictCode    int                `json:"district_code" gorm:"column:district_code"`
-	WardCode        int                `json:"ward_Code" gorm:"column:ward_code"`
+	ProvinceCode    int                `json:"-" gorm:"column:province_code"`
+	Province        *Province          `json:"province,inline" gorm:"foreignKey:ProvinceCode;references:Code"`
+	DistrictCode    int                `json:"-" gorm:"column:district_code"`
+	District        *District          `json:"district,inline" gorm:"foreignKey:DistrictCode;references:Code"`
+	WardCode        int                `json:"-" gorm:"column:ward_code"`
+	Ward            *Ward              `json:"ward,inline" gorm:"foreignKey:WardCode;references:Code"`
 	Lat             float64            `json:"lat" gorm:"column:lat"`
 	Lng             float64            `json:"lng" gorm:"column:lng"`
 	Star            int                `json:"star" gorm:"star"`
@@ -126,3 +129,30 @@ var (
 	ErrNameIsEmpty      = errors.New("name can not be empty")
 	ErrInvalidHotelType = errors.New("invalid hotel type")
 )
+
+type Province struct {
+	Code int    `json:"code" gorm:"column:code"`
+	Name string `json:"name" gorm:"column:name"`
+}
+
+func (Province) TableName() string {
+	return "provinces"
+}
+
+type District struct {
+	Code int    `json:"code" gorm:"column:code"`
+	Name string `json:"name" gorm:"column:name"`
+}
+
+func (District) TableName() string {
+	return "districts"
+}
+
+type Ward struct {
+	Code int    `json:"code" gorm:"column:code"`
+	Name string `json:"name" gorm:"column:name"`
+}
+
+func (Ward) TableName() string {
+	return "wards"
+}

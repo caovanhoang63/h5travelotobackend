@@ -1,10 +1,10 @@
-package storage
+package invoicestorage
 
 import "gorm.io/gorm"
 
 // InvoiceStorage defines the storage layer for invoice
 type sqlStore struct {
-	gorm *gorm.DB
+	db *gorm.DB
 }
 
 func NewSQLStore(db *gorm.DB) *sqlStore {

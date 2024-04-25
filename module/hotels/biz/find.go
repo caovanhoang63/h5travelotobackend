@@ -24,8 +24,8 @@ func NewFindHotelBiz(store FindHotelStore, ps pubsub.Pubsub) *findHotelBiz {
 	return &findHotelBiz{store: store, ps: ps}
 }
 
-func (biz *findHotelBiz) FindWithConditionHotel(ctx context.Context, condition map[string]interface{}, moreKeys ...string) (*hotelmodel.Hotel, error) {
-	data, err := biz.store.FindDataWithCondition(ctx, condition, moreKeys...)
+func (biz *findHotelBiz) FindWithConditionHotel(ctx context.Context, condition map[string]interface{}) (*hotelmodel.Hotel, error) {
+	data, err := biz.store.FindDataWithCondition(ctx, condition, "Province", "District", "Ward")
 	if err != nil {
 		if err == common.RecordNotFound {
 			return nil, common.RecordNotFound

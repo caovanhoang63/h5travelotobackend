@@ -12,6 +12,7 @@ type Invoice struct {
 	BookingId       int             `json:"-" gorm:"column:booking_id;"`
 	BookingFakeId   *common.UID     `json:"booking_id" gorm:"column:booking_id;"`
 	DealId          int             `json:"-" gorm:"column:deal_id;"`
+	PayInHotel      bool            `json:"pay_in_hotel" gorm:"column:pay_in_hotel;"`
 	DealFakeId      *common.UID     `json:"deal_id" gorm:"column:deal_id;"`
 	TotalAmount     decimal.Decimal `json:"total_amount" gorm:"column:total_amount;"`
 	DiscountAmount  decimal.Decimal `json:"discount_amount" gorm:"column:discount_amount;"`
@@ -48,6 +49,7 @@ type InvoiceCreate struct {
 	DealId          int         `json:"-" gorm:"column:deal_id;"`
 	DealFakeId      *common.UID `json:"deal_id" gorm:"column:deal_id;"`
 	Currency        string      `json:"currency" gorm:"column:currency;"`
+	PayInHotel      bool        `json:"pay_in_hotel" gorm:"column:pay_in_hotel;"`
 }
 
 func (InvoiceCreate) TableName() string {

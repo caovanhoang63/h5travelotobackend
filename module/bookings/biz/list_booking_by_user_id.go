@@ -36,7 +36,7 @@ func (biz *listBookingBiz) ListBookingByUserId(
 	}
 	filter.UserId = userId
 
-	result, err := biz.store.ListBookingWithCondition(ctx, filter, paging)
+	result, err := biz.store.ListBookingWithCondition(ctx, filter, paging, "Hotel", "Hotel.Province", "Hotel.District", "Hotel.Ward")
 	if err != nil {
 		return nil, common.ErrCannotListEntity(bookingmodel.EntityName, err)
 	}
