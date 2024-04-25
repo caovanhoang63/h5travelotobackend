@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 	"h5travelotobackend/component/pubsub"
 	"h5travelotobackend/component/uploadprovider"
+	"h5travelotobackend/skio"
 )
 
 type AppContext interface {
@@ -13,6 +14,7 @@ type AppContext interface {
 	GetSecretKey() string
 	UploadProvider() uploadprovider.UploadProvider
 	GetPubSub() pubsub.Pubsub
+	GetRealTimeEngine() skio.RealtimeEngine
 }
 
 type appContext struct {
@@ -21,9 +23,10 @@ type appContext struct {
 	uploadProvider uploadprovider.UploadProvider
 	secretKey      string
 	pubSub         pubsub.Pubsub
+	rtEngine       skio.RealtimeEngine
 }
 
-func NewAppContext(db *gorm.DB, mongodb *mongo.Database, secretKey string, provider uploadprovider.UploadProvider, pubsub pubsub.Pubsub) AppContext {
+func NewAppContext(db *gorm.DB, mongodb *mongo.Database, secretKey string, provider uploadprovider.UploadProvider, pubsub pubsub.Pubsub) *appContext {
 	return &appContext{
 		db:             db,
 		mongodb:        mongodb,
@@ -48,3 +51,9 @@ func (appCtx *appContext) UploadProvider() uploadprovider.UploadProvider {
 }
 
 func (appCtx *appContext) GetPubSub() pubsub.Pubsub { return appCtx.pubSub }
+
+func (appContext *appContext) GetRealTimeEngine() skio.RealtimeEngine { return appContext.rtEngine }
+
+func (appContext *appContext) SetRealTimeEngine(rtEngine skio.RealtimeEngine) {
+	appContext.rtEngine = rtEngine
+}
