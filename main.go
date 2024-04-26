@@ -140,6 +140,9 @@ func main() {
 		log.Println(err)
 	}
 
+	r.StaticFile("/socket/hotel", "./hotel.html")
+	r.StaticFile("/socket/customer", "./customer.html")
+
 	if err := r.Run(); err != nil {
 		log.Fatal(err)
 	}

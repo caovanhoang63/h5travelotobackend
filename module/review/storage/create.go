@@ -12,8 +12,11 @@ func (s *mongoStore) Create(ctx context.Context, review *reviewmodel.Review) err
 
 	coll := s.db.Collection(review.CollectionName())
 	one, err := coll.InsertOne(ctx, review)
-	review.ID = (one.InsertedID).(primitive.ObjectID)
-	fmt.Println("review")
+	if one != nil {
+		id := (one.InsertedID).(primitive.ObjectID)
+		review.ID = &id
+		fmt.Println("review")
+	}
 	if err != nil {
 		return common.ErrDb(err)
 	}

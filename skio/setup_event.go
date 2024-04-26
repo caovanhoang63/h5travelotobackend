@@ -65,8 +65,19 @@ func Setup(appCtx AppContext, engine *rtEngine) {
 
 		appSck := NewAppSocket(s, user)
 		engine.saveAppSocket(user.Id, appSck)
+		fmt.Println("socket authenticated")
 
 		s.Emit("authenticated", user)
 
 	})
+	server.OnEvent("/", "chat", func(s socketio.Conn, message Message) {
+		fmt.Printf("user: %s\n", message.Message)
+	})
+	server.OnEvent("/", "join", func(s socketio.Conn, hotelId string) {
+		fmt.Printf("user wants to chat with hotel %s\n", hotelId)
+	})
+}
+
+type Message struct {
+	Message string `json:"message"`
 }
