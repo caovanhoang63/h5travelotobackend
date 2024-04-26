@@ -1,0 +1,90 @@
+<!doctype html>
+
+<head>
+    <title>Demo chat with socket.io</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.0/socket.io.js"></script>
+</head>
+
+<body>
+    <div>
+        <h1>Login</h1>
+        <input id="email" placeholder="email" />
+        <input id="password" placeholder="password" />
+        <button id="login">Login</button>
+    </div>
+
+    <div>
+        <h1>Connect to hotel</h1>
+        <input id="hotel" placeholder="hotel-id" />
+        <button id="join">Join</button>
+    </div>
+
+    <div id="main">
+        <h1>Demo Socket IO</h1>
+        <input id="message" placeholder="message" />
+        <button id="send"> Send </button>
+    </div>
+
+    <script>
+
+        const joinButton = document.querySelector('#join')
+        joinButton.addEventListener('click', () => {
+            const hotel = document.getElementById('hotel').value;
+            console.log(hotel)
+            socket.emit('join', hotel );
+        });
+
+
+        const socket = io("", { transports: ['websocket'] });
+
+        socket.on('connect', () => {
+            console.log('Client connected');
+            socket.emit('authenticate', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJfaWQiOjYsInJvbGUiOiJvd25lciIsIkV4cGlyeSI6MH0sImV4cCI6MTcxNjY5NTA5MSwiaWF0IjoxNzE0MTAzMDkxfQ.jKRCzLrORTq8w9k9S2GbMOOBBXTxKp70kLfzkys2P5I');
+        })
+
+        socket.on('disconnect', () => console.log('Socket is disconnected'))
+
+
+        const sendButton = document.querySelector('#send');
+        sendButton.addEventListener('click', () => {
+            const message = document.getElementById('message').value;
+            console.log(message)
+            socket.emit('chat', { message });
+        });
+
+        const loginButton = document.querySelector('#login')
+
+        loginButton.addEventListener('click', () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const userLogin = {
+                email : email,
+                password : password,
+            }
+            console.log(userLogin)
+            axios.post("http://localhost:8080/v1/authenticate",userLogin,
+                {
+                    headers: {
+                        Accept: "application/json",
+                    }
+                }
+            )
+                .then((res) => {
+                    alert("login success!")
+                    socket.emit('authenticate', res.data.data.access_token.Token);
+                })
+                .catch((err) => {
+                    alert("login failed!")
+            })
+
+        });
+
+
+
+
+
+
+    </script>
+</body>
+

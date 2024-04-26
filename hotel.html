@@ -1,0 +1,76 @@
+<!doctype html>
+
+<head>
+    <title>Demo chat with socket.io</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.0/socket.io.js"></script>
+</head>
+
+<body>
+    <div>
+        <h1>Login</h1>
+        <input id="email" placeholder="email" />
+        <input id="password" placeholder="password" />
+        <button id="login">Login</button>
+    </div>
+
+
+    <div id="main">
+        <h1>Demo Socket IO</h1>
+        <input id="message" placeholder="message" />
+        <button id="send"> Send </button>
+    </div>
+
+    <script>
+        const socket = io("", { transports: ['websocket'] });
+        var locTimer = null;
+
+        socket.on('connect', () => {
+            console.log('Client connected');
+        })
+
+        socket.on('disconnect', () => console.log('Socket is disconnected'))
+        const sendButton = document.querySelector('#send');
+        sendButton.addEventListener('click', () => {
+            const message = document.getElementById('message').value;
+            console.log(message)
+            socket.emit('chat', { message });
+        });
+
+        const loginButton = document.querySelector('#login')
+        loginButton.addEventListener('click', () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const userLogin = {
+                email : email,
+                password : password,
+            }
+            console.log(userLogin)
+            axios.post("http://localhost:8080/v1/authenticate",userLogin,
+                {
+                    headers: {
+                        Accept: "application/json",
+                    }
+                }
+            )
+                .then((res) => {
+                console.log(res.data);
+
+                    socket.emit('authenticate', res.data.data.access_token.Token);
+
+                })
+                .catch((err) => {
+                console.log(err);
+            })
+
+        });
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>
