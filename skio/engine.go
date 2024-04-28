@@ -6,6 +6,7 @@ import (
 	"github.com/googollee/go-socket.io/engineio"
 	"github.com/googollee/go-socket.io/engineio/transport"
 	"github.com/googollee/go-socket.io/engineio/transport/websocket"
+	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
 	"log"
 	"sync"
@@ -14,6 +15,7 @@ import (
 type AppContext interface {
 	GetGormDbConnection() *gorm.DB
 	GetSecretKey() string
+	GetMongoConnection() *mongo.Database
 }
 
 type RealtimeEngine interface {
