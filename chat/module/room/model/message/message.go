@@ -1,4 +1,4 @@
-package chatmodel
+package chatmessage
 
 import (
 	"h5travelotobackend/common"

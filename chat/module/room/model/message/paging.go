@@ -1,6 +1,4 @@
-package chatmodel
-
-import "strings"
+package chatmessage
 
 type Paging struct {
 	Limit int   `json:"limit" form:"limit"`
@@ -17,10 +15,8 @@ func (p *Paging) FullFill() {
 		p.Page = 1
 	}
 	if p.Limit <= 0 {
-		p.Limit = 50
+		p.Limit = 30
 	}
-
-	p.FakeCursor = strings.TrimSpace(p.FakeCursor)
 }
 
 func (p *Paging) GetOffSet() int {
