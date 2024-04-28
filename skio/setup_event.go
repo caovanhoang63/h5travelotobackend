@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	socketio "github.com/googollee/go-socket.io"
+	"h5travelotobackend/chat/module/room/transport/skiochat"
+	"h5travelotobackend/common"
 	"h5travelotobackend/component/tokenprovider/jwt"
 	userstorage "h5travelotobackend/module/users/storage"
 )
@@ -37,7 +39,6 @@ func Setup(appCtx AppContext, engine *rtEngine) {
 	server.OnEvent("/", "authenticate", func(s socketio.Conn, token string) {
 		db := appCtx.GetGormDbConnection()
 		store := userstorage.NewSqlStore(db)
-
 		tokenProvider := jwt.NewJWTProvider(appCtx.GetSecretKey())
 
 		payload, err := tokenProvider.Validate(token)
@@ -64,20 +65,15 @@ func Setup(appCtx AppContext, engine *rtEngine) {
 		user.Mask(false)
 
 		appSck := NewAppSocket(s, user)
+		s.SetContext(user)
 		engine.saveAppSocket(user.Id, appSck)
 		fmt.Println("socket authenticated")
 
 		s.Emit("authenticated", user)
 
 	})
-	server.OnEvent("/", "chat", func(s socketio.Conn, message Message) {
-		fmt.Printf("user: %s\n", message.Message)
-	})
-	server.OnEvent("/", "join", func(s socketio.Conn, hotelId string) {
-		fmt.Printf("user wants to chat with hotel %s\n", hotelId)
-	})
-}
 
-type Message struct {
-	Message string `json:"message"`
+	server.OnEvent("/", common.EventMessageSent, skiochat.MessageSent(appCtx, engine))
+	server.OnEvent("/", common.EventUserJoined, skiochat.UserJoined(appCtx, engine))
+
 }

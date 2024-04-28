@@ -6,14 +6,20 @@ import (
 )
 
 type Message struct {
-	Id         int           `json:"id" bson:"id"`
+	Id         int           `json:"id,omitempty" bson:"id"`
 	Message    string        `json:"message,omitempty" bson:"message,omitempty"`
 	Image      *common.Image `json:"image,omitempty" bson:"image,omitempty"`
 	From       int           `json:"-" bson:"from"`
 	FromFakeId *common.UID   `json:"from" bson:"-"`
 	Status     int           `json:"status" bson:"status"`
+	IsRead     bool          `json:"is_read" bson:"is_read"`
 	CreatedAt  *time.Time    `json:"created_at" bson:"created_at"`
 	UpdatedAt  *time.Time    `json:"updated_at" bson:"updated_at"`
+}
+
+type MessageSent struct {
+	RoomId  string   `json:"room_id" bson:"room_id"`
+	Message *Message `json:"message" bson:"message"`
 }
 
 type Messages []*Message
