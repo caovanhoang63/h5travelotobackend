@@ -22,7 +22,7 @@ func GetChatRoom(appCtx appContext.AppContext) gin.HandlerFunc {
 		biz := chatbiz.NewFindChatRoomBiz(store)
 
 		requester := c.MustGet(common.CurrentUser).(common.Requester)
-		room, err := biz.FindChatRoom(c.Request.Context(), int(uid.GetLocalID()), requester.GetUserId())
+		room, err := biz.FindChatRoom(c.Request.Context(), requester.GetUserId(), int(uid.GetLocalID()))
 
 		if err != nil {
 			panic(err)

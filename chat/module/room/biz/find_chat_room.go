@@ -23,7 +23,8 @@ func NewFindChatRoomBiz(store FindChatRoomStore) *findChatRoomBiz {
 	return &findChatRoomBiz{store: store}
 }
 
-func (biz *findChatRoomBiz) FindChatRoom(ctx context.Context, userId int, hotelId int) (*chatroom.Room, error) {
+func (biz *findChatRoomBiz) FindChatRoom(ctx context.Context,
+	userId int, hotelId int) (*chatroom.Room, error) {
 	room, err := biz.store.FindChatRoom(ctx, userId, hotelId)
 	if err == nil {
 		return room, nil
