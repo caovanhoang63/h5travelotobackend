@@ -19,8 +19,8 @@ func (s *mongoStore) HandleNewMessage(ctx context.Context, message *chatroommode
 	update := bson.D{
 		{"$set", bson.D{{"last_message", message.ID}}},
 		{"$inc", bson.D{{"total_message", 1}}},
-		{"$inc", bson.M{"active": bson.M{"$eq": bson.A{"user_id", message.UserId}}, "user_unread": 1}},
-		{"$inc", bson.M{"active": bson.M{"$nq": bson.A{"user_id", message.UserId}}, "hotel_unread": 1}},
+		{"$inc", bson.D{{"user_unread", bson.M{"$cond": bson.A{bson.M{"$eq": bson.A{"$user_id", message.UserId}}, 1, 0}}}}},
+		{"$inc", bson.D{{"hotel_unread", bson.M{"$cond": bson.A{bson.M{"$ne": bson.A{"$user_id", message.UserId}}, 1, 0}}}}},
 	}
 
 	one, err := coll.UpdateOne(ctx, filter, update)
