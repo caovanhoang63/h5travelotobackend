@@ -1,6 +1,8 @@
 package common
 
-import "strings"
+import (
+	"strings"
+)
 
 type Paging struct {
 	Limit int   `json:"limit" form:"limit"`

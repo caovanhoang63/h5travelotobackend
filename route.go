@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"h5travelotobackend/chat/module/message/transport/ginchatmessage"
+	"h5travelotobackend/chat/module/room/transport/ginchatroom"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/middleware"
@@ -161,4 +163,18 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	dealRead := v1.Group("deals")
 	dealRead.GET("/:deal-id", gindeal.GetDealById(appCtx))
 	dealRead.GET("/", gindeal.ListDeal(appCtx))
+
+	// chat
+	useChat := v1.Group("/chat")
+	useChat.Use(middleware.RequireAuth(appCtx))
+	useChat.GET("/hotels/:hotel-id", ginchatroom.GetChatRoom(appCtx))
+	useChat.GET("/messages/:message-id", ginchatmessage.GetMessageById(appCtx))
+	useChat.GET("/rooms/:room-id/messages", ginchatmessage.ListMessagesByRoomId(appCtx))
+
+	hotelChat := v1.Group("/hotels/:hotel-id/chat")
+	hotelChat.Use(middleware.RequireAuth(appCtx))
+	hotelChat.Use(middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager, common.RoleStaff))
+	hotelChat.Use(middleware.IsHotelWorker(appCtx))
+	hotelChat.GET("/", ginchatroom.ListChatRoomByHotelId(appCtx))
+
 }

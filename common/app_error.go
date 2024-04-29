@@ -140,4 +140,5 @@ func ErrCannotPublishMessage(topic string, err error) *AppError {
 		fmt.Sprintf("CANNOT_PUBLISH_%s", strings.ToUpper(topic)))
 }
 
+var DocumentNotFound = errors.New("document not found")
 var RecordNotFound = errors.New("record not found")

@@ -1,0 +1,78 @@
+<!doctype html>
+
+<head>
+    <title>Demo chat with socket.io</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.0/socket.io.js"></script>
+</head>
+
+<body>
+    <div>
+        <h1>Connect to hotel</h1>
+        <input id="hotel-id" placeholder="hotel-id"  value="e532qos8jjM1"/>
+        <button id="join">Join</button>
+    </div>
+
+    <div id="main">
+        <h1>Demo Socket IO</h1>
+        <input id="message" placeholder="message" />
+        <button id="send"> Send </button>
+    </div>
+
+    <script>
+
+
+        // Socket connect to server
+        const socket = io("", { transports: ['websocket'] });
+        const Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJfaWQiOjcsInJvbGUiOiJjdXN0b21lciIsIkV4cGlyeSI6MH0sImV4cCI6MTcxNjk3NTc2NiwiaWF0IjoxNzE0MzgzNzY2fQ.YmMwDxiyHyeYfKpqBDDY4yjRsmk98So0_CrCAVqE2xA";
+        socket.on('connect', () => {
+            console.log('Client connected');
+            socket.emit('authenticate', Token);
+        })
+        socket.on('disconnect', () => console.log('Socket is disconnected'))
+        // Socket connect to server
+
+        // Set up axios
+        const axiosInstance = axios.create({
+            baseURL: 'http://localhost:8080/v1/',
+            timeout: 5000,
+            headers: {
+                Authorization: `Bearer ${Token}`,
+                Accept: "application/json",
+            }
+        });
+        // End  Set up axios
+
+        // Join room
+        const joinButton = document.querySelector('#join')
+        joinButton.addEventListener('click', () => {
+            const hotel = document.getElementById('hotel-id').value;
+            axiosInstance.get(`chat/hotels/${hotel}`)
+                .then((res) => {
+                    const data = res.data.data
+                    socket.emit('user_joined', data.id)
+                    sessionStorage.setItem('room-id', data.id)
+                })
+                .catch((error) => {
+                    alert('Hotel not found')
+                });
+        });
+        socket.on('joined', (data) => {
+            console.log('Joined room', data)
+        })
+        // End Join room
+
+        // Send message
+        const sendButton = document.querySelector('#send');
+        sendButton.addEventListener('click', () => {
+            const message = {
+                message: document.getElementById('message').value,
+                room_id: sessionStorage.getItem('room-id'),
+            }
+            socket.emit('message_sent',message)
+        });
+        // Send message
+
+    </script>
+</body>
+

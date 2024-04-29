@@ -66,6 +66,10 @@ func (engine *consumerEngine) Start() error {
 		log.Println("Err:", err)
 	}
 
+	if err := engine.startSubTopic(common.EventNewMessage, true,
+		NewMessage(engine.appCtx, context.Background())); err != nil {
+		log.Println("Err:", err)
+	}
 	return nil
 }
 

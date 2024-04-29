@@ -15,6 +15,7 @@ import (
 	rabbitpubsub "h5travelotobackend/component/pubsub/rabbitmq"
 	"h5travelotobackend/component/uploadprovider"
 	"h5travelotobackend/middleware"
+	"h5travelotobackend/skio"
 	"h5travelotobackend/subcriber"
 	"log"
 	"net/http"
@@ -132,6 +133,15 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	rtEngine := skio.NewEngine()
+	appCtx.SetRealTimeEngine(rtEngine)
+	if err := rtEngine.Run(appCtx, r); err != nil {
+		log.Println(err)
+	}
+
+	r.StaticFile("/socket/hotel", "./hotel.html")
+	r.StaticFile("/socket/customer", "./customer.html")
 
 	if err := r.Run(); err != nil {
 		log.Fatal(err)

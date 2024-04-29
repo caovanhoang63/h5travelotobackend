@@ -33,7 +33,7 @@ func CreateRoom(appCtx appContext.AppContext) gin.HandlerFunc {
 		data.RoomTypeID = int(roomTypeUid.GetLocalID())
 
 		store := roomstorage.NewSqlStore(appCtx.GetGormDbConnection())
-		//TODO: use gRPC instead of SQL store
+		//TODO: use gRPC instead of SQL storage
 		findRoomTypeStore := roomtypesqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
 		biz := roombiz.NewCreateRoomBiz(store, findRoomTypeStore, appCtx.GetPubSub())
 

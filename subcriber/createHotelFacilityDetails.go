@@ -13,7 +13,7 @@ import (
 
 func CreateHotelFacilityDetails(appCtx appContext.AppContext, ctx context.Context) consumerJob {
 	return consumerJob{
-		Title: "store facilities of a hotel when it's created",
+		Title: "storage facilities of a hotel when it's created",
 		Handler: func(ctx context.Context, message *pubsub.Message) error {
 			var hotel common.DTOHotel
 			err := json.Unmarshal(message.Data, &hotel)
