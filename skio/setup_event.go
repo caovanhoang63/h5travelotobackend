@@ -76,5 +76,7 @@ func Setup(appCtx AppContext, engine *rtEngine) {
 
 	server.OnEvent("/", common.EventMessageSent, skiochatmessage.MessageSent(appCtx, engine))
 	server.OnEvent("/", common.EventUserJoined, skiochatroom.UserJoined(appCtx, engine))
+	server.OnEvent("/", common.EventCustomerSeenMessage, skiochatroom.UserSeenMessages(appCtx, engine))
+	server.OnEvent("/", common.EventHotelSeenMessage, skiochatroom.HotelSeenMessages(appCtx, engine))
 
 }
