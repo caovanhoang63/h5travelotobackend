@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"h5travelotobackend/chat/module/message/transport/ginchatmessage"
 	"h5travelotobackend/chat/module/room/transport/ginchatroom"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
@@ -167,6 +168,7 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	useChat := v1.Group("/chat")
 	useChat.Use(middleware.RequireAuth(appCtx))
 	useChat.GET("/hotels/:hotel-id", ginchatroom.GetChatRoom(appCtx))
+	useChat.GET("/messages/:message-id", ginchatmessage.GetMessageById(appCtx))
 
 	hotelChat := v1.Group("/hotels/:hotel-id/chat")
 	hotelChat.Use(middleware.RequireAuth(appCtx))

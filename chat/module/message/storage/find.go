@@ -22,7 +22,7 @@ func (s *mongoStore) FindMessageWithCondition(ctx context.Context,
 	err = one.Err()
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, common.ErrInternal(err)
+			return nil, common.DocumentNotFound
 		}
 		return nil, common.ErrDb(err)
 	}
