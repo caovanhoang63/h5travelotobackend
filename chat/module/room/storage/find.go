@@ -1,11 +1,11 @@
-package chatstorage
+package chatroomstorage
 
 import (
 	"errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/net/context"
-	chatroom "h5travelotobackend/chat/module/room/model/room"
+	chatroom "h5travelotobackend/chat/module/room/model"
 	"h5travelotobackend/common"
 )
 

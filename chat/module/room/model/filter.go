@@ -1,4 +1,4 @@
-package chatroom
+package chatroommodel
 
 import (
 	"go.mongodb.org/mongo-driver/bson"

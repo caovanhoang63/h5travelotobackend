@@ -1,9 +1,9 @@
-package chatbiz
+package chatroombiz
 
 import (
 	"errors"
 	"golang.org/x/net/context"
-	chatroom "h5travelotobackend/chat/module/room/model/room"
+	chatroom "h5travelotobackend/chat/module/room/model"
 	"h5travelotobackend/common"
 )
 
@@ -39,7 +39,6 @@ func (biz *findChatRoomBiz) FindChatRoom(ctx context.Context,
 		}
 		room.UserId = userId
 		room.HotelId = hotelId
-		room.Messages = nil
 		return room, nil
 	}
 

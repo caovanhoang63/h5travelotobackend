@@ -1,4 +1,4 @@
-package skiochat
+package skiochatroom
 
 import (
 	"fmt"

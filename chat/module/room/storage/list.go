@@ -1,16 +1,16 @@
-package chatstorage
+package chatroomstorage
 
 import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/net/context"
-	chatroom "h5travelotobackend/chat/module/room/model/room"
+	"h5travelotobackend/chat/module/room/model"
 	"h5travelotobackend/common"
 )
 
-func (s *mongoStore) ListChatRoom(ctx context.Context, filter *chatroom.Filter, paging *common.Paging) ([]chatroom.RoomTiny, error) {
-	var result []chatroom.RoomTiny
+func (s *mongoStore) ListChatRoom(ctx context.Context, filter *chatroommodel.Filter, paging *common.Paging) ([]chatroommodel.Room, error) {
+	var result []chatroommodel.Room
 	filterB, err := filter.ToBson()
 	filterB = append(filterB, bson.E{Key: "status", Value: 1})
 	if err != nil {
@@ -33,7 +33,7 @@ func (s *mongoStore) ListChatRoom(ctx context.Context, filter *chatroom.Filter, 
 
 	option.SetLimit(int64(paging.Limit)).SetSort(bson.D{{Key: "_id", Value: -1}})
 
-	coll := s.db.Collection(chatroom.Room{}.CollectionName())
+	coll := s.db.Collection(chatroommodel.Room{}.CollectionName())
 	if count, err := coll.CountDocuments(ctx, filterB); err != nil {
 		return nil, common.ErrDb(err)
 	} else {
@@ -46,7 +46,7 @@ func (s *mongoStore) ListChatRoom(ctx context.Context, filter *chatroom.Filter, 
 	}
 
 	for cur.Next(ctx) {
-		var chatRoom chatroom.RoomTiny
+		var chatRoom chatroommodel.Room
 		if err := cur.Decode(&chatRoom); err != nil {
 			return nil, common.ErrDb(err)
 		}

@@ -5,7 +5,8 @@ import (
 	"errors"
 	"fmt"
 	socketio "github.com/googollee/go-socket.io"
-	"h5travelotobackend/chat/module/room/transport/skiochat"
+	"h5travelotobackend/chat/module/message/transport/skiochatmessage"
+	"h5travelotobackend/chat/module/room/transport/skiochatroom"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/tokenprovider/jwt"
 	userstorage "h5travelotobackend/module/users/storage"
@@ -73,7 +74,7 @@ func Setup(appCtx AppContext, engine *rtEngine) {
 
 	})
 
-	server.OnEvent("/", common.EventMessageSent, skiochat.MessageSent(appCtx, engine))
-	server.OnEvent("/", common.EventUserJoined, skiochat.UserJoined(appCtx, engine))
+	server.OnEvent("/", common.EventMessageSent, skiochatmessage.MessageSent(appCtx, engine))
+	server.OnEvent("/", common.EventUserJoined, skiochatroom.UserJoined(appCtx, engine))
 
 }

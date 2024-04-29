@@ -1,8 +1,8 @@
-package chatbiz
+package chatmessagebiz
 
 import (
 	"golang.org/x/net/context"
-	chatmodel "h5travelotobackend/chat/module/room/model/message"
+	chatmodel "h5travelotobackend/chat/module/message/model"
 )
 
 type CreateNewMessageStore interface {

@@ -1,9 +1,9 @@
-package ginchat
+package ginchatroom
 
 import (
 	"github.com/gin-gonic/gin"
-	chatbiz "h5travelotobackend/chat/module/room/biz"
-	chatstorage "h5travelotobackend/chat/module/room/storage"
+	chatroombiz "h5travelotobackend/chat/module/room/biz"
+	chatroomstorage "h5travelotobackend/chat/module/room/storage"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	"net/http"
@@ -18,8 +18,8 @@ func GetChatRoom(appCtx appContext.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 		}
 
-		store := chatstorage.NewMongoStore(appCtx.GetMongoConnection())
-		biz := chatbiz.NewFindChatRoomBiz(store)
+		store := chatroomstorage.NewMongoStore(appCtx.GetMongoConnection())
+		biz := chatroombiz.NewFindChatRoomBiz(store)
 
 		requester := c.MustGet(common.CurrentUser).(common.Requester)
 		room, err := biz.FindChatRoom(c.Request.Context(), requester.GetUserId(), int(uid.GetLocalID()))

@@ -1,4 +1,4 @@
-package chatroomstorage
+package chatmessagestorage
 
 import "go.mongodb.org/mongo-driver/mongo"
 
