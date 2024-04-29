@@ -169,6 +169,7 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	useChat.Use(middleware.RequireAuth(appCtx))
 	useChat.GET("/hotels/:hotel-id", ginchatroom.GetChatRoom(appCtx))
 	useChat.GET("/messages/:message-id", ginchatmessage.GetMessageById(appCtx))
+	useChat.GET("/rooms/:room-id/messages", ginchatmessage.ListMessagesByRoomId(appCtx))
 
 	hotelChat := v1.Group("/hotels/:hotel-id/chat")
 	hotelChat.Use(middleware.RequireAuth(appCtx))

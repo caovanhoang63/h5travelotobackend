@@ -1,12 +1,12 @@
 package chatmessagestorage
 
 import (
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/net/context"
 	chatmessagemodel "h5travelotobackend/chat/module/message/model"
-	chatroommodel "h5travelotobackend/chat/module/room/model"
 	"h5travelotobackend/common"
 )
 
@@ -17,6 +17,8 @@ func (s *mongoStore) ListMessageWithCondition(ctx context.Context,
 	if err != nil {
 		return nil, common.ErrInternal(err)
 	}
+
+	filterB = append(filterB, bson.E{Key: "status", Value: common.StatusActive})
 
 	option := &options.FindOptions{}
 
@@ -34,13 +36,15 @@ func (s *mongoStore) ListMessageWithCondition(ctx context.Context,
 
 	option.SetLimit(int64(paging.Limit)).SetSort(bson.D{{Key: "_id", Value: -1}})
 
-	coll := s.db.Collection(chatroommodel.Room{}.CollectionName())
+	coll := s.db.Collection(chatmessagemodel.Message{}.CollectionName())
 	if count, err := coll.CountDocuments(ctx, filterB); err != nil {
 		return nil, common.ErrDb(err)
 	} else {
 		paging.Total = count
 	}
 
+	fmt.Println("filterB: ", filterB)
+	fmt.Println("option: ", option)
 	cur, err := coll.Find(ctx, filterB, option)
 	if err != nil {
 		return nil, common.ErrDb(err)
@@ -53,6 +57,7 @@ func (s *mongoStore) ListMessageWithCondition(ctx context.Context,
 		}
 		result = append(result, message)
 	}
+	fmt.Println("count: ", cur.Current)
 
 	if err := cur.Err(); err != nil {
 		return nil, common.ErrDb(err)
