@@ -106,7 +106,8 @@ func (u *UserUpdate) Validate() error {
 }
 
 type UserChangePassword struct {
-	Password string `json:"password" gorm:"column:password;"`
+	OldPassword string `json:"old_password" gorm:"column:old_password;"`
+	Password    string `json:"password" gorm:"column:password;"`
 }
 
 func (UserChangePassword) TableName() string {
@@ -179,5 +180,15 @@ var (
 		errors.New("user has been banned"),
 		"user has been banned",
 		"ErrUserBanned",
+	)
+	ErrPasswordMatchedWithPast = common.NewCustomError(
+		errors.New("password matched with past"),
+		"password matched with past",
+		"ErrPasswordMatchedWithPast",
+	)
+	ErrOldPasswordNotMatch = common.NewCustomError(
+		errors.New("old password not match"),
+		"old password not match",
+		"ErrOldPasswordNotMatch",
 	)
 )
