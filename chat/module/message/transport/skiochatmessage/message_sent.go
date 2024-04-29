@@ -12,25 +12,23 @@ import (
 
 func MessageSent(appCtx common.SimpleAppContext,
 	rtEngine common.SimpleRealtimeEngine,
-) func(s socketio.Conn, sent *chatmessagemodel.MessageSent) {
-	return func(s socketio.Conn, sent *chatmessagemodel.MessageSent) {
+) func(s socketio.Conn, message *chatmessagemodel.Message) {
+	return func(s socketio.Conn, message *chatmessagemodel.Message) {
 		user := s.Context().(common.Requester)
+		message.UserId = user.GetUserId()
+		message.UserFakeId = common.NewUIDP(uint32(user.GetUserId()), common.DbTypeUser, 0)
 
-		sent.Message.UserId = user.GetUserId()
-		sent.Message.UserFakeId = common.NewUIDP(uint32(user.GetUserId()), common.DbTypeUser, 0)
-		sent.Message.OnCreate()
-
-		log.Printf("user %v sent: %s\n", user.GetUserId(), sent.Message.Message)
-		log.Println("room id: ", sent.RoomId)
+		log.Printf("user %v sent: %s\n", user.GetUserId(), message.Message)
+		log.Println("room id: ", message.RoomId)
 
 		store := chatmessagestorage.NewMongoStore(appCtx.GetMongoConnection())
-		biz := chatmessagebiz.NewCreateNewMessageBiz(store)
+		biz := chatmessagebiz.NewCreateNewMessageBiz(store, appCtx.GetPubSub())
 
-		if err := biz.CreateMessage(context.TODO(), sent.RoomId, sent.Message); err != nil {
+		if err := biz.CreateMessage(context.TODO(), message); err != nil {
 			s.Emit(common.EventCannotSendMessage, true)
 		}
 
-		err := rtEngine.EmitToRoom(sent.RoomId, common.EventNewMessage, sent.Message)
+		err := rtEngine.EmitToRoom(message.RoomId.String(), common.EventNewMessage, message.Message)
 		if err != nil {
 			s.Emit(common.EventCannotSendMessage, true)
 		}

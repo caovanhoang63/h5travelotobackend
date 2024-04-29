@@ -17,13 +17,20 @@ type Message struct {
 	IsRead            bool                `json:"is_read" bson:"is_read"`
 }
 
-func (m Message) CollectionName() string {
-	return "chat_messages"
+func (m *Message) GetChatMessageId() string {
+	return m.ID.Hex()
 }
 
-type MessageSent struct {
-	RoomId  string   `json:"room_id" bson:"room_id"`
-	Message *Message `json:"message" bson:"message"`
+func (m *Message) GetChatRoomId() string {
+	return m.RoomId.Hex()
+}
+
+func (m *Message) GetSenderId() int {
+	return m.UserId
+}
+
+func (m Message) CollectionName() string {
+	return "chat_messages"
 }
 
 type Messages []*Message

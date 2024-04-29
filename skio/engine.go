@@ -8,6 +8,7 @@ import (
 	"github.com/googollee/go-socket.io/engineio/transport/websocket"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
+	"h5travelotobackend/component/pubsub"
 	"log"
 	"sync"
 )
@@ -16,6 +17,7 @@ type AppContext interface {
 	GetGormDbConnection() *gorm.DB
 	GetSecretKey() string
 	GetMongoConnection() *mongo.Database
+	GetPubSub() pubsub.Pubsub
 }
 
 type RealtimeEngine interface {

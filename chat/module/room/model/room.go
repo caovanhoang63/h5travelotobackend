@@ -30,6 +30,10 @@ func (r *Room) Mask(isAdmin bool) {
 
 type RoomCreate struct {
 	common.MongoModel `bson:",inline"`
-	HotelId           int `json:"-" bson:"hotel_id"`
-	UserId            int `json:"-" bson:"user_id"`
+	HotelId           int                 `json:"-" bson:"hotel_id"`
+	UserId            int                 `json:"-" bson:"user_id"`
+	TotalMessage      int                 `json:"total_message" bson:"total_message"`
+	LastMessageId     *primitive.ObjectID `json:"last_message" bson:"last_message"`
+	UserUnRead        int                 `json:"user_unread" bson:"user_unread"`
+	HotelUnRead       int                 `json:"hotel_unread" bson:"hotel_unread"`
 }
