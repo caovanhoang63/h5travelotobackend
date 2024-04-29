@@ -1,0 +1,45 @@
+[
+  {
+    "_id" : "5b7f1b3b1f4b1f0014f1f1f1",
+    "hotelId" : "213",
+    "userId" : "123",
+    "messages" :
+    [
+      {
+        "id" : 1,
+        "message" : "Hello",
+        "timestamp" : "2018-08-23T10:00:00.000Z",
+        "from" : "123"
+      },
+      {
+        "id" : 2,
+        "message" : "Hi",
+        "timestamp" : "2018-08-23T10:00:00.000Z",
+        "from" : "212"
+      }
+    ]
+  },
+  {
+    "_id" : "5b7f1b3b1f4b1f0014f1f1f1",
+    "hotelId" : "213",
+    "userId" : "123",
+    "messages" :
+    [
+      {
+        "id" : 1,
+        "message" : "Hello",
+        "image" : {
+            "url" : "https://www.google.com",
+            "caption" : "This is an image"
+        },
+        "timestamp" : "2018-08-23T10:00:00.000Z",
+        "from" : "123"
+      },
+      {
+        "message" : "Hi",
+        "timestamp" : "2018-08-23T10:00:00.000Z",
+        "from" : "212"
+      }
+    ]
+  }
+]
