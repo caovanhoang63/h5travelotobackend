@@ -15,7 +15,6 @@ type Message struct {
 	UserId            int                 `json:"-" bson:"from"`
 	UserFakeId        *common.UID         `json:"from" bson:"-"`
 	IsFromCustomer    bool                `json:"is_from_customer" bson:"-"`
-	IsRead            bool                `json:"is_read" bson:"is_read"`
 }
 
 func (m *Message) GetChatMessageId() string {

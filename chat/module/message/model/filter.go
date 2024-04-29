@@ -11,7 +11,6 @@ type Filter struct {
 	UserId     int                 `json:"-" bson:"from"`
 	UserFakeId *common.UID         `json:"from" bson:"-"`
 	Status     int                 `json:"status" bson:"status"`
-	IsRead     bool                `json:"is_read" bson:"is_read"`
 }
 
 func (f *Filter) ToBsonD() (bson.D, error) {
