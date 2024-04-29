@@ -106,7 +106,7 @@ func (u *UserUpdate) Validate() error {
 }
 
 type UserChangePassword struct {
-	OldPassword string `json:"old_password" gorm:"column:old_password;"`
+	OldPassword string `json:"old_password" gorm:"-"`
 	Password    string `json:"password" gorm:"column:password;"`
 }
 
