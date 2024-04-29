@@ -36,10 +36,12 @@ func (biz *userChangePasswordBiz) ChangePassword(ctx context.Context, id int, da
 		return usermodel.ErrOldPasswordNotMatch
 	}
 
-	if biz.hasher.Hash(data.Password+user.Salt) == user.Password {
+	hashed := biz.hasher.Hash(data.Password + user.Salt)
+	if hashed == user.Password {
 		return usermodel.ErrPasswordMatchedWithPast
 	}
 
+	data.Password = hashed
 	if err := biz.store.ChangePassword(ctx, id, data); err != nil {
 		return common.ErrCannotUpdateEntity(usermodel.EntityName, err)
 	}
