@@ -23,9 +23,6 @@ func NewUserChangePasswordBiz(store UserChangePasswordStore, hasher Hasher) *use
 }
 
 func (biz *userChangePasswordBiz) ChangePassword(ctx context.Context, id int, data *usermodel.UserChangePassword) error {
-	if err := data.Validate(); err != nil {
-		return err
-	}
 
 	user, err := biz.store.FindUser(ctx, map[string]interface{}{"id": id})
 	if err != nil {
@@ -39,6 +36,10 @@ func (biz *userChangePasswordBiz) ChangePassword(ctx context.Context, id int, da
 	hashed := biz.hasher.Hash(data.Password + user.Salt)
 	if hashed == user.Password {
 		return usermodel.ErrPasswordMatchedWithPast
+	}
+
+	if err := data.Validate(); err != nil {
+		return err
 	}
 
 	data.Password = hashed
