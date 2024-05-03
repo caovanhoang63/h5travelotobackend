@@ -28,13 +28,13 @@ func (s *sqlStore) ListHotelWithCondition(
 				f.Lat, f.Lat, f.Lng, f.Distance)
 		}
 
-		if f.DistrictCode > 0 {
+		if !common.IsEmpty(f.DistrictCode) {
 			db = db.Where("district_code = ?", f.DistrictCode)
 		}
-		if f.WardCode > 0 {
+		if !common.IsEmpty(f.WardCode) {
 			db = db.Where("ward_code = ?", f.WardCode)
 		}
-		if f.ProvinceCode > 0 {
+		if !common.IsEmpty(f.ProvinceCode) {
 			db = db.Where("province_code = ?", f.ProvinceCode)
 		}
 	}

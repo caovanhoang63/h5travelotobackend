@@ -8,9 +8,9 @@ import (
 
 type Filter struct {
 	OwnerId         int         `json:"owner_id" form:"owner"`
-	ProvinceCode    int         `json:"province_code" gorm:"column:province_code"`
-	DistrictCode    int         `json:"district_code" gorm:"column:district_code"`
-	WardCode        int         `json:"ward_Code" gorm:"column:ward_code"`
+	ProvinceCode    string      `json:"province_code" gorm:"column:province_code"`
+	DistrictCode    string      `json:"district_code" gorm:"column:district_code"`
+	WardCode        string      `json:"ward_Code" gorm:"column:ward_code"`
 	HotelType       int         `json:"-" gorm:"column:hotel_type"`
 	HotelTypeFakeId *common.UID `json:"hotel_type" gorm:"-"`
 	Distance        float64     `json:"distance" form:"distance"`

@@ -21,11 +21,11 @@ type Hotel struct {
 	Hotline         string             `json:"hotline" gorm:"column:hotline"`
 	Logo            *common.Image      `json:"logo" gorm:"column:logo"`
 	Images          *common.Images     `json:"images" gorm:"column:images"`
-	ProvinceCode    int                `json:"-" gorm:"column:province_code"`
+	ProvinceCode    string             `json:"-" gorm:"column:province_code"`
 	Province        *Province          `json:"province,inline" gorm:"foreignKey:ProvinceCode;references:Code"`
-	DistrictCode    int                `json:"-" gorm:"column:district_code"`
+	DistrictCode    string             `json:"-" gorm:"column:district_code"`
 	District        *District          `json:"district,inline" gorm:"foreignKey:DistrictCode;references:Code"`
-	WardCode        int                `json:"-" gorm:"column:ward_code"`
+	WardCode        string             `json:"-" gorm:"column:ward_code"`
 	Ward            *Ward              `json:"ward,inline" gorm:"foreignKey:WardCode;references:Code"`
 	Lat             float64            `json:"lat" gorm:"column:lat"`
 	Lng             float64            `json:"lng" gorm:"column:lng"`
@@ -57,9 +57,9 @@ type HotelCreate struct {
 	HotelType       int                                 `json:"-" gorm:"column:hotel_type"`
 	HotelTypeFakeId *common.UID                         `json:"hotel_type" gorm:"-"`
 	Hotline         string                              `json:"hotline" gorm:"column:hotline"`
-	ProvinceCode    int                                 `json:"province_code" gorm:"column:province_code"`
-	DistrictCode    int                                 `json:"district_code" gorm:"column:district_code"`
-	WardCode        int                                 `json:"ward_Code" gorm:"column:ward_code"`
+	ProvinceCode    string                              `json:"province_code" gorm:"column:province_code"`
+	DistrictCode    string                              `json:"district_code" gorm:"column:district_code"`
+	WardCode        string                              `json:"ward_Code" gorm:"column:ward_code"`
 	Logo            *common.Image                       `json:"logo" gorm:"column:logo"`
 	Images          *common.Images                      `json:"images" gorm:"column:images"`
 	Lat             float64                             `json:"lat" gorm:"column:lat"`
@@ -101,9 +101,9 @@ type HotelUpdate struct {
 	Hotline         string         `json:"hotline" gorm:"column:hotline"`
 	Logo            *common.Image  `json:"logo" gorm:"column:logo"`
 	Images          *common.Images `json:"images" gorm:"column:images"`
-	ProvinceCode    int            `json:"province_code" gorm:"column:province_code"`
-	DistrictCode    int            `json:"district_code" gorm:"column:district_code"`
-	WardCode        int            `json:"ward_Code" gorm:"column:ward_code"`
+	ProvinceCode    string         `json:"province_code" gorm:"column:province_code"`
+	DistrictCode    string         `json:"district_code" gorm:"column:district_code"`
+	WardCode        string         `json:"ward_Code" gorm:"column:ward_code"`
 	Lat             float64        `json:"lat" gorm:"column:lat"`
 	Lng             float64        `json:"lng" gorm:"column:lng"`
 	Star            int            `json:"star" gorm:"star"`
@@ -131,7 +131,7 @@ var (
 )
 
 type Province struct {
-	Code int    `json:"code" gorm:"column:code"`
+	Code string `json:"code" gorm:"column:code"`
 	Name string `json:"name" gorm:"column:name"`
 }
 
@@ -140,7 +140,7 @@ func (Province) TableName() string {
 }
 
 type District struct {
-	Code int    `json:"code" gorm:"column:code"`
+	Code string `json:"code" gorm:"column:code"`
 	Name string `json:"name" gorm:"column:name"`
 }
 
@@ -149,7 +149,7 @@ func (District) TableName() string {
 }
 
 type Ward struct {
-	Code int    `json:"code" gorm:"column:code"`
+	Code string `json:"code" gorm:"column:code"`
 	Name string `json:"name" gorm:"column:name"`
 }
 
