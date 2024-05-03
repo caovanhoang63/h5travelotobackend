@@ -34,21 +34,28 @@ echo 'waiting for control-center start...'
 # Start MySQL connector
 curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @source.conf.json
 
-# Start Elasticsearch connector
-#curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @es-sink-enriched.conf.json
+echo '-------'
 
-echo '/n'
-
+sleep 2
+# Check the status of the connector
 curl localhost:8083/connectors/mysql-connector/status/
-echo '/n'
-
-
-
-#curl localhost:8083/connectors/elastic-sink/status/
-echo '/n'
 
 echo 'waiting to run ksqldb...'
 
 sleep 5
-docker exec -it ksqldb ksql http://localhost:8088
 
+cat ./ksqldb-ddl.sql | docker exec -i ksqldb ksql http://localhost:8088
+
+
+echo 'Done running ksqldb-ddl.sql'
+
+sleep 2
+
+echo '-------'
+
+# Start Elasticsearch connector
+curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @es-sink-enriched.conf.json
+
+
+# Check the status of the connector
+curl localhost:8083/connectors/elastic-sink-enriched/status/
