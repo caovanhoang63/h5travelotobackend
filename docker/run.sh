@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-
 docker compose down
-
-echo "Compose Down Done"
 
 
 docker compose up -d
@@ -20,6 +17,7 @@ done
 echo -e $(date) "\n\n--------------\n\o/ Kafka Connect is ready! Listener HTTP state: " $(curl -s -o /dev/null -w %{http_code} http://localhost:8083/connectors) "\n--------------\n"
 '
 
+sleep 5
 echo 'starting to copy jars'
 docker cp kafka-connect:/usr/share/confluent-hub-components ./data/connect-jars
 echo 'done copying jars'
@@ -59,3 +57,7 @@ curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json"
 
 # Check the status of the connector
 curl localhost:8083/connectors/elastic-sink-enriched/status/
+
+
+
+

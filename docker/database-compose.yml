@@ -1,0 +1,58 @@
+
+services:
+
+  mysql:
+    image: bitnami/mysql:${MYSQL_VERSION}
+    container_name: h5traveloto-mysql
+
+    privileged: true
+    ports:
+      - "3306:3306"
+    networks:
+      - h5traveloto
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    volumes:
+      - mysql_data:/bitnami/mysql/data
+      - ./data/mysql:/docker-entrypoint-initdb.d
+
+
+  mongo:
+    image: mongo
+    privileged: true
+    container_name: h5traveloto-mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - h5traveloto
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+
+
+  rabbitmq:
+    image: rabbitmq
+    container_name: h5traveloto-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - h5traveloto
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+
+networks:
+  h5traveloto:
+    external: true
+
+volumes:
+  rabbitmq_log:
+  rabbitmq_data:
+  mysql_data:
+  mongo_data:

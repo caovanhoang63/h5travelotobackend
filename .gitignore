@@ -3,7 +3,7 @@
 
 ### infrastructure
 *.conf*
-/data/
+data/
 
 ### dotenv ###
 .env

@@ -1,4 +1,4 @@
-version: "2.3"
+version: "3.3"
 
 services:
 
@@ -6,8 +6,7 @@ services:
     container_name: zookeeper
     image: confluentinc/cp-zookeeper:${KAFKA_VERSION}
     networks:
-      - kafkastream
-      - h5traveloto
+      - kafka-stream
     ports:
       - 2181:2181
       - 2888:2888
@@ -16,14 +15,15 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
 
+
+
   broker:
     image: confluentinc/cp-kafka:${KAFKA_VERSION}
     container_name: broker
     depends_on:
       - zookeeper
     networks:
-      - kafkastream
-      - h5traveloto
+      - kafka-stream
       - elastic
     ports:
       - 9092:9092
@@ -48,19 +48,20 @@ services:
     ports:
       - "8081:8081"
     networks:
-      - kafkastream
+      - kafka-stream
     depends_on:
       - broker
     environment:
-      - SCHEMA_REGISTRY_HOST_NAME= chema-registry
+      - SCHEMA_REGISTRY_HOST_NAME=chema-registry
       - SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS=broker:29092
+
+
 
   kafka-connect:
     image: confluentinc/cp-kafka-connect-base:${KAFKA_VERSION}
     container_name: kafka-connect
     networks:
-      - kafkastream
-      - h5traveloto
+      - kafka-stream
       - elastic
     depends_on:
       - broker
@@ -103,6 +104,8 @@ services:
         #
         sleep infinity
 
+    
+
   ksqldb:
     # *-----------------------------*
     # To connect to ksqlDB CLI
@@ -111,7 +114,7 @@ services:
     image: confluentinc/ksqldb-server:0.21.0
     container_name: ksqldb
     networks:
-      - kafkastream
+      - kafka-stream
     depends_on:
       - broker
       - schema-registry
@@ -133,7 +136,7 @@ services:
     image: confluentinc/cp-enterprise-control-center:${KAFKA_VERSION}
     container_name: control-center
     networks:
-      - kafkastream
+      - kafka-stream
     depends_on:
       - broker
       - schema-registry
@@ -166,6 +169,8 @@ services:
                necessary topics to be available"
         sleep 120
         /etc/confluent/docker/run
+        deploy:
+
 
 
   elasticsearch:
@@ -182,10 +187,16 @@ services:
       memlock:
         soft: -1
         hard: -1
-
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
-    mem_limit: 2g
+    deploy:
+      resources:
+        limits:
+          memory: 3g
+
+
 
   kibana:
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
@@ -197,15 +208,15 @@ services:
     depends_on:
       - elasticsearch
 
-networks:
-  h5traveloto:
-    external: true
-  kafkastream:
-    driver: bridge
-  elastic:
-    driver: bridge
-volumes:
-  kafka-connect-data:
-    driver: local
 
+networks:
+  kafka-stream:
+  elastic:
+volumes:
+  rabbitmq_log:
+  rabbitmq_data:
+  mysql_data:
+  mongo_data:
+  kafka-connect-data:
+  es_data:
 
