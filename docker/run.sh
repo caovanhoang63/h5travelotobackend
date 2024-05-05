@@ -51,6 +51,28 @@ sleep 2
 
 echo '-------'
 
+# map the location field to geo_point
+
+curl --silent --show-error -XPUT -H 'Content-Type: application/json' \
+    http://localhost:9200/_index_template/rmoff_template01/ \
+    -d'{
+        "index_patterns": [ "hotels*" ],
+        "template": {
+            "mappings": {
+                "properties": {
+                    "location": {
+                        "type": "geo_point"
+                    },
+                    "location_example": {
+                        "type": "geo_point"
+                    }
+                }
+            }
+        }
+}'
+
+
+
 # Start Elasticsearch connector
 curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @es-sink-enriched.conf.json
 

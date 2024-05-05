@@ -24,7 +24,7 @@ import (
 
 func main() {
 
-	err := godotenv.Load()
+	err := godotenv.Load("./devenv/.env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
@@ -40,6 +40,46 @@ func main() {
 	mySqlConnString := os.Getenv("MYSQL_CONN_STRING")
 	mongoDbConnString := os.Getenv("MONGODB_CONN_STRING")
 	rabbitMqConnString := os.Getenv("RABBITMQ_CONN_STRING")
+
+	//esURL := os.Getenv("ES_URL")
+	//redisConnString := os.Getenv("REDIS_CONN_STRING")
+
+	// Set up Elasticsearch Connection
+	//esCfg := elasticsearch.Config{
+	//	Addresses: []string{
+	//		esURL,
+	//	},
+	//	Transport: &http.Transport{
+	//		MaxIdleConnsPerHost:   10,
+	//		ResponseHeaderTimeout: 10 * time.Second,
+	//	},
+	//}
+	//
+	//es, err := elasticsearch.NewTypedClient(esCfg)
+	//if err != nil {
+	//	log.Fatal("Error creating the client: ", err)
+	//}
+	//log.Println("Elasticsearch client created")
+	//
+	//ping, err := es.Ping().Do(context.Background())
+	//if err != nil {
+	//	return
+	//}
+	//log.Println("Elasticsearch ping: ", ping)
+	//// End Set up Elasticsearch Connection
+	//
+	//// Set up Redis Connection
+	//redisConnOpt, err := redis.ParseURL(redisConnString)
+	//if err != nil {
+	//	log.Fatal("Error parsing Redis URL: ", err)
+	//}
+	//redisClient := redis.NewClient(redisConnOpt)
+	//_, err = redisClient.Ping(context.Background()).Result()
+	//if err != nil {
+	//	log.Fatal("Error connecting to Redis: ", err)
+	//}
+	//log.Println("Connected to Redis")
+	//// End Set up Redis Connection
 
 	// Set up MongoDb Connection
 	/***************************************************************/

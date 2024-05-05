@@ -111,7 +111,7 @@ services:
     # To connect to ksqlDB CLI
     #   docker exec --interactive --tty ksqldb ksql http://localhost:8088
     # *-----------------------------*
-    image: confluentinc/ksqldb-server:0.21.0
+    image: confluentinc/ksqldb-server
     container_name: ksqldb
     networks:
       - kafka-stream
@@ -195,7 +195,6 @@ services:
       resources:
         limits:
           memory: 3g
-
 
 
   kibana:
