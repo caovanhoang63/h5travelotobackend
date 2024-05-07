@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
 
@@ -105,8 +105,8 @@ services:
         /etc/confluent/docker/run &
         #
         sleep infinity
-
-    
+  
+  
 
   ksqldb:
     # *-----------------------------*
@@ -173,13 +173,16 @@ services:
         /etc/confluent/docker/run
         deploy:
 
-# elastic stack
+  # elastic stack
 
   setup:
+    container_name: setup
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
     volumes:
       - $PWD/certs:/usr/share/elasticsearch/config/certs
     user: "0"
+    networks:
+      - elastic
     command: >
       bash -c '
         if [ x${ELASTIC_PASSWORD} == x ]; then
@@ -194,8 +197,26 @@ services:
           bin/elasticsearch-certutil ca --silent --pem -out config/certs/ca.zip;
           unzip config/certs/ca.zip -d config/certs;
         fi;
-        bin/elasticsearch-certutil cert --silent --pem -out config/certs/certs.zip --in config/certs/instances.yml --ca-cert config/certs/ca/ca.crt --ca-key config/certs/ca/ca.key;
-        unzip config/certs/certs.zip -d config/certs;
+        if [ ! -f config/certs/certs.zip ]; then
+          echo "Creating certs";
+          echo -ne \
+          "instances:\n"\
+          "  - name: es01\n"\
+          "    dns:\n"\
+          "      - es01\n"\
+          "      - localhost\n"\
+          "    ip:\n"\
+          "      - 127.0.0.1\n"\
+          "  - name: kibana\n"\
+          "    dns:\n"\
+          "      - kibana\n"\
+          "      - localhost\n"\
+          "    ip:\n"\
+          "      - 127.0.0.1\n"\
+          > config/certs/instances.yml;
+          bin/elasticsearch-certutil cert --silent --pem -out config/certs/certs.zip --in config/certs/instances.yml --ca-cert config/certs/ca/ca.crt --ca-key config/certs/ca/ca.key;
+          unzip config/certs/certs.zip -d config/certs;
+        fi;
         echo "Setting file permissions"
         chown -R root:root config/certs;
         find . -type d -exec chmod 750 \{\} \;;
@@ -218,11 +239,10 @@ services:
       setup:
         condition: service_healthy
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
-    networks:
-        - elastic
-        - kafka-stream
     labels:
       co.elastic.logs/module: elasticsearch
+    networks:
+      - elastic
     volumes:
       - $PWD/certs:/usr/share/elasticsearch/config/certs
       - esdata01:/usr/share/elasticsearch/data
@@ -245,6 +265,10 @@ services:
       - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
       - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.license.self_generated.type=${LICENSE}
+    deploy:
+      resources:
+        limits:
+          memory: 5g
     ulimits:
       memlock:
         soft: -1
@@ -258,10 +282,6 @@ services:
       interval: 10s
       timeout: 10s
       retries: 120
-    deploy:
-      resources:
-        limits:
-          memory: 3g
 
   kibana:
     container_name: kibana
@@ -269,13 +289,13 @@ services:
       es01:
         condition: service_healthy
     image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
+    networks:
+      - elastic
     labels:
       co.elastic.logs/module: kibana
-    networks:
-        - elastic
     volumes:
       - $PWD/certs:/usr/share/kibana/config/certs
-      - kibana-data:/usr/share/kibana/data
+      - kibanadata:/usr/share/kibana/data
     ports:
       - ${KIBANA_PORT}:5601
     environment:
@@ -296,17 +316,23 @@ services:
       interval: 10s
       timeout: 10s
       retries: 120
-
+  redis:
+    image: redis
+    container_name: redis
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+      - redis-data:/data
+    ports:
+      - "6379:6379"
 
 
 networks:
   kafka-stream:
   elastic:
+    external: false
 volumes:
-  kibana-data:
-  rabbitmq_log:
-  rabbitmq_data:
-  mysql_data:
-  mongo_data:
+  kibanadata:
   kafka-connect-data:
   esdata01:
+  redis-data:
