@@ -27,9 +27,19 @@ import (
 )
 
 func main() {
-	err := godotenv.Load(".dev.env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	isDev := true
+
+	if isDev {
+		err := godotenv.Load(".dev.env")
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+		err := godotenv.Load(".env")
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
 	}
 
 	RegisterImageFormat()
