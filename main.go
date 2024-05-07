@@ -159,7 +159,7 @@ func main() {
 	/***************************************************************/
 
 	// Set up App Context
-	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey, s3Provider, pb)
+	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey, s3Provider, pb, es)
 
 	r := gin.New()
 	r.Use(middleware.Recover(appCtx))
