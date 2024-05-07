@@ -27,7 +27,11 @@ curl -s localhost:8083/connector-plugins|jq '.[].class'|egrep 'MySqlConnector|El
 
 echo 'waiting for control-center start...'
 
-
+# Add permissions to the certs folder
+chmod 777 certs
+chmod 777 certs/es01
+chmod 777 certs/es01/keystore.jks
+chmod 777 certs/es01/truststore.jks
 
 # Start MySQL connector
 curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @source.conf.json
@@ -53,8 +57,8 @@ echo '-------'
 
 # map the location field to geo_point
 
-curl --silent --show-error -XPUT -H 'Content-Type: application/json' \
-    http://localhost:9200/_index_template/rmoff_template01/ \
+curl --silent --show-error -k -XPUT -u elastic:oc2nq0mhv8bju1e -H 'Content-Type: application/json' \
+    https://localhost:9200/_index_template/rmoff_template01/ \
     -d'{
         "index_patterns": [ "hotels*" ],
         "template": {
@@ -72,6 +76,8 @@ curl --silent --show-error -XPUT -H 'Content-Type: application/json' \
 }'
 
 
+#keytool -import -alias elasticsearch -file es01.crt -keystore truststore.jks
+#keytool -import -alias elasticsearch -file es01.crt -keystore keystore.jks
 
 # Start Elasticsearch connector
 curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @es-sink-enriched.conf.json

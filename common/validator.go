@@ -3,6 +3,7 @@ package common
 import (
 	"github.com/asaskevich/govalidator"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -51,4 +52,18 @@ func IsPhoneNumber(phone string) bool {
 		return false
 	}
 	return true
+}
+
+func IsLatitude(lat float64) bool {
+	if govalidator.IsLatitude(strconv.FormatFloat(lat, 'f', -1, 64)) {
+		return true
+	}
+	return false
+}
+
+func IsLongitude(lng float64) bool {
+	if govalidator.IsLongitude(strconv.FormatFloat(lng, 'f', -1, 64)) {
+		return true
+	}
+	return false
 }

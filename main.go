@@ -2,10 +2,13 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
+	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/redis/go-redis/v9"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -20,11 +23,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
-
-	err := godotenv.Load("./devenv/.env")
+	err := godotenv.Load(".dev.env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
@@ -40,45 +43,53 @@ func main() {
 	mySqlConnString := os.Getenv("MYSQL_CONN_STRING")
 	mongoDbConnString := os.Getenv("MONGODB_CONN_STRING")
 	rabbitMqConnString := os.Getenv("RABBITMQ_CONN_STRING")
-
-	//esURL := os.Getenv("ES_URL")
-	//redisConnString := os.Getenv("REDIS_CONN_STRING")
+	esURL := os.Getenv("ES_URL")
+	esUserName := os.Getenv("ES_USERNAME")
+	esPassword := os.Getenv("ES_PASSWORD")
+	//esFingerprint := os.Getenv("ES_CERT_FINGERPRINT")
+	redisConnString := os.Getenv("REDIS_CONN_STRING")
 
 	// Set up Elasticsearch Connection
-	//esCfg := elasticsearch.Config{
-	//	Addresses: []string{
-	//		esURL,
-	//	},
-	//	Transport: &http.Transport{
-	//		MaxIdleConnsPerHost:   10,
-	//		ResponseHeaderTimeout: 10 * time.Second,
-	//	},
-	//}
-	//
-	//es, err := elasticsearch.NewTypedClient(esCfg)
-	//if err != nil {
-	//	log.Fatal("Error creating the client: ", err)
-	//}
-	//log.Println("Elasticsearch client created")
-	//
-	//ping, err := es.Ping().Do(context.Background())
-	//if err != nil {
-	//	return
-	//}
-	//log.Println("Elasticsearch ping: ", ping)
+	esCfg := elasticsearch.Config{
+		Addresses: []string{
+			esURL,
+		},
+		Username: esUserName,
+		Password: esPassword,
+		Transport: &http.Transport{
+			MaxIdleConnsPerHost:   10,
+			ResponseHeaderTimeout: 10 * time.Second,
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		},
+	}
+
+	es, err := elasticsearch.NewTypedClient(esCfg)
+	if err != nil {
+		log.Fatal("Error creating the client: ", err)
+	}
+
+	log.Println("Elasticsearch client created")
+
+	ping, err := es.Ping().Do(context.Background())
+	if err != nil {
+		log.Fatal("Error creating the client: ", err)
+	}
+	log.Println("Elasticsearch ping: ", ping)
 	//// End Set up Elasticsearch Connection
 	//
 	//// Set up Redis Connection
-	//redisConnOpt, err := redis.ParseURL(redisConnString)
-	//if err != nil {
-	//	log.Fatal("Error parsing Redis URL: ", err)
-	//}
-	//redisClient := redis.NewClient(redisConnOpt)
-	//_, err = redisClient.Ping(context.Background()).Result()
-	//if err != nil {
-	//	log.Fatal("Error connecting to Redis: ", err)
-	//}
-	//log.Println("Connected to Redis")
+	redisConnOpt, err := redis.ParseURL(redisConnString)
+	if err != nil {
+		log.Fatal("Error parsing Redis URL: ", err)
+	}
+	redisClient := redis.NewClient(redisConnOpt)
+	_, err = redisClient.Ping(context.Background()).Result()
+	if err != nil {
+		log.Fatal("Error connecting to Redis: ", err)
+	}
+	log.Println("Connected to Redis")
 	//// End Set up Redis Connection
 
 	// Set up MongoDb Connection
