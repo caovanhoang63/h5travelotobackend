@@ -26,6 +26,7 @@ import (
 	"h5travelotobackend/module/users/transport/ginuser"
 	"h5travelotobackend/module/ward/transport/ginward"
 	"h5travelotobackend/module/worker/transport/ginworker"
+	"h5travelotobackend/search/module/hotel/transport/ginhotelsearch"
 )
 
 func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
@@ -177,4 +178,8 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	hotelChat.Use(middleware.IsHotelWorker(appCtx))
 	hotelChat.GET("/", ginchatroom.ListChatRoomByHotelId(appCtx))
 
+	// search
+	search := v1.Group("/search")
+	v1.Use(middleware.RequireAuth(appCtx))
+	search.GET("/hotels", ginhotelsearch.ListHotel(appCtx))
 }

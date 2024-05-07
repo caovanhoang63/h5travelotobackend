@@ -10,14 +10,16 @@ const EntityName = "User"
 
 type User struct {
 	common.SqlModel `json:",inline"`
-	Email           string        `json:"email" gorm:"column:email;"`
-	Password        string        `json:"-" gorm:"column:password;"`
-	Salt            string        `json:"-" gorm:"column:salt;"`
-	LastName        string        `json:"last_name" gorm:"column:last_name;"`
-	Firstname       string        `json:"first_name" gorm:"column:first_name;"`
-	Phone           string        `json:"phone" gorm:"column:phone;"`
-	Role            string        `json:"role" gorm:"column:role;"`
-	Avatar          *common.Image `json:"avatar,omitempty" gorm:"column:avatar;type:json;"`
+	Email           string            `json:"email" gorm:"column:email;"`
+	Password        string            `json:"-" gorm:"column:password;"`
+	Salt            string            `json:"-" gorm:"column:salt;"`
+	LastName        string            `json:"last_name" gorm:"column:last_name;"`
+	Firstname       string            `json:"first_name" gorm:"column:first_name;"`
+	Phone           string            `json:"phone" gorm:"column:phone;"`
+	Role            string            `json:"role" gorm:"column:role;"`
+	Avatar          *common.Image     `json:"avatar,omitempty" gorm:"column:avatar;type:json;"`
+	Gender          string            `json:"gender" gorm:"column:gender"`
+	DateOfBirth     *common.CivilTime `json:"date_of_birth" gorm:"column:date_of_birth"`
 }
 
 func (User) TableName() string {
@@ -84,10 +86,12 @@ func (UserLogin) TableName() string {
 }
 
 type UserUpdate struct {
-	LastName  string        `json:"last_name" gorm:"column:last_name;"`
-	Firstname string        `json:"first_name" gorm:"column:first_name;"`
-	Phone     string        `json:"phone" gorm:"column:phone;"`
-	Avatar    *common.Image `json:"avatar,omitempty" gorm:"column:avatar;type:json;"`
+	LastName    string            `json:"last_name" gorm:"column:last_name;"`
+	Firstname   string            `json:"first_name" gorm:"column:first_name;"`
+	Phone       string            `json:"phone" gorm:"column:phone;"`
+	Avatar      *common.Image     `json:"avatar,omitempty" gorm:"column:avatar;type:json;"`
+	Gender      string            `json:"gender" gorm:"column:gender"`
+	DateOfBirth *common.CivilTime `json:"date_of_birth" gorm:"column:date_of_birth"`
 }
 
 func (UserUpdate) TableName() string {

@@ -2,45 +2,67 @@ package hotelmodel
 
 import (
 	"errors"
+	"github.com/asaskevich/govalidator"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
-	"h5travelotobackend/common"
+	"log"
 	"strings"
 	"time"
 )
 
 type Filter struct {
-	SearchText   string     `json:"search_text"`
-	Adults       int        `json:"adults"`
-	Children     int        `json:"children"`
-	Star         int        `json:"star"`
-	ByLocation   bool       `json:"by_location"`
-	ByProvince   bool       `json:"by_province"`
-	ByDistrict   bool       `json:"by_district"`
-	ByWard       bool       `json:"by_ward"`
-	ByHotelName  bool       `json:"by_hotel_name"`
-	ProvinceCode string     `json:"province_code"`
-	DistrictCode string     `json:"district_code"`
-	WardCode     string     `json:"ward_code"`
-	Name         string     `json:"name"`
-	Lat          float64    `json:"lat"`
-	Lng          float64    `json:"lng"`
-	StartDate    *time.Time `json:"start_date"`
-	EndDate      *time.Time `json:"date_date"`
+	SearchText   string         `json:"search_text" form:"search_text"`
+	Adults       int            `json:"adults" form:"adults"`
+	Children     int            `json:"children" form:"children"`
+	Star         int            `json:"star" form:"star"`
+	ByLocation   bool           `json:"by_location" form:"by_location"`
+	ByProvince   bool           `json:"by_province" form:"by_province"`
+	ByDistrict   bool           `json:"by_district" form:"by_district"`
+	ByWard       bool           `json:"by_ward" form:"by_ward"`
+	ByHotelName  bool           `json:"by_hotel_name" form:"by_hotel_name"`
+	ProvinceCode string         `json:"province_code" form:"province_code" `
+	DistrictCode string         `json:"district_code" form:"district_code" `
+	WardCode     string         `json:"ward_code" form:"ward_code"`
+	Name         string         `json:"name" form:"name"`
+	ListFacility []string       `json:"list_facility" form:"list_facility"`
+	Lat          *types.Float64 `json:"lat" form:"lat" `
+	Lng          *types.Float64 `json:"lng" form:"lng"`
+	StartDate    *time.Time     `json:"start_date" form:"start_date"`
+	EndDate      *time.Time     `json:"end_date" form:"end_date"`
 }
 
 func (f *Filter) Validate() error {
-	trueCount := 0
+	if f.Adults+f.Children == 0 {
+		return ErrOccupancyEmpty
+	}
+	start := *f.StartDate
+	end := *f.EndDate
 
+	if start.After(end) {
+		return ErrStartDateAfterEndDate
+	}
+
+	if start.After(time.Now()) {
+		return ErrStartDateIsAfterNow
+	}
+
+	trueCount := 0
 	if f.ByLocation {
 		trueCount++
-		if f.Lat == 0 || f.Lng == 0 {
+		if f.Lat == nil || f.Lng == nil {
 			return ErrLatLonEmpty
 		}
-		if !common.IsLatitude(f.Lat) || !common.IsLongitude(f.Lng) {
+		lat, err := f.Lat.MarshalJSON()
+		if err != nil {
 			return ErrInvalidLatLon
 		}
-
+		lng, err := f.Lat.MarshalJSON()
+		if err != nil {
+			return ErrInvalidLatLon
+		}
+		if !govalidator.IsLatitude(string(lat)) || !govalidator.IsLongitude(string(lng)) {
+			return ErrInvalidLatLon
+		}
 	}
 	if f.ByProvince {
 		trueCount++
@@ -79,27 +101,31 @@ func (f *Filter) Validate() error {
 }
 
 func (f *Filter) ToSearchRequest() (*search.Request, error) {
-	if f.ByWard && f.ByLocation && f.ByProvince && f.ByDistrict && f.ByHotelName {
+	if !(f.ByWard && f.ByLocation && f.ByProvince && f.ByDistrict && f.ByHotelName) {
+		log.Println("hotel", f.Name)
 		return &search.Request{
 			Query: &types.Query{
-				Match: map[string]types.MatchQuery{
-					"name":                   {Query: f.SearchText},
-					"province.province_name": {Query: f.SearchText},
-					"district.district_name": {Query: f.SearchText},
-					"ward.name":              {Query: f.SearchText},
+				Bool: &types.BoolQuery{
+					Should: []types.Query{
+						{
+							Match: map[string]types.MatchQuery{
+								"NAME": {Query: f.Name},
+							},
+						},
+					},
 				},
 			},
 		}, nil
 	}
 
 	if f.ByLocation {
-		if f.Lng != 0 && f.Lat != 0 {
+		if f.Lng != nil && f.Lat != nil {
 			return &search.Request{
 				Query: &types.Query{
 					GeoDistance: &types.GeoDistanceQuery{
 						Distance: "20km",
 						GeoDistanceQuery: map[string]types.GeoLocation{
-							"location_example": types.LatLonGeoLocation{Lat: types.Float64(f.Lat), Lon: types.Float64(f.Lng)},
+							"location_example": types.LatLonGeoLocation{Lat: *f.Lat, Lon: *f.Lng},
 						},
 					},
 				},
@@ -150,13 +176,16 @@ func (f *Filter) ToSearchRequest() (*search.Request, error) {
 }
 
 var (
-	ErrSearchTextIsEmpty = errors.New("search text can not be empty")
-	ErrNoFilterIsSet     = errors.New("no filter is set")
-	ErrTooManyFilters    = errors.New("too many filters are set")
-	ErrHotelNameIsEmpty  = errors.New("hotel name can not be empty")
-	ErrProvinceCodeEmpty = errors.New("province code can not be empty")
-	ErrDistrictCodeEmpty = errors.New("district code can not be empty")
-	ErrWardCodeEmpty     = errors.New("ward code can not be empty")
-	ErrLatLonEmpty       = errors.New("lat and lon can not be empty")
-	ErrInvalidLatLon     = errors.New("lat and lon are invalid")
+	ErrSearchTextIsEmpty     = errors.New("search text can not be empty")
+	ErrNoFilterIsSet         = errors.New("no filter is set")
+	ErrTooManyFilters        = errors.New("too many filters are set")
+	ErrHotelNameIsEmpty      = errors.New("hotel name can not be empty")
+	ErrProvinceCodeEmpty     = errors.New("province code can not be empty")
+	ErrDistrictCodeEmpty     = errors.New("district code can not be empty")
+	ErrWardCodeEmpty         = errors.New("ward code can not be empty")
+	ErrLatLonEmpty           = errors.New("lat and lon can not be empty")
+	ErrInvalidLatLon         = errors.New("lat and lon are invalid")
+	ErrOccupancyEmpty        = errors.New("occupancy can not be empty")
+	ErrStartDateAfterEndDate = errors.New("start date can not be after end date")
+	ErrStartDateIsAfterNow   = errors.New("start date can not be after now")
 )
