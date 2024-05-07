@@ -2,6 +2,7 @@ package appContext
 
 import (
 	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/redis/go-redis/v9"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
 	"h5travelotobackend/component/pubsub"
@@ -17,6 +18,7 @@ type AppContext interface {
 	GetPubSub() pubsub.Pubsub
 	GetRealTimeEngine() skio.RealtimeEngine
 	GetElasticSearchClient() *elasticsearch.TypedClient
+	GetRedisClient() *redis.Client
 }
 
 type appContext struct {
@@ -27,6 +29,7 @@ type appContext struct {
 	pubSub         pubsub.Pubsub
 	rtEngine       skio.RealtimeEngine
 	esClient       *elasticsearch.TypedClient
+	redisClient    *redis.Client
 }
 
 func NewAppContext(db *gorm.DB,
@@ -34,7 +37,8 @@ func NewAppContext(db *gorm.DB,
 	secretKey string,
 	provider uploadprovider.UploadProvider,
 	pubsub pubsub.Pubsub,
-	es *elasticsearch.TypedClient) *appContext {
+	es *elasticsearch.TypedClient,
+	redisClient *redis.Client) *appContext {
 	return &appContext{
 		db:             db,
 		mongodb:        mongodb,
@@ -42,6 +46,7 @@ func NewAppContext(db *gorm.DB,
 		uploadProvider: provider,
 		pubSub:         pubsub,
 		esClient:       es,
+		redisClient:    redisClient,
 	}
 }
 
@@ -69,4 +74,8 @@ func (appContext *appContext) SetRealTimeEngine(rtEngine skio.RealtimeEngine) {
 
 func (appCtx *appContext) GetElasticSearchClient() *elasticsearch.TypedClient {
 	return appCtx.esClient
+}
+
+func (appCtx *appContext) GetRedisClient() *redis.Client {
+	return appCtx.redisClient
 }

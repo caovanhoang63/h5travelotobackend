@@ -27,7 +27,7 @@ import (
 )
 
 func main() {
-	err := godotenv.Load(".dev.env")
+	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
@@ -46,7 +46,6 @@ func main() {
 	esURL := os.Getenv("ES_URL")
 	esUserName := os.Getenv("ES_USERNAME")
 	esPassword := os.Getenv("ES_PASSWORD")
-	//esFingerprint := os.Getenv("ES_CERT_FINGERPRINT")
 	redisConnString := os.Getenv("REDIS_CONN_STRING")
 
 	// Set up Elasticsearch Connection
@@ -67,29 +66,31 @@ func main() {
 
 	es, err := elasticsearch.NewTypedClient(esCfg)
 	if err != nil {
-		log.Fatal("Error creating the client: ", err)
+		log.Println("Error creating the client: ", err)
+	} else {
+		log.Println("Elasticsearch client created")
 	}
-
-	log.Println("Elasticsearch client created")
 
 	ping, err := es.Ping().Do(context.Background())
 	if err != nil {
-		log.Fatal("Error creating the client: ", err)
+		log.Println("Error creating the client: ", err)
+	} else {
+		log.Println("Elasticsearch ping: ", ping)
 	}
-	log.Println("Elasticsearch ping: ", ping)
 	//// End Set up Elasticsearch Connection
 	//
 	//// Set up Redis Connection
 	redisConnOpt, err := redis.ParseURL(redisConnString)
 	if err != nil {
-		log.Fatal("Error parsing Redis URL: ", err)
+		log.Println("Error parsing Redis URL: ", err)
 	}
 	redisClient := redis.NewClient(redisConnOpt)
 	_, err = redisClient.Ping(context.Background()).Result()
 	if err != nil {
-		log.Fatal("Error connecting to Redis: ", err)
+		log.Println("Error connecting to Redis: ", err)
+	} else {
+		log.Println("Connected to Redis")
 	}
-	log.Println("Connected to Redis")
 	//// End Set up Redis Connection
 
 	// Set up MongoDb Connection
@@ -159,7 +160,7 @@ func main() {
 	/***************************************************************/
 
 	// Set up App Context
-	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey, s3Provider, pb, es)
+	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey, s3Provider, pb, es, redisClient)
 
 	r := gin.New()
 	r.Use(middleware.Recover(appCtx))
@@ -198,5 +199,4 @@ func main() {
 	if err := r.Run(); err != nil {
 		log.Fatal(err)
 	}
-
 }
