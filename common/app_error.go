@@ -140,5 +140,13 @@ func ErrCannotPublishMessage(topic string, err error) *AppError {
 		fmt.Sprintf("CANNOT_PUBLISH_%s", strings.ToUpper(topic)))
 }
 
+func ErrTooManyRequest(ip, api string, err error) *AppError {
+	return NewCustomError(
+		err,
+		fmt.Sprintf("Too many request from %s to %s", ip, api),
+		fmt.Sprintf("TOO_MANY_REQUEST"))
+}
+
 var DocumentNotFound = errors.New("document not found")
 var RecordNotFound = errors.New("record not found")
+var RateLimited = errors.New("rate limited")
