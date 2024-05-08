@@ -7,6 +7,7 @@ import (
 	hotelbiz "h5travelotobackend/module/hotels/biz"
 	hotelmodel "h5travelotobackend/module/hotels/model"
 	hotelstorage "h5travelotobackend/module/hotels/storage"
+	reviewstorage "h5travelotobackend/module/review/storage/redis"
 )
 
 func ListHotel(appCtx appContext.AppContext) gin.HandlerFunc {
@@ -24,7 +25,8 @@ func ListHotel(appCtx appContext.AppContext) gin.HandlerFunc {
 		paging.FullFill()
 
 		store := hotelstorage.NewSqlStore(appCtx.GetGormDbConnection())
-		biz := hotelbiz.NewListHotelBiz(store)
+		rvStore := reviewstorage.NewRedisStore(appCtx.GetRedisClient())
+		biz := hotelbiz.NewListHotelBiz(store, rvStore)
 		data, err := biz.ListHotel(c.Request.Context(), &filter, &paging)
 		if err != nil {
 			panic(err)

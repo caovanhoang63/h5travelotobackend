@@ -1,4 +1,4 @@
-package reviewstorage
+package mongo
 
 import (
 	"go.mongodb.org/mongo-driver/bson"
@@ -9,7 +9,7 @@ import (
 	reviewmodel "h5travelotobackend/module/review/model"
 )
 
-func (s *mongoStore) ListReviewWithCondition(
+func (s *store) ListReviewWithCondition(
 	ctx context.Context,
 	filter *reviewmodel.Filter,
 	paging *common.Paging,

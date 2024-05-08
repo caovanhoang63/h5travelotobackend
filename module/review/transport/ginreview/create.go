@@ -6,7 +6,7 @@ import (
 	"h5travelotobackend/component/appContext"
 	reviewbiz "h5travelotobackend/module/review/biz"
 	reviewmodel "h5travelotobackend/module/review/model"
-	reviewstorage "h5travelotobackend/module/review/storage"
+	reviewstorage "h5travelotobackend/module/review/storage/mongo"
 )
 
 // url path: /v1/reviews

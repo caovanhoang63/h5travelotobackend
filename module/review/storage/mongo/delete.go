@@ -1,4 +1,4 @@
-package reviewstorage
+package mongo
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -7,7 +7,7 @@ import (
 	reviewmodel "h5travelotobackend/module/review/model"
 )
 
-func (s *mongoStore) Delete(ctx context.Context, Id primitive.ObjectID) error {
+func (s *store) Delete(ctx context.Context, Id primitive.ObjectID) error {
 	coll := s.db.Collection(reviewmodel.Review{}.CollectionName())
 
 	filter := map[string]interface{}{"_id": Id}

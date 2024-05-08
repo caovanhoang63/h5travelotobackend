@@ -1,4 +1,4 @@
-package reviewstorage
+package mongo
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	reviewmodel "h5travelotobackend/module/review/model"
 )
 
-func (s *mongoStore) Create(ctx context.Context, review *reviewmodel.Review) error {
+func (s *store) Create(ctx context.Context, review *reviewmodel.Review) error {
 
 	coll := s.db.Collection(review.CollectionName())
 	one, err := coll.InsertOne(ctx, review)

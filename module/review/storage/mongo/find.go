@@ -1,4 +1,4 @@
-package reviewstorage
+package mongo
 
 import (
 	"golang.org/x/net/context"
@@ -6,7 +6,7 @@ import (
 	reviewmodel "h5travelotobackend/module/review/model"
 )
 
-func (s *mongoStore) FindWithCondition(ctx context.Context, condition map[string]interface{}) (*reviewmodel.Review, error) {
+func (s *store) FindWithCondition(ctx context.Context, condition map[string]interface{}) (*reviewmodel.Review, error) {
 	coll := s.db.Collection(reviewmodel.Review{}.CollectionName())
 
 	result := coll.FindOne(ctx, condition)

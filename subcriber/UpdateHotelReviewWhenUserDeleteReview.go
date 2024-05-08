@@ -9,7 +9,7 @@ import (
 	reviewstorage "h5travelotobackend/module/review/storage/redis"
 )
 
-func UpdateHotelReviewWhenUserReview(appCtx appContext.AppContext, ctx context.Context) consumerJob {
+func UpdateHotelReviewWhenUserDeleteReview(appCtx appContext.AppContext, ctx context.Context) consumerJob {
 	return consumerJob{
 		Title: "update hotel review when user review hotel",
 		Handler: func(ctx context.Context, message *pubsub.Message) error {
@@ -22,7 +22,7 @@ func UpdateHotelReviewWhenUserReview(appCtx appContext.AppContext, ctx context.C
 
 			store := reviewstorage.NewRedisStore(appCtx.GetRedisClient())
 
-			return store.IncTotalReview(ctx, review.HotelId, review.Rating)
+			return store.DecTotalReview(ctx, review.HotelId, review.Rating)
 		},
 	}
 }

@@ -8,7 +8,7 @@ import (
 	reviewbiz "h5travelotobackend/module/review/biz"
 	reviewmodel "h5travelotobackend/module/review/model"
 	reviewrepo "h5travelotobackend/module/review/repo"
-	reviewstorage "h5travelotobackend/module/review/storage"
+	reviewstorage "h5travelotobackend/module/review/storage/mongo"
 	userstorage "h5travelotobackend/module/users/storage"
 	"net/http"
 )

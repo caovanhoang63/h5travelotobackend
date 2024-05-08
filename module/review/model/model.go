@@ -1,6 +1,7 @@
 package reviewmodel
 
 import (
+	"fmt"
 	"h5travelotobackend/common"
 )
 
@@ -49,4 +50,12 @@ func (f *Review) UnMask() {
 	if f.RoomTypeFakeId != nil {
 		f.RoomTypeId = int(f.RoomTypeFakeId.GetLocalID())
 	}
+}
+
+func GetTotalKey(hotelId int) string {
+	return fmt.Sprintf("hotel:%d:total_review", hotelId)
+}
+
+func GetAvgKey(hotelId int) string {
+	return fmt.Sprintf("hotel:%d:avg_rating", hotelId)
 }

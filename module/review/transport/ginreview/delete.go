@@ -6,7 +6,7 @@ import (
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	reviewbiz "h5travelotobackend/module/review/biz"
-	reviewstorage "h5travelotobackend/module/review/storage"
+	reviewstorage "h5travelotobackend/module/review/storage/mongo"
 	"net/http"
 )
 
@@ -19,7 +19,7 @@ func DeleteReviewById(appCtx appContext.AppContext) gin.HandlerFunc {
 		}
 		requester := c.MustGet(common.CurrentUser).(common.Requester)
 		store := reviewstorage.NewMongoStore(appCtx.GetMongoConnection())
-		biz := reviewbiz.NewDeleteReviewBiz(store)
+		biz := reviewbiz.NewDeleteReviewBiz(store, appCtx.GetPubSub())
 		if err := biz.DeleteReview(c.Request.Context(), requester, objId); err != nil {
 			panic(err)
 		}

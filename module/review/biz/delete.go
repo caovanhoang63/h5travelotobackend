@@ -4,7 +4,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/net/context"
 	"h5travelotobackend/common"
+	"h5travelotobackend/component/pubsub"
 	reviewmodel "h5travelotobackend/module/review/model"
+	"log"
 )
 
 type DeleteReviewStore interface {
@@ -14,9 +16,10 @@ type DeleteReviewStore interface {
 
 type deleteReviewBiz struct {
 	store DeleteReviewStore
+	ps    pubsub.Pubsub
 }
 
-func NewDeleteReviewBiz(store DeleteReviewStore) *deleteReviewBiz {
+func NewDeleteReviewBiz(store DeleteReviewStore, ps pubsub.Pubsub) *deleteReviewBiz {
 	return &deleteReviewBiz{store: store}
 }
 
@@ -36,6 +39,15 @@ func (biz *deleteReviewBiz) DeleteReview(ctx context.Context, requester common.R
 
 	if err := biz.store.Delete(ctx, Id); err != nil {
 		return common.ErrCannotDeleteEntity(reviewmodel.EntityName, err)
+	}
+	mess := pubsub.NewMessage(common.DTOReview{
+		HotelId: oldData.HotelId,
+		UserId:  oldData.UserId,
+		Rating:  oldData.Rating,
+	})
+
+	if err := biz.ps.Publish(ctx, common.TopicUserDeleteReviewHotel, mess); err != nil {
+		log.Println(common.ErrCannotPublishMessage(common.TopicUserDeleteReviewHotel, err))
 	}
 
 	return nil
