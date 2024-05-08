@@ -66,9 +66,6 @@ curl --silent --show-error -k -XPUT -u elastic:oc2nq0mhv8bju1e -H 'Content-Type:
                 "properties": {
                     "location": {
                         "type": "geo_point"
-                    },
-                    "location_example": {
-                        "type": "geo_point"
                     }
                 }
             }

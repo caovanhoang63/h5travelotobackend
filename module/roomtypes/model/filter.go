@@ -2,23 +2,19 @@ package roomtypemodel
 
 import (
 	"h5travelotobackend/common"
-	"time"
 )
 
 type Filter struct {
 	HotelId     int         `json:"-" gorm:"column:hotel_id;" form:"-"`
 	HotelFakeId common.UID  `json:"hotel_id" gorm:"-" form:"hotel-id"`
 	Bed         *common.Bed `json:"bed" gorm:"column:bed;" form:"bed"`
-
-	BreakFast  bool    `json:"break_fast" gorm:"column:break_fast;" form:"break-fast"`
-	FreeCancel bool    `json:"free_cancel" gorm:"column:free_cancel;" form:"free-cancel"`
-	Rating     float64 `json:"rating" gorm:"column:rating;" form:"rating"`
-
-	MaxPrice float64 `json:"max_price"  form:"max-price"`
-	MinPrice float64 `json:"min_price" form:"min-price"`
-
-	StartDate *time.Time `json:"start_date" form:"start-date"`
-	EndDate   *time.Time `json:"end_date" form:"end-date"`
+	Area        float64     `json:"area" gorm:"column:area;" form:"area"`
+	PayInHotel  bool        `json:"pay_in_hotel" gorm:"column:pay_in_hotel;" form:"pay-in-hotel"`
+	BreakFast   bool        `json:"break_fast" gorm:"column:break_fast;" form:"break-fast"`
+	FreeCancel  bool        `json:"free_cancel" gorm:"column:free_cancel;" form:"free-cancel"`
+	MaxPrice    float64     `json:"max_price"  form:"max-price"`
+	MinPrice    float64     `json:"min_price" form:"min-price"`
+	MaxCustomer int         `json:"max_customer" gorm:"column:max_customer;" form:"max-customer"`
 }
 
 func (f *Filter) SetDefault() {

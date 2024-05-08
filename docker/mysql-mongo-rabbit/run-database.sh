@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
+dockerr compose down
 
-docker compose -f database-compose.yml up -d
+docker compose compose up
 
 docker run -d -p 80:80 -p 443:443 --name nginx-proxy  --network h5traveloto --privileged=true \
   -e ENABLE_IPV6=true \

@@ -34,11 +34,10 @@ func (s *sqlStore) ListRoomTypeWithCondition(
 				db = db.Where("JSON_EXTRACT(bed, '$.double')  = ? ", f.Bed.Double)
 			}
 		}
-		db.Where("price >= ? and price <= ?", f.MinPrice, f.MaxPrice)
-
-		if f.StartDate != nil && f.EndDate != nil {
-			//TODO: Xử lý tìm phòng trống trong thời gian yêu cầu
+		if f.MaxCustomer > 0 {
+			db = db.Where("max_customer = ?", f.MaxCustomer)
 		}
+		db.Where("price >= ? and price <= ?", f.MinPrice, f.MaxPrice)
 	}
 
 	if err := db.Count(&paging.Total).Error; err != nil {

@@ -44,22 +44,22 @@ CREATE STREAM HOTELS_ENRICHED
 AS
 SELECT
     H.ID AS ID,
-    H.OWNER_ID,
-    H.NAME AS NAME,
-    H.HOTEL_TYPE,
-    H.LOGO,
-    H.IMAGES,
-    H.ADDRESS,
-    STRUCT(PROVINCE_CODE := P.CODE, PROVINCE_NAME := P.NAME) AS PROVINCE,
-    STRUCT(DISTRICT_CODE := D.CODE, DISTRICT_NAME := D.NAME) AS DISTRICT,
-    STRUCT(WARD_CODE := W.CODE, WARD_NAME := W.NAME) AS WARD,
-    STRUCT("lat" := H.LAT, "lon" := H.LNG) AS location,
-    CAST(H.LAT AS VARCHAR)  + ',' + CAST(H.LNG AS VARCHAR) AS "location_example",
-    H.STAR,
-    H.STATUS,
-    H.CREATED_AT,
-    H.UPDATED_AT,
-    HF.FACILITY_LIST
+    H.OWNER_ID AS "owner_id",
+    H.NAME AS "name" ,
+    H.HOTEL_TYPE AS "hotel_type",
+    H.LOGO AS "logo",
+    H.IMAGES AS "images",
+    H.ADDRESS AS "address",
+    STRUCT("province_code" := P.CODE, "province_name" := P.NAME) AS "province",
+    STRUCT("district_code" := D.CODE, "district_name" := D.NAME) AS "district",
+    STRUCT("ward_code" := W.CODE, "ward_name" := W.NAME) AS "ward",
+    STRUCT("lat" := H.LAT, "lon" := H.LNG) AS LOCATION,
+    CAST(H.LAT AS VARCHAR)  + ',' + CAST(H.LNG AS VARCHAR) AS "location",
+    H.STAR as "star",
+    H.STATUS as "status",
+    H.CREATED_AT as "created_at",
+    H.UPDATED_AT as "updated_at",
+    HF.FACILITY_LIST AS "facility_list"
 FROM HOTELS H
          LEFT JOIN PROVINCES P ON 'Struct{code='+H.PROVINCE_CODE+'}' = P.ID
          LEFT JOIN DISTRICTS D ON 'Struct{code='+H.DISTRICT_CODE+'}' = D.ID
