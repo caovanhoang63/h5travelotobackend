@@ -52,10 +52,10 @@ func (f *Review) UnMask() {
 	}
 }
 
-func GetTotalKey(hotelId int) string {
+func GetTotalReviewKey(hotelId int) string {
 	return fmt.Sprintf("hotel:%d:total_review", hotelId)
 }
 
-func GetAvgKey(hotelId int) string {
-	return fmt.Sprintf("hotel:%d:avg_rating", hotelId)
+func GetTotalRatingKey(hotelId int) string {
+	return fmt.Sprintf("hotel:%d:total_rating", hotelId)
 }

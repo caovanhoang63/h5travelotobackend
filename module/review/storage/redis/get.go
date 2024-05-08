@@ -9,17 +9,22 @@ import (
 func (s *store) GetTotalAndAvg(ctx context.Context, hotelId int) (int, float32, error) {
 	txPipeline := s.redis.TxPipeline()
 
-	totalStr := txPipeline.Get(ctx, reviewmodel.GetTotalKey(hotelId))
-	total, err := totalStr.Int()
+	rvStr := txPipeline.Get(ctx, reviewmodel.GetTotalReviewKey(hotelId))
+	rtStr := txPipeline.Get(ctx, reviewmodel.GetTotalRatingKey(hotelId))
+	_, err := txPipeline.Exec(ctx)
+	if err != nil {
+		return 0, 0, common.ErrDb(err)
+	}
+
+	rv, err := rvStr.Int()
+	if err != nil {
+		return 0, 0, common.ErrInternal(err)
+	}
+	rt, err := rtStr.Float32()
 	if err != nil {
 		return 0, 0, common.ErrInternal(err)
 	}
 
-	avgStr := txPipeline.Get(ctx, reviewmodel.GetAvgKey(hotelId))
-	avg, err := avgStr.Float32()
-	if err != nil {
-		return 0, 0, common.ErrInternal(err)
-	}
-
-	return total, avg, nil
+	avg := rt / float32(rv)
+	return rv, avg, nil
 }
