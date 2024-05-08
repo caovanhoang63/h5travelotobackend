@@ -3,6 +3,7 @@ CREATE STREAM HOTELS WITH(KAFKA_TOPIC='mysql-debezium-h5traveloto.h5traveloto.ho
 CREATE STREAM HOTEL_FACILITIES WITH(KAFKA_TOPIC='mysql-debezium-h5traveloto.h5traveloto.hotel_facility_details', PARTITIONS=1, VALUE_FORMAT='AVRO');
 CREATE STREAM ROOM_FACILITIES WITH(KAFKA_TOPIC='mysql-debezium-h5traveloto.h5traveloto.room_facility_details', PARTITIONS=1 ,VALUE_FORMAT='AVRO');
 CREATE STREAM ROOM_TYPES WITH (KAFKA_TOPIC='mysql-debezium-h5traveloto.h5traveloto.room_types', PARTITIONS=1 ,VALUE_FORMAT='AVRO');
+CREATE STREAM HOTEL_DETAILS WITH (KAFKA_TOPIC='mysql-debezium-h5traveloto.h5traveloto.hotel_details', PARTITIONS=1 ,VALUE_FORMAT='AVRO');
 CREATE TABLE PROVINCES (ID VARCHAR PRIMARY KEY)
     WITH (KAFKA_TOPIC='mysql-debezium-h5traveloto.h5traveloto.provinces',
         VALUE_FORMAT='AVRO');
@@ -56,6 +57,19 @@ SELECT
     STRUCT("lat" := H.LAT, "lon" := H.LNG) AS LOCATION,
     CAST(H.LAT AS VARCHAR)  + ',' + CAST(H.LNG AS VARCHAR) AS "location",
     H.STAR as "star",
+    STRUCT(
+    "number_of_floor" := HD.NUMBER_OF_FLOOR,
+    "distance_to_center_city" := HD.DISTANCE_TO_CENTER_CITY,
+    "description" := HD.DESCRIPTION,
+    "location_detail" := HD.LOCATION_DETAIL,
+    "check_in_time" := HD.CHECK_IN_TIME,
+    "check_out_time" := HD.CHECK_OUT_TIME,
+    "require_document" := HD.REQUIRE_DOCUMENT,
+    "minimum_age" := HD.MINIMUM_AGE,
+    "cancellation_policy" := HD.CANCELLATION_POLICY,
+    "smoking_policy" := HD.SMOKING_POLICY,
+    "additional_policies" := HD.ADDITIONAL_POLICIES
+    ) AS "hotel_details",
     H.STATUS as "status",
     H.CREATED_AT as "created_at",
     H.UPDATED_AT as "updated_at",
@@ -65,5 +79,6 @@ FROM HOTELS H
          LEFT JOIN DISTRICTS D ON 'Struct{code='+H.DISTRICT_CODE+'}' = D.ID
          LEFT JOIN WARDS W ON 'Struct{code='+H.WARD_CODE+'}' = W.ID
          LEFT JOIN HOTEL_FACILITY_LIST HF ON H.ID = HF.HOTEL_ID
+         LEFT JOIN HOTEL_DETAILS HD WITHIN 30 SECONDS ON H.ID = HD.HOTEL_ID
     PARTITION BY H.ID;
 
