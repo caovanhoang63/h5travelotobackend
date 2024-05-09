@@ -64,13 +64,12 @@ curl --silent --show-error -k -XPUT -u elastic:oc2nq0mhv8bju1e -H 'Content-Type:
         "template": {
             "mappings": {
                 "properties": {
-                    "geo_location": {
+                    "location_geo_point": {
                         "type": "geo_point"
                 }
             }
         }
-    }'
-
+    }}'
 
 
 

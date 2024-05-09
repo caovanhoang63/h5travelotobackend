@@ -91,7 +91,7 @@ SELECT
     STRUCT("district_code" := D.CODE, "district_name" := D.NAME) AS "district",
     STRUCT("ward_code" := W.CODE, "ward_name" := W.NAME) AS "ward",
     STRUCT("lat" := H.LAT, "lon" := H.LNG) AS "location",
-    CAST(H.LAT AS VARCHAR)  + ',' + CAST(H.LNG AS VARCHAR) AS "geo_location",
+    CAST(H.LAT AS VARCHAR)  + ',' + CAST(H.LNG AS VARCHAR) AS "location_geo_point",
     H.STAR as "star",
     STRUCT(
     "number_of_floor" := HD.NUMBER_OF_FLOOR,
