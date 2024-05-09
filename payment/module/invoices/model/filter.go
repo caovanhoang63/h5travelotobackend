@@ -7,7 +7,7 @@ type Filter struct {
 	BookingFakeId *common.UID       `json:"booking_id" form:"booking_id" gorm:"column:booking_id"`
 	DealId        int               `json:"-" form:"-" gorm:"column:deal_id"`
 	DealFakeId    *common.UID       `json:"deal_id" form:"deal_id" gorm:"column:deal_id"`
-	CreatedAt     *common.CivilTime `json:"created_at" form:"created_at" gorm:"column:created_at"`
+	CreatedAt     *common.CivilDate `json:"created_at" form:"created_at" gorm:"column:created_at"`
 }
 
 func (f *Filter) Mask(isAdmin bool) {

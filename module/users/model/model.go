@@ -19,7 +19,7 @@ type User struct {
 	Role            string            `json:"role" gorm:"column:role;"`
 	Avatar          *common.Image     `json:"avatar,omitempty" gorm:"column:avatar;type:json;"`
 	Gender          string            `json:"gender" gorm:"column:gender"`
-	DateOfBirth     *common.CivilTime `json:"date_of_birth" gorm:"column:date_of_birth"`
+	DateOfBirth     *common.CivilDate `json:"date_of_birth" gorm:"column:date_of_birth"`
 }
 
 func (User) TableName() string {
@@ -91,7 +91,7 @@ type UserUpdate struct {
 	Phone       string            `json:"phone" gorm:"column:phone;"`
 	Avatar      *common.Image     `json:"avatar,omitempty" gorm:"column:avatar;type:json;"`
 	Gender      string            `json:"gender" gorm:"column:gender"`
-	DateOfBirth *common.CivilTime `json:"date_of_birth" gorm:"column:date_of_birth"`
+	DateOfBirth *common.CivilDate `json:"date_of_birth" gorm:"column:date_of_birth"`
 }
 
 func (UserUpdate) TableName() string {

@@ -17,8 +17,8 @@ type Booking struct {
 	RoomTypeFakeId   *common.UID        `json:"room_type_id" gorm:"-"`
 	RoomQuantity     int                `json:"room_quantity" gorm:"column:room_quantity"`
 	CustomerQuantity int                `json:"customer_quantity" gorm:"column:customer_quantity"`
-	StartDate        *common.CivilTime  `json:"start_date" gorm:"column:start_date"`
-	EndDate          *common.CivilTime  `json:"end_date" gorm:"column:end_date"`
+	StartDate        *common.CivilDate  `json:"start_date" gorm:"column:start_date"`
+	EndDate          *common.CivilDate  `json:"end_date" gorm:"column:end_date"`
 }
 
 func (Booking) TableName() string {
@@ -51,8 +51,8 @@ type BookingCreate struct {
 	RoomTypeFakeId   *common.UID       `json:"room_type_id" gorm:"-"`
 	CustomerQuantity int               `json:"customer_quantity" gorm:"column:customer_quantity"`
 	RoomQuantity     int               `json:"room_quantity" gorm:"column:room_quantity"`
-	StartDate        *common.CivilTime `json:"start_date" gorm:"column:start_date"`
-	EndDate          *common.CivilTime `json:"end_date" gorm:"column:end_date"`
+	StartDate        *common.CivilDate `json:"start_date" gorm:"column:start_date"`
+	EndDate          *common.CivilDate `json:"end_date" gorm:"column:end_date"`
 }
 
 func (b *BookingCreate) UnMask() {
@@ -72,8 +72,8 @@ func (BookingCreate) TableName() string {
 
 type BookingUpdate struct {
 	CustomerQuantity int               `json:"customer_quantity" gorm:"column:customer_quantity"`
-	StartDate        *common.CivilTime `json:"start_date" gorm:"column:start_date"`
-	EndDate          *common.CivilTime `json:"end_date" gorm:"column:end_date"`
+	StartDate        *common.CivilDate `json:"start_date" gorm:"column:start_date"`
+	EndDate          *common.CivilDate `json:"end_date" gorm:"column:end_date"`
 }
 
 func (BookingUpdate) TableName() string {

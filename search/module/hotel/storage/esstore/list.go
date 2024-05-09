@@ -41,7 +41,7 @@ func (s *esStore) ListHotel(ctx context.Context,
 			if err != nil {
 				return nil, err
 			}
-			//hotel.Id = hit.Id_
+
 			result = append(result, hotel)
 		}
 

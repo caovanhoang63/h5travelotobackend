@@ -21,8 +21,8 @@ type Deal struct {
 	DiscountType      string            `json:"discount_type" gorm:"column:discount_type;"`
 	DiscountAmount    float64           `json:"discount_amount" gorm:"column:discount_amount;"`
 	DiscountPercent   float64           `json:"discount_percent" gorm:"column:discount_percent;"`
-	StartDate         *common.CivilTime `json:"start_date" gorm:"column:start_date;"`
-	ExpiryDate        *common.CivilTime `json:"expiry_date" gorm:"column:expiry_date;"`
+	StartDate         *common.CivilDate `json:"start_date" gorm:"column:start_date;"`
+	ExpiryDate        *common.CivilDate `json:"expiry_date" gorm:"column:expiry_date;"`
 	IsUnlimited       bool              `json:"is_unlimited" gorm:"column:is_unlimited;"`
 }
 

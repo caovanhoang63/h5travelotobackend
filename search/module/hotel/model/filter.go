@@ -23,7 +23,6 @@ type Filter struct {
 	ProvinceCode string         `json:"province_code" form:"province_code" `
 	DistrictCode string         `json:"district_code" form:"district_code" `
 	WardCode     string         `json:"ward_code" form:"ward_code"`
-	Name         string         `json:"name" form:"name"`
 	ListFacility []string       `json:"list_facility" form:"list_facility"`
 	Lat          *types.Float64 `json:"lat" form:"lat" `
 	Lng          *types.Float64 `json:"lng" form:"lng"`
@@ -35,6 +34,13 @@ func (f *Filter) Validate() error {
 	if f.Adults+f.Children == 0 {
 		return ErrOccupancyEmpty
 	}
+	if f.StartDate == nil {
+		return ErrStartIsEmpty
+	}
+	if f.EndDate == nil {
+		return ErrEndIsEmpty
+	}
+
 	start := *f.StartDate
 	end := *f.EndDate
 
@@ -84,7 +90,7 @@ func (f *Filter) Validate() error {
 	}
 	if f.ByHotelName {
 		trueCount++
-		if f.Name == "" {
+		if f.SearchText == "" {
 			return ErrHotelNameIsEmpty
 		}
 	}
@@ -102,7 +108,7 @@ func (f *Filter) Validate() error {
 
 func (f *Filter) ToSearchRequest() (*search.Request, error) {
 	if !(f.ByWard && f.ByLocation && f.ByProvince && f.ByDistrict && f.ByHotelName) {
-		log.Println("hotel", f.Name)
+		log.Println("hotel", f.SearchText)
 		return &search.Request{
 			Query: &types.Query{
 				Bool: &types.BoolQuery{
@@ -122,6 +128,15 @@ func (f *Filter) ToSearchRequest() (*search.Request, error) {
 		if f.Lng != nil && f.Lat != nil {
 			return &search.Request{
 				Query: &types.Query{
+					Bool: &types.BoolQuery{
+						Should: []types.Query{
+							{
+								Match: map[string]types.MatchQuery{
+									"name": {Query: f.SearchText},
+								},
+							},
+						},
+					},
 					GeoDistance: &types.GeoDistanceQuery{
 						Distance: "20km",
 						GeoDistanceQuery: map[string]types.GeoLocation{
@@ -167,7 +182,7 @@ func (f *Filter) ToSearchRequest() (*search.Request, error) {
 		return &search.Request{
 			Query: &types.Query{
 				Match: map[string]types.MatchQuery{
-					"name": {Query: f.Name},
+					"name": {Query: f.SearchText},
 				},
 			},
 		}, nil
@@ -188,4 +203,6 @@ var (
 	ErrOccupancyEmpty        = errors.New("occupancy can not be empty")
 	ErrStartDateAfterEndDate = errors.New("start date can not be after end date")
 	ErrStartDateIsAfterNow   = errors.New("start date can not be after now")
+	ErrStartIsEmpty          = errors.New("start date can not be empty")
+	ErrEndIsEmpty            = errors.New("end date can not be empty")
 )
