@@ -8,6 +8,7 @@ import (
 	"h5travelotobackend/common"
 	suggestmodel "h5travelotobackend/search/module/suggest/model"
 	"log"
+	"strings"
 )
 
 func (s *esStore) ListSuggestions(ctx context.Context,
@@ -17,28 +18,36 @@ func (s *esStore) ListSuggestions(ctx context.Context,
 	var result suggestmodel.SuggestionHits
 
 	boost1 := map[string]types.Float64{
-		"hotels_enriched": 20.0,
+		"hotels_enriched": 28.0,
 	}
 	boost2 := map[string]types.Float64{
-		"provinces": 25.0,
+		"provinces": 30.0,
 	}
 	boost3 := map[string]types.Float64{
-		"districts": 5.0,
+		"districts": 10.0,
 	}
+	boot4 := map[string]types.Float64{
+		"wards": 10.0,
+	}
+	str := strings.Split(input.SearchText, " ")
+	wildCard := "*" + str[len(str)-1] + "*"
+	caseInsensitive := true
 
-	a := true
-	b := "*" + input.SearchText + "*"
 	req := &search.Request{
-		IndicesBoost: []map[string]types.Float64{boost1, boost2, boost3},
+		IndicesBoost: []map[string]types.Float64{boost1, boost2, boost3, boot4},
 		Query: &types.Query{
 			Bool: &types.BoolQuery{
-
 				Should: []types.Query{
+					{
+						Match: map[string]types.MatchQuery{
+							"name": {Query: input.SearchText},
+						},
+					},
 					{
 						Wildcard: map[string]types.WildcardQuery{
 							"name": {
-								Value:           &b,
-								CaseInsensitive: &a,
+								Value:           &wildCard,
+								CaseInsensitive: &caseInsensitive,
 							},
 						},
 					},

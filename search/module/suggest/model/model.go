@@ -29,4 +29,10 @@ type SuggestionHit struct {
 	Name     string           `json:"name"`
 	Score    types.Float64    `json:"score"`
 	Location *common.Location `json:"location"`
+	Province *Province        `json:"province"`
+}
+
+type Province struct {
+	Code string `json:"province_code"`
+	Name string `json:"province_name"`
 }

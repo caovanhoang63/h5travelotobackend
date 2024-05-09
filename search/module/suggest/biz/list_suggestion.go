@@ -1,6 +1,7 @@
 package suggestbiz
 
 import (
+	"errors"
 	"golang.org/x/net/context"
 	"h5travelotobackend/common"
 	suggestmodel "h5travelotobackend/search/module/suggest/model"
@@ -25,6 +26,9 @@ func (biz *listSuggestBiz) ListSuggestions(ctx context.Context,
 ) (*suggestmodel.SuggestResponse, error) {
 
 	response, err := biz.store.ListSuggestions(ctx, input)
+	if input.SearchText == "" {
+		return nil, common.ErrInvalidRequest(errors.New("search text is empty"))
+	}
 	if err != nil {
 		return nil, common.ErrInternal(err)
 	}
