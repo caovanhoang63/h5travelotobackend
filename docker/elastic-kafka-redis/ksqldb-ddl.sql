@@ -7,27 +7,7 @@ CREATE STREAM HOTEL_DETAILS WITH (KAFKA_TOPIC='mysql-debezium-h5traveloto.h5trav
 CREATE STREAM PROVINCES_BASE WITH (KAFKA_TOPIC='mysql-debezium-h5traveloto.h5traveloto.provinces', PARTITIONS=1 ,VALUE_FORMAT='AVRO');
 CREATE STREAM DISTRICTS_BASE WITH (KAFKA_TOPIC='mysql-debezium-h5traveloto.h5traveloto.districts', PARTITIONS=1 ,VALUE_FORMAT='AVRO');
 CREATE STREAM WARDS_BASE WITH (KAFKA_TOPIC='mysql-debezium-h5traveloto.h5traveloto.wards', PARTITIONS=1 ,VALUE_FORMAT='AVRO');
-CREATE STREAM PROVINCES
-       AS
-     SELECT
-        P.CODE as "code",
-        P.NAME as "name"
-FROM PROVINCES_BASE P
-PARTITION BY P.CODE;
-CREATE STREAM DISTRICTS
-       AS
-     SELECT
-        D.CODE as "code",
-        D.NAME as "name"
-FROM DISTRICTS_BASE D
-PARTITION BY D.CODE;
-CREATE STREAM WARDS
-       AS
-     SELECT
-        W.CODE as "code",
-        W.NAME as "name"
-FROM WARDS_BASE W
-PARTITION BY W.CODE;
+
 CREATE TABLE PROVINCES_TABLE (ID VARCHAR PRIMARY KEY)
     WITH (KAFKA_TOPIC='mysql-debezium-h5traveloto.h5traveloto.provinces',
         VALUE_FORMAT='AVRO');
@@ -45,6 +25,38 @@ CREATE TABLE  ROOM_FACILITY_LIST  AS
     SELECT RF.ROOM_ID, COLLECT_LIST(FACILITY_ID) AS FACILITY_LIST
     FROM  ROOM_FACILITIES RF
     GROUP BY RF.ROOM_ID;
+CREATE STREAM PROVINCES
+       AS
+SELECT
+    P.CODE as "code",
+    P.NAME as "name"
+FROM PROVINCES_BASE P
+    PARTITION BY P.CODE;
+CREATE STREAM DISTRICTS
+       AS
+SELECT
+    D.CODE as "code",
+    D.NAME as "name",
+    STRUCT("province_code" := P.CODE, "province_name" := P.NAME) AS "province"
+    FROM DISTRICTS_BASE D
+    JOIN PROVINCES_TABLE P ON 'Struct{code='+D.PROVINCE_CODE+'}' = P.ID
+    PARTITION BY D.CODE;
+CREATE STREAM WARDS
+       AS
+SELECT
+    W.CODE as "code",
+    W.NAME as "name",
+    STRUCT("district_code" := D.CODE, "district_name" := D.NAME) AS "district",
+    STRUCT("province_code" := P.CODE, "province_name" := P.NAME) AS "province"
+FROM WARDS_BASE W
+    JOIN DISTRICTS_TABLE D ON 'Struct{code='+W.DISTRICT_CODE+'}' = D.ID
+    JOIN PROVINCES_TABLE P ON 'Struct{code='+D.PROVINCE_CODE+'}' = P.ID
+
+PARTITION BY W.CODE;
+
+
+
+
 CREATE STREAM ROOM_TYPES_ENRICHED AS
     SELECT
         RT.ID ID,
