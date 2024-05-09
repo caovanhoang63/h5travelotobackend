@@ -64,13 +64,14 @@ curl --silent --show-error -k -XPUT -u elastic:oc2nq0mhv8bju1e -H 'Content-Type:
         "template": {
             "mappings": {
                 "properties": {
-                    "location": {
+                    "geo_location": {
                         "type": "geo_point"
-                    }
                 }
             }
         }
-}'
+    }'
+
+
 
 
 #keytool -import -alias elasticsearch -file es01.crt -keystore truststore.jks
@@ -78,6 +79,7 @@ curl --silent --show-error -k -XPUT -u elastic:oc2nq0mhv8bju1e -H 'Content-Type:
 
 # Start Elasticsearch connector
 curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @es-sink-enriched.conf.json
+curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @es-sink-suggest.conf.json
 
 
 # Check the status of the connector
