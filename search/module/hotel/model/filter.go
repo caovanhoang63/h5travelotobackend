@@ -2,11 +2,11 @@ package hotelmodel
 
 import (
 	"errors"
+	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"h5travelotobackend/common"
-	"log"
 	"time"
 )
 
@@ -21,14 +21,15 @@ const (
 )
 
 type Filter struct {
-	SearchText   string            `json:"search_text" form:"search_text"`
+	SearchText   *string           `json:"search_text" form:"search_text"`
+	Id           *string           `json:"id" form:"id"`
 	SearchTerm   *SearchTerm       `json:"search_term" form:"search_term"`
 	Adults       int               `json:"adults" form:"adults"`
 	Children     int               `json:"children" form:"children"`
 	Star         int               `json:"star" form:"star"`
 	ListFacility []string          `json:"list_facility" form:"list_facility"`
-	Lat          *types.Float64    `json:"lat" form:"lat" `
-	Lng          *types.Float64    `json:"lng" form:"lng"`
+	Lat          *string           `json:"lat" form:"lat" `
+	Lng          *string           `json:"lng" form:"lng"`
 	StartDate    *common.CivilDate `json:"start_date" form:"start_date"`
 	EndDate      *common.CivilDate `json:"end_date" form:"end_date"`
 }
@@ -44,9 +45,6 @@ func (f *Filter) Validate() error {
 		return ErrEndIsEmpty
 	}
 
-	log.Println("start date: ", f.StartDate.ToString())
-	log.Println("end date: ", f.EndDate.ToString())
-
 	if f.StartDate.After(*f.EndDate) {
 		return ErrStartDateAfterEndDate
 	}
@@ -56,23 +54,25 @@ func (f *Filter) Validate() error {
 		return ErrStartInPass
 	}
 
+	searchTerm := *f.SearchTerm
+
 	if *f.SearchTerm == SearchTermLocation {
 		if f.Lat == nil || f.Lng == nil {
 			return ErrLatLonEmpty
 		}
-		latBytes, err := f.Lat.MarshalJSON()
-		if err != nil {
-			return common.ErrInvalidRequest(err)
-		}
-		lngBytes, err := f.Lng.MarshalJSON()
-		if err != nil {
-			return common.ErrInvalidRequest(err)
-		}
-		if govalidator.IsLatitude(string(latBytes)) && govalidator.IsLongitude((string(lngBytes))) {
+		if !govalidator.IsLatitude(*f.Lat) && !govalidator.IsLongitude(*f.Lng) {
 			return ErrInvalidLatLon
 		}
-	} else {
-		if f.SearchText == "" {
+	}
+
+	if searchTerm == SearchTermProvince || searchTerm == SearchTermDistrict || searchTerm == SearchTermWard {
+		if f.Id == nil {
+			return ErrIdIsEmpty
+		}
+	}
+
+	if searchTerm == SearchTermName {
+		if f.SearchText == nil {
 			return ErrSearchTextIsEmpty
 		}
 	}
@@ -81,7 +81,25 @@ func (f *Filter) Validate() error {
 }
 
 func (f *Filter) ToSearchRequest() (*search.Request, error) {
-	//TODO implement this
+	if *f.SearchTerm == SearchTermLocation {
+		LatLonGeo := fmt.Sprintf("%s,%s", *f.Lat, *f.Lng)
+		return &search.Request{
+			Query: &types.Query{
+				Bool: &types.BoolQuery{
+					Filter: []types.Query{
+						{
+							GeoDistance: &types.GeoDistanceQuery{
+								Distance: "30km",
+								GeoDistanceQuery: map[string]types.GeoLocation{
+									"location_geo_point": LatLonGeo,
+								},
+							},
+						},
+					},
+				},
+			},
+		}, nil
+	}
 	return nil, nil
 }
 
@@ -95,4 +113,5 @@ var (
 	ErrStartIsEmpty          = errors.New("start date can not be empty")
 	ErrEndIsEmpty            = errors.New("end date can not be empty")
 	ErrStartInPass           = errors.New("start date can not be in the past")
+	ErrIdIsEmpty             = errors.New("id can not be empty")
 )

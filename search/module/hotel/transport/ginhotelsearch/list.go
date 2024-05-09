@@ -7,7 +7,6 @@ import (
 	hotelsearchbiz "h5travelotobackend/search/module/hotel/biz"
 	hotelmodel "h5travelotobackend/search/module/hotel/model"
 	hotelstorage "h5travelotobackend/search/module/hotel/storage/esstore"
-	"log"
 	"net/http"
 )
 
@@ -18,7 +17,6 @@ func ListHotel(appCtx appContext.AppContext) gin.HandlerFunc {
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
-		log.Println("filter: ", filter)
 
 		var paging common.Paging
 		err = c.ShouldBindQuery(&paging)
