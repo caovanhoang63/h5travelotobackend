@@ -1,6 +1,7 @@
 package hotelstorage
 
 import (
+	json2 "encoding/json"
 	"fmt"
 	"golang.org/x/net/context"
 	"h5travelotobackend/common"
@@ -19,8 +20,6 @@ func (s *esStore) ListHotel(ctx context.Context,
 		return nil, common.ErrInvalidRequest(err)
 	}
 
-	log.Println("req: ", req.Query.Bool.Should[0].Match)
-
 	res, err := s.es.Search().Index(hotelmodel.IndexName).
 		Request(req).Do(ctx)
 	if err != nil {
@@ -38,11 +37,11 @@ func (s *esStore) ListHotel(ctx context.Context,
 				return nil, err
 			}
 			log.Println("json: ", string(json))
-			//err = json2.Unmarshal(json, &hotel)
-			//if err != nil {
-			//	return nil, err
-			//}
-			hotel.Id = hit.Id_
+			err = json2.Unmarshal(json, &hotel)
+			if err != nil {
+				return nil, err
+			}
+			//hotel.Id = hit.Id_
 			result = append(result, hotel)
 		}
 

@@ -109,7 +109,7 @@ func (f *Filter) ToSearchRequest() (*search.Request, error) {
 					Should: []types.Query{
 						{
 							Match: map[string]types.MatchQuery{
-								"NAME": {Query: f.Name},
+								"name": {Query: f.SearchText},
 							},
 						},
 					},
@@ -125,7 +125,7 @@ func (f *Filter) ToSearchRequest() (*search.Request, error) {
 					GeoDistance: &types.GeoDistanceQuery{
 						Distance: "20km",
 						GeoDistanceQuery: map[string]types.GeoLocation{
-							"location_example": types.LatLonGeoLocation{Lat: *f.Lat, Lon: *f.Lng},
+							"location": types.LatLonGeoLocation{Lat: *f.Lat, Lon: *f.Lng},
 						},
 					},
 				},
