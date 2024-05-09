@@ -2,6 +2,7 @@ package suggestmodel
 
 import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
+	"h5travelotobackend/common"
 )
 
 const IndexName = "hotels_enriched,provinces,districts,wards"
@@ -23,14 +24,9 @@ func (hits *SuggestionHits) Append(hit SuggestionHit) {
 }
 
 type SuggestionHit struct {
-	Index    string        `json:"index"`
-	Id       string        `json:"id"`
-	Name     string        `json:"name"`
-	Score    types.Float64 `json:"score"`
-	Location *Location     `json:"location"`
-}
-
-type Location struct {
-	Lat *types.Float64 `json:"lat"`
-	Lon *types.Float64 `json:"lon"`
+	Index    string           `json:"index"`
+	Id       string           `json:"id"`
+	Name     string           `json:"name"`
+	Score    types.Float64    `json:"score"`
+	Location *common.Location `json:"location"`
 }
