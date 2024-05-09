@@ -266,7 +266,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 5g
+          memory: 6g
     ulimits:
       memlock:
         soft: -1
