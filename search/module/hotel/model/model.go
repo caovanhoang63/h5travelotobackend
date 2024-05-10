@@ -11,8 +11,6 @@ type Hotel struct {
 	OwnerID       int              `json:"-"`
 	Name          string           `json:"name"`
 	Address       string           `json:"address"`
-	Logo          *common.Image    `json:"logo"`
-	Images        *common.Images   `json:"images"`
 	HotelType     int              `json:"hotel_type"`
 	Hotline       string           `json:"hotline"`
 	Star          int              `json:"star"`
@@ -22,6 +20,8 @@ type Hotel struct {
 	Province      *Province        `json:"province"`
 	District      *District        `json:"district"`
 	Ward          *Ward            `json:"ward"`
+	Logo          *common.Image    `json:"logo"`
+	Images        *common.Images   `json:"images"`
 }
 
 type Province struct {
