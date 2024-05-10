@@ -21,7 +21,6 @@ func (s *sqlStore) ListHotelWithCondition(
 			db = db.Where("owner_id = ?", f.OwnerId)
 		}
 
-		//TODO: Tinh khoang cach dua vao kinh do va vi do
 		if f.Distance > 0 {
 
 			db = db.Where("ACOS( SIN(lat)*SIN(?) + COS(lat)*COS(?)*COS(?-lng) ) * 6371000 < ?",

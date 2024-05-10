@@ -24,11 +24,7 @@ func CreateHotelFacilityDetails(appCtx appContext.AppContext, ctx context.Contex
 
 			for i := range hotel.FacilitiesIds {
 				hotelFacilityDetails[i].HotelId = hotel.Id
-				uid, err := common.FromBase58(hotel.FacilitiesIds[i])
-				if err != nil {
-					log.Println(err)
-				}
-				hotelFacilityDetails[i].FacilityId = int(uid.GetLocalID())
+				hotelFacilityDetails[i].FacilityId = hotel.FacilitiesIds[i]
 			}
 			store := hotelfacilitysqlstore.NewSqlStore(appCtx.GetGormDbConnection())
 			return store.CreateHotelFacilityDetails(ctx, hotelFacilityDetails)

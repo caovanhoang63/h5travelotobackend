@@ -26,10 +26,6 @@ func GetFacilitiesOfAHotel(appCtx appContext.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		for i := range data {
-			data[i].Mask(false)
-		}
-
 		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
 	}
 }

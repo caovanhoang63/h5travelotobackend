@@ -9,20 +9,7 @@ type HotelFacilityType struct {
 	Facilities      []HotelFacility `json:"facilities" gorm:"-"`
 }
 
-func (h *HotelFacilityType) Mask(isAdmin bool) {
-	h.GenUID(common.DbTypeHotelFacilityType)
-	if h.Facilities != nil {
-		for i := range h.Facilities {
-			h.Facilities[i].Mask(isAdmin)
-		}
-	}
-}
-
 type HotelFacility common.FacilityDetail
-
-func (h *HotelFacility) Mask(isAdmin bool) {
-	h.GenUID(common.DbTypeHotelFacility)
-}
 
 func (HotelFacilityType) TableName() string {
 	return "hotel_facility_types"

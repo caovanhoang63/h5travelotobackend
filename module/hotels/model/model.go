@@ -16,8 +16,7 @@ type Hotel struct {
 	User            *common.SimpleUser `json:"user" gorm:"foreignKey:OwnerID;preload:false"`
 	Name            string             `json:"name" gorm:"column:name"`
 	Address         string             `json:"address" gorm:"column:address"`
-	HotelType       int                `json:"-" gorm:"column:hotel_type"`
-	HotelTypeFakeId *common.UID        `json:"hotel_type" gorm:"-"`
+	HotelType       int                `json:"hotel_type" gorm:"column:hotel_type"`
 	Hotline         string             `json:"hotline" gorm:"column:hotline"`
 	Logo            *common.Image      `json:"logo" gorm:"column:logo"`
 	Images          *common.Images     `json:"images" gorm:"column:images"`
@@ -42,11 +41,9 @@ func (Hotel) TableName() string {
 
 func (data *Hotel) Mask(isAdmin bool) {
 	data.GenUID(common.DbTypeHotel)
-	data.HotelTypeFakeId = common.NewUIDP(uint32(data.HotelType), common.DbTypeHotelType, 1)
 }
 
 func (data *Hotel) UnMask() {
-	data.HotelType = int(data.HotelTypeFakeId.GetLocalID())
 }
 
 type HotelCreate struct {
@@ -54,8 +51,7 @@ type HotelCreate struct {
 	OwnerID         int                                 `json:"-" gorm:"column:owner_id"`
 	Name            string                              `json:"name" gorm:"column:name"`
 	Address         string                              `json:"address" gorm:"column:address"`
-	HotelType       int                                 `json:"-" gorm:"column:hotel_type"`
-	HotelTypeFakeId *common.UID                         `json:"hotel_type" gorm:"-"`
+	HotelType       int                                 `json:"hotel_type" gorm:"column:hotel_type"`
 	Hotline         string                              `json:"hotline" gorm:"column:hotline"`
 	ProvinceCode    string                              `json:"province_code" gorm:"column:province_code"`
 	DistrictCode    string                              `json:"district_code" gorm:"column:district_code"`
@@ -65,7 +61,7 @@ type HotelCreate struct {
 	Lat             float64                             `json:"lat" gorm:"column:lat"`
 	Lng             float64                             `json:"lng" gorm:"column:lng"`
 	Star            int                                 `json:"star" gorm:"star"`
-	FacilityIds     []string                            `json:"facility_ids" gorm:"-"`
+	FacilityIds     []int                               `json:"facility_ids" gorm:"-"`
 	HotelDetail     *hoteldetailmodel.HotelDetailCreate `json:"hotel_detail" gorm:"foreignKey:HotelId;references:Id"`
 }
 
@@ -78,7 +74,6 @@ func (data *HotelCreate) Mask(isAdmin bool) {
 }
 
 func (data *HotelCreate) UnMask() {
-	data.HotelType = int(data.HotelTypeFakeId.GetLocalID())
 }
 
 func (data *HotelCreate) Validate() error {
