@@ -14,9 +14,9 @@ type SearchTerm string
 
 const (
 	SearchTermName     SearchTerm = "name"
-	SearchTermProvince SearchTerm = "provinces"
-	SearchTermDistrict SearchTerm = "districts"
-	SearchTermWard     SearchTerm = "wards"
+	SearchTermProvince SearchTerm = "province"
+	SearchTermDistrict SearchTerm = "district"
+	SearchTermWard     SearchTerm = "ward"
 	SearchTermLocation SearchTerm = "location"
 )
 
@@ -81,6 +81,11 @@ func (f *Filter) Validate() error {
 }
 
 func (f *Filter) ToSearchRequest() (*search.Request, error) {
+	if f.SearchTerm == nil {
+		return nil, ErrNoFilter
+	}
+	searchTerm := string(*f.SearchTerm)
+	var field string
 	if *f.SearchTerm == SearchTermLocation {
 		LatLonGeo := fmt.Sprintf("%s,%s", *f.Lat, *f.Lng)
 		return &search.Request{
@@ -99,8 +104,37 @@ func (f *Filter) ToSearchRequest() (*search.Request, error) {
 				},
 			},
 		}, nil
+	} else if *f.SearchTerm == SearchTermName {
+		field = string(SearchTermName)
+		return &search.Request{
+			Query: &types.Query{
+				Bool: &types.BoolQuery{
+					Should: []types.Query{
+						{
+							Match: map[string]types.MatchQuery{
+								field: {Query: *f.SearchText},
+							},
+						},
+					},
+				},
+			},
+		}, nil
+	} else {
+		field = fmt.Sprintf("%s.%s_code", searchTerm, searchTerm)
+		return &search.Request{
+			Query: &types.Query{
+				Bool: &types.BoolQuery{
+					Must: []types.Query{
+						{
+							Term: map[string]types.TermQuery{
+								field: {Value: *f.Id},
+							},
+						},
+					},
+				},
+			},
+		}, nil
 	}
-	return nil, nil
 }
 
 var (
@@ -114,4 +148,5 @@ var (
 	ErrEndIsEmpty            = errors.New("end date can not be empty")
 	ErrStartInPass           = errors.New("start date can not be in the past")
 	ErrIdIsEmpty             = errors.New("id can not be empty")
+	ErrNoFilter              = errors.New("no filter")
 )
