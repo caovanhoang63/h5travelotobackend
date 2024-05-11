@@ -6,16 +6,18 @@ import (
 	hotelmodel "h5travelotobackend/search/module/hotel/model"
 )
 
-type ListHotelStore interface {
-	ListHotel(ctx context.Context, filter *hotelmodel.Filter, paging *common.Paging) ([]hotelmodel.Hotel, error)
+type ListHotelRepo interface {
+	ListHotelWithFilter(ctx context.Context,
+		filter *hotelmodel.Filter,
+		paging *common.Paging) ([]hotelmodel.Hotel, error)
 }
 
 type listHotelBiz struct {
-	store ListHotelStore
+	repo ListHotelRepo
 }
 
-func NewListHotelBiz(store ListHotelStore) *listHotelBiz {
-	return &listHotelBiz{store: store}
+func NewListHotelBiz(repo ListHotelRepo) *listHotelBiz {
+	return &listHotelBiz{repo: repo}
 }
 
 func (biz *listHotelBiz) ListHotelWithFilter(ctx context.Context,
@@ -26,9 +28,24 @@ func (biz *listHotelBiz) ListHotelWithFilter(ctx context.Context,
 		return nil, common.ErrInvalidRequest(err)
 	}
 
-	result, err := biz.store.ListHotel(ctx, filter, paging)
+	result, err := biz.repo.ListHotelWithFilter(ctx, filter, paging)
 	if err != nil {
-		return nil, common.ErrInternal(err)
+		return nil, err
+	}
+
+	for i := range result {
+		if result[i].ListAvailableRoomType == nil {
+			result = append(result[:i], result[i+1:]...)
+		}
+	}
+
+	if len(result) == 0 {
+		if paging.Total > int64(paging.Limit*paging.Page) {
+			paging.Page++
+			return biz.ListHotelWithFilter(ctx, filter, paging)
+		} else {
+			return nil, nil
+		}
 	}
 
 	return result, nil
