@@ -4,7 +4,6 @@ import (
 	"golang.org/x/net/context"
 	"h5travelotobackend/common"
 	hotelmodel "h5travelotobackend/search/module/hotel/model"
-	"log"
 )
 
 type ListHotelRepo interface {
@@ -34,10 +33,7 @@ func (biz *listHotelBiz) ListHotelWithFilter(ctx context.Context,
 		return nil, common.ErrInternal(err)
 	}
 
-	log.Println("result: ", len(result))
-
 	for i := len(result) - 1; i >= 0; i-- {
-		log.Println("result[i]: ", result[i].Name)
 		if result[i].ListAvailableRoomType == nil {
 			result = append(result[:i], result[i+1:]...)
 		}
@@ -45,8 +41,6 @@ func (biz *listHotelBiz) ListHotelWithFilter(ctx context.Context,
 
 	if len(result) == 0 {
 		if paging.Total > int64(paging.Limit*paging.Page) {
-			log.Println("paging:", paging.Page)
-			log.Println("paging TOTAL:", paging.Total)
 			paging.Page++
 			return biz.ListHotelWithFilter(ctx, filter, paging)
 		} else {
