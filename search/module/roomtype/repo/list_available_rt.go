@@ -14,7 +14,7 @@ type ListRoomTypeStore interface {
 }
 
 type BookingStore interface {
-	CountBookedRoom(ctx context.Context, rtId int, startDate, endDate *common.CivilDate) (int, error)
+	CountBookedRoom(ctx context.Context, rtId int, startDate, endDate *common.CivilDate) (*int, error)
 }
 
 type listRoomTypeRepo struct {
@@ -42,12 +42,12 @@ func (repo *listRoomTypeRepo) ListRoomType(ctx context.Context,
 	jobs := make([]asyncjob.Job, len(rts))
 	for i := range rts {
 		asyncjob.NewJob(func(ctx context.Context) error {
-			var booked int
+			var booked *int
 			booked, err = repo.bkStore.CountBookedRoom(ctx, rts[i].Id, filter.StartDate, filter.EndDate)
-			if err != nil {
+			if err != nil || booked == nil {
 				return common.ErrInternal(err)
 			}
-			rts[i].AvailableRoom = rts[i].TotalRoom - booked
+			rts[i].AvailableRoom = rts[i].TotalRoom - *booked
 			return nil
 		})
 		jobs = append(jobs, jobs[i])
