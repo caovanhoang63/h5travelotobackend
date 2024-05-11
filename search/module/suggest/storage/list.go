@@ -7,7 +7,6 @@ import (
 	"golang.org/x/net/context"
 	"h5travelotobackend/common"
 	suggestmodel "h5travelotobackend/search/module/suggest/model"
-	"log"
 	"strings"
 )
 
@@ -60,7 +59,6 @@ func (s *esStore) ListSuggestions(ctx context.Context,
 		Index("hotels_enriched,provinces,districts,wards").
 		Request(req).
 		Size(input.Limit)
-	log.Println("do: ", do)
 
 	res, err := do.Do(ctx)
 

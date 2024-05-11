@@ -24,15 +24,12 @@ func (hits *SuggestionHits) Append(hit SuggestionHit) {
 }
 
 type SuggestionHit struct {
-	Index    string           `json:"index"`
-	Id       string           `json:"id"`
-	Name     string           `json:"name"`
-	Score    types.Float64    `json:"score"`
-	Location *common.Location `json:"location"`
-	Province *Province        `json:"province"`
-}
-
-type Province struct {
-	Code string `json:"province_code"`
-	Name string `json:"province_name"`
+	Index    string                     `json:"index"`
+	Id       string                     `json:"id"`
+	Name     string                     `json:"name"`
+	FullName *string                    `json:"full_name"`
+	Score    types.Float64              `json:"score"`
+	Location *common.Location           `json:"location"`
+	Province *common.AdministrativeUnit `json:"province"`
+	District *common.AdministrativeUnit `json:"district"`
 }
