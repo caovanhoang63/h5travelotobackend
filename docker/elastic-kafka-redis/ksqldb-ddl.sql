@@ -29,7 +29,8 @@ CREATE STREAM PROVINCES
        AS
 SELECT
     P.CODE as "code",
-    P.NAME as "name"
+    P.NAME as "name",
+    P.FULL_NAME as "full_name"
 FROM PROVINCES_BASE P
     PARTITION BY P.CODE;
 CREATE STREAM DISTRICTS
@@ -37,7 +38,8 @@ CREATE STREAM DISTRICTS
 SELECT
     D.CODE as "code",
     D.NAME as "name",
-    STRUCT("province_code" := P.CODE, "province_name" := P.NAME) AS "province"
+    D.FULL_NAME as "full_name",
+    STRUCT("code" := P.CODE, "name" := P.NAME,"full_name" := P.FULL_NAME) AS "province"
     FROM DISTRICTS_BASE D
     JOIN PROVINCES_TABLE P ON 'Struct{code='+D.PROVINCE_CODE+'}' = P.ID
     PARTITION BY D.CODE;
@@ -46,8 +48,9 @@ CREATE STREAM WARDS
 SELECT
     W.CODE as "code",
     W.NAME as "name",
-    STRUCT("district_code" := D.CODE, "district_name" := D.NAME) AS "district",
-    STRUCT("province_code" := P.CODE, "province_name" := P.NAME) AS "province"
+    W.FULL_NAME as "full_name",
+    STRUCT("code" := D.CODE, "name" := D.NAME,"full_name" := D.FULL_NAME ) AS "district",
+    STRUCT("code" := P.CODE, "name" := P.NAME,"full_name" :=P.FULL_NAME) AS "province"
 FROM WARDS_BASE W
     JOIN DISTRICTS_TABLE D ON 'Struct{code='+W.DISTRICT_CODE+'}' = D.ID
     JOIN PROVINCES_TABLE P ON 'Struct{code='+D.PROVINCE_CODE+'}' = P.ID
@@ -87,9 +90,9 @@ SELECT
     H.LOGO AS "logo_str",
     H.IMAGES AS "images_str",
     H.ADDRESS AS "address",
-    STRUCT("province_code" := P.CODE, "province_name" := P.NAME) AS "province",
-    STRUCT("district_code" := D.CODE, "district_name" := D.NAME) AS "district",
-    STRUCT("ward_code" := W.CODE, "ward_name" := W.NAME) AS "ward",
+    STRUCT("code" := P.CODE, "name" := P.NAME,"full_name" := P.FULL_NAME) AS "province",
+    STRUCT("code" := D.CODE, "name" := D.NAME,"full_name" := D.FULL_NAME) AS "district",
+    STRUCT("code" := W.CODE, "name" := W.NAME,"full_name" := W.FULL_NAME) AS "ward",
     STRUCT("lat" := H.LAT, "lon" := H.LNG) AS "location",
     CAST(H.LAT AS VARCHAR)  + ',' + CAST(H.LNG AS VARCHAR) AS "location_geo_point",
     H.STAR as "star",
