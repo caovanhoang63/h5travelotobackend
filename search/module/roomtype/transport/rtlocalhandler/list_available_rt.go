@@ -17,6 +17,7 @@ type listAvailableRoomTypeHandler struct {
 func (l *listAvailableRoomTypeHandler) ListAvailableRt(ctx context.Context,
 	filter *rtsearchmodel.Filter,
 ) ([]rtsearchmodel.RoomType, error) {
+	filter.SetDefault()
 	rtHandlerStore := rtsearchstorage.NewStore(l.appCtx.GetElasticSearchClient())
 	bookingHandler := bklocalhandler.NewCountBookedRoomLocalHandler(l.appCtx)
 	rtHandlerRepo := rtsearchrepo.NewListRoomTypeRepo(rtHandlerStore, bookingHandler)

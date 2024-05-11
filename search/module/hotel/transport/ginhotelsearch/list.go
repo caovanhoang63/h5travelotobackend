@@ -8,7 +8,7 @@ import (
 	hotelmodel "h5travelotobackend/search/module/hotel/model"
 	hotelsearchrepo "h5travelotobackend/search/module/hotel/repo"
 	hotelstorage "h5travelotobackend/search/module/hotel/storage/esstore"
-	"h5travelotobackend/search/module/roomtype/transport/localHandler"
+	rtSearchlocalHdl "h5travelotobackend/search/module/roomtype/transport/rtlocalhandler"
 	"net/http"
 )
 
@@ -21,11 +21,12 @@ func ListHotel(appCtx appContext.AppContext) gin.HandlerFunc {
 		}
 
 		var paging common.Paging
+
 		err = c.ShouldBindQuery(&paging)
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
-
+		paging.FullFill()
 		store := hotelstorage.NewESStore(appCtx.GetElasticSearchClient())
 		rtHandler := rtSearchlocalHdl.NewListAvailableRoomTypeHandler(appCtx)
 		repo := hotelsearchrepo.NewListHotelRepo(store, rtHandler)

@@ -44,6 +44,8 @@ func (repo *listHotelRepo) ListHotelWithFilter(ctx context.Context,
 				HotelId:   result[i].Id,
 				StartDate: filter.StartDate,
 				EndDate:   filter.EndDate,
+				MaxPrice:  filter.MaxPrice,
+				MinPrice:  filter.MinPrice,
 			})
 			if err != nil {
 				return common.ErrInternal(err)

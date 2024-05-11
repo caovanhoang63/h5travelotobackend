@@ -22,7 +22,7 @@ func (s *esStore) ListHotel(ctx context.Context,
 	}
 
 	res, err := s.es.Search().Index(hotelmodel.IndexName).
-		Request(req).Do(ctx)
+		Request(req).From(paging.GetOffSet()).Size(paging.Limit).Do(ctx)
 	if err != nil {
 		return nil, err
 	}

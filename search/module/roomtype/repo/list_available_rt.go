@@ -56,7 +56,7 @@ func (repo *listRoomTypeRepo) ListRoomType(ctx context.Context,
 	g := asyncjob.NewGroup(true, jobs...)
 	err = g.Run(ctx)
 	if err != nil {
-		log.Println(err)
+		log.Println("a: ", err)
 	}
 
 	return rts, nil

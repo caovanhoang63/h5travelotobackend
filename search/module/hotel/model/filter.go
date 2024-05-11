@@ -30,6 +30,8 @@ type Filter struct {
 	ListFacility []string          `json:"list_facility" form:"list_facility"`
 	Lat          *string           `json:"lat" form:"lat" `
 	Lng          *string           `json:"lng" form:"lng"`
+	MaxPrice     *float64          `json:"max_price" form:"max_price"`
+	MinPrice     *float64          `json:"min_price" form:"min_price"`
 	StartDate    *common.CivilDate `json:"start_date" form:"start_date"`
 	EndDate      *common.CivilDate `json:"end_date" form:"end_date"`
 }
