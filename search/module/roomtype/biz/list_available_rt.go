@@ -26,8 +26,9 @@ func (biz *listAvailableRtBiz) ListAvailableRt(ctx context.Context,
 	if err != nil {
 		return nil, err
 	}
-	for i := range rts {
-		if rts[i].AvailableRoom == 0 {
+	for i := len(rts) - 1; i >= 0; i-- {
+		if rts[i].AvailableRoom == 0 || rts[i].AvailableRoom < filter.RoomQuantity ||
+			float32(rts[i].MaxCustomer*filter.RoomQuantity) < filter.Customer {
 			rts = append(rts[:i], rts[i+1:]...)
 		}
 	}

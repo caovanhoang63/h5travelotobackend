@@ -8,12 +8,14 @@ import (
 )
 
 type Filter struct {
-	HotelId   int               `json:"hotel_id"`
-	Customer  int               `json:"customer"`
-	MinPrice  *float64          `json:"min_price"`
-	MaxPrice  *float64          `json:"max_price"`
-	StartDate *common.CivilDate `json:"start_date"`
-	EndDate   *common.CivilDate `json:"end_date"`
+	CacheKey     string            `json:"cache_key"`
+	HotelId      int               `json:"hotel_id"`
+	Customer     float32           `json:"customer"`
+	MinPrice     *float64          `json:"min_price"`
+	MaxPrice     *float64          `json:"max_price"`
+	RoomQuantity int               `json:"room_quantity" form:"room_quantity"`
+	StartDate    *common.CivilDate `json:"start_date"`
+	EndDate      *common.CivilDate `json:"end_date"`
 }
 
 func (f *Filter) SetDefault() {
@@ -24,7 +26,7 @@ func (f *Filter) SetDefault() {
 
 	if f.MaxPrice == nil {
 		f.MaxPrice = new(float64)
-		*f.MaxPrice = 0
+		*f.MaxPrice = 100000000
 	}
 }
 
@@ -44,7 +46,7 @@ func (f *Filter) ToSearchRequest() (*search.Request, error) {
 				Must: []types.Query{
 					{
 						Term: map[string]types.TermQuery{
-							"hotel_id": {Value: f.HotelId},
+							"hotel_id": {Value: strconv.Itoa(f.HotelId)},
 						},
 					},
 					{

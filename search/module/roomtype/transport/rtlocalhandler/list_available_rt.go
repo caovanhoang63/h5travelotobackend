@@ -18,12 +18,19 @@ func (l *listAvailableRoomTypeHandler) ListAvailableRt(ctx context.Context,
 	filter *rtsearchmodel.Filter,
 ) ([]rtsearchmodel.RoomType, error) {
 	filter.SetDefault()
-	rtHandlerStore := rtsearchstorage.NewStore(l.appCtx.GetElasticSearchClient())
+	rtHandlerStore := rtsearchstorage.NewStore(l.appCtx.GetElasticSearchClient(), l.appCtx.GetRedisClient())
 	bookingHandler := bklocalhandler.NewCountBookedRoomLocalHandler(l.appCtx)
 	rtHandlerRepo := rtsearchrepo.NewListRoomTypeRepo(rtHandlerStore, bookingHandler)
 	rtHandler := rtsearchbiz.NewListAvailableRtBiz(rtHandlerRepo)
 
-	return rtHandler.ListAvailableRt(ctx, filter)
+	rts, err := rtHandler.ListAvailableRt(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	for i := range rts {
+		rts[i].Mask(false)
+	}
+	return rts, nil
 }
 
 func NewListAvailableRoomTypeHandler(appCtx appContext.AppContext) *listAvailableRoomTypeHandler {

@@ -26,6 +26,7 @@ type Filter struct {
 	SearchTerm   *SearchTerm       `json:"search_term" form:"search_term"`
 	Adults       int               `json:"adults" form:"adults"`
 	Children     int               `json:"children" form:"children"`
+	RoomQuantity int               `json:"room_quantity" form:"room_quantity"`
 	Star         int               `json:"star" form:"star"`
 	ListFacility []string          `json:"list_facility" form:"list_facility"`
 	Lat          *string           `json:"lat" form:"lat" `
@@ -34,9 +35,26 @@ type Filter struct {
 	MinPrice     *float64          `json:"min_price" form:"min_price"`
 	StartDate    *common.CivilDate `json:"start_date" form:"start_date"`
 	EndDate      *common.CivilDate `json:"end_date" form:"end_date"`
+	Customer     float32           `json:"customer"`
+}
+
+func (f *Filter) SetDefault() {
+	f.Customer = float32(f.Adults) + float32(f.Children)/2.0
+	if f.MinPrice == nil {
+		f.MinPrice = new(float64)
+		*f.MinPrice = 0
+	}
+
+	if f.MaxPrice == nil {
+		f.MaxPrice = new(float64)
+		*f.MaxPrice = 100000000
+	}
 }
 
 func (f *Filter) Validate() error {
+	if f.RoomQuantity == 0 {
+		return ErrRoomQuantityIsZero
+	}
 	if f.Adults+f.Children == 0 {
 		return ErrOccupancyEmpty
 	}
@@ -151,4 +169,5 @@ var (
 	ErrStartInPass           = errors.New("start date can not be in the past")
 	ErrIdIsEmpty             = errors.New("id can not be empty")
 	ErrNoFilter              = errors.New("no filter")
+	ErrRoomQuantityIsZero    = errors.New("room quantity can not be zero")
 )

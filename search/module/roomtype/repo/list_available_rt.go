@@ -13,20 +13,20 @@ type ListRoomTypeStore interface {
 		filter *rtsearchmodel.Filter) ([]rtsearchmodel.RoomType, error)
 }
 
-type BookingStore interface {
+type BookingHandler interface {
 	CountBookedRoom(ctx context.Context, rtId int, startDate, endDate *common.CivilDate) (*int, error)
 }
 
 type listRoomTypeRepo struct {
-	rtStore ListRoomTypeStore
-	bkStore BookingStore
+	rtStore   ListRoomTypeStore
+	bkHandler BookingHandler
 }
 
-func NewListRoomTypeRepo(rtStore ListRoomTypeStore, bkStore BookingStore) *listRoomTypeRepo {
+func NewListRoomTypeRepo(rtStore ListRoomTypeStore, bkStore BookingHandler) *listRoomTypeRepo {
 	{
 		return &listRoomTypeRepo{
-			rtStore: rtStore,
-			bkStore: bkStore,
+			rtStore:   rtStore,
+			bkHandler: bkStore,
 		}
 	}
 }
@@ -39,18 +39,32 @@ func (repo *listRoomTypeRepo) ListRoomType(ctx context.Context,
 		return nil, common.ErrCannotListEntity(rtsearchmodel.EntityName, err)
 	}
 
-	jobs := make([]asyncjob.Job, len(rts))
+	if rts == nil {
+		return nil, nil
+	}
+
+	var jobs []asyncjob.Job
 	for i := range rts {
-		asyncjob.NewJob(func(ctx context.Context) error {
-			var booked *int
-			booked, err = repo.bkStore.CountBookedRoom(ctx, rts[i].Id, filter.StartDate, filter.EndDate)
-			if err != nil || booked == nil {
+		if rts[i].TotalRoom == 0 {
+			rts[i].AvailableRoom = 0
+			continue
+		}
+		job := asyncjob.NewJob(func(ctx context.Context) error {
+
+			booked, err := repo.bkHandler.CountBookedRoom(ctx, rts[i].Id, filter.StartDate, filter.EndDate)
+
+			if err != nil {
 				return common.ErrInternal(err)
 			}
-			rts[i].AvailableRoom = rts[i].TotalRoom - *booked
+			if booked == nil {
+				rts[i].AvailableRoom = rts[i].TotalRoom
+			} else {
+				rts[i].AvailableRoom = rts[i].TotalRoom - *booked
+			}
 			return nil
+
 		})
-		jobs = append(jobs, jobs[i])
+		jobs = append(jobs, job)
 	}
 
 	g := asyncjob.NewGroup(true, jobs...)

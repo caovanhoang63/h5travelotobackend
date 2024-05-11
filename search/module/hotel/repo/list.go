@@ -1,12 +1,14 @@
 package hotelsearchrepo
 
 import (
+	"fmt"
 	"golang.org/x/net/context"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/asyncjob"
 	hotelmodel "h5travelotobackend/search/module/hotel/model"
 	rtsearchmodel "h5travelotobackend/search/module/roomtype/model"
 	"log"
+	"time"
 )
 
 type ListHotelStore interface {
@@ -36,16 +38,19 @@ func (repo *listHotelRepo) ListHotelWithFilter(ctx context.Context,
 	if err != nil {
 		return nil, common.ErrInternal(err)
 	}
-
 	var jobs []asyncjob.Job
+	cacheTime := time.Now().Unix()
 	for i := range result {
 		job := asyncjob.NewJob(func(ctx context.Context) error {
 			result[i].ListAvailableRoomType, err = repo.rTHandler.ListAvailableRt(ctx, &rtsearchmodel.Filter{
-				HotelId:   result[i].Id,
-				StartDate: filter.StartDate,
-				EndDate:   filter.EndDate,
-				MaxPrice:  filter.MaxPrice,
-				MinPrice:  filter.MinPrice,
+				HotelId:      result[i].Id,
+				StartDate:    filter.StartDate,
+				EndDate:      filter.EndDate,
+				MaxPrice:     filter.MaxPrice,
+				MinPrice:     filter.MinPrice,
+				RoomQuantity: filter.RoomQuantity,
+				Customer:     filter.Customer,
+				CacheKey:     fmt.Sprintf("%v:hotel:%v", cacheTime, result[i].Id),
 			})
 			if err != nil {
 				return common.ErrInternal(err)

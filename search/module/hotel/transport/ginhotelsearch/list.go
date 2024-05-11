@@ -19,6 +19,7 @@ func ListHotel(appCtx appContext.AppContext) gin.HandlerFunc {
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
+		filter.SetDefault()
 
 		var paging common.Paging
 
