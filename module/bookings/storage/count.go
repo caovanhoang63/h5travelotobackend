@@ -1,23 +1,37 @@
 package bookingsqlstorage
 
 import (
+	"database/sql"
 	"golang.org/x/net/context"
 	"h5travelotobackend/common"
 	bookingmodel "h5travelotobackend/module/bookings/model"
+	"log"
 )
 
 func (s *sqlStore) CountBookedRoom(ctx context.Context, rtId int,
 	startDate *common.CivilDate, endDate *common.CivilDate) (*int, error) {
-	var result int64
+	var result sql.NullInt64
 	db := s.db.Table(bookingmodel.Booking{}.TableName())
 
-	if err := db.Where("room_type_id = ?", rtId).
-		Where("bookings.end_date >= ? and  bookings.end_date <= ? ", startDate, endDate).
-		Or("bookings.start_date >= ? and bookings.start_date <= ?", startDate, endDate).Count(&result).
-		Error; err != nil {
+	row := db.Where("room_type_id = ? ", rtId).
+		Where("(start_date between (?) and (?)) or (end_date between (?) and (?))",
+			startDate, endDate, startDate, endDate).
+		Select("sum(room_quantity)").Row()
+
+	if row.Err() != nil {
+		return nil, common.ErrDb(row.Err())
+	}
+
+	err := row.Scan(&result)
+	if err != nil {
 		return nil, common.ErrDb(err)
 	}
 
-	var resultInt = int(result)
+	if !result.Valid {
+		return nil, nil
+	}
+
+	log.Println("result: ", result)
+	var resultInt = int(result.Int64)
 	return &resultInt, nil
 }
