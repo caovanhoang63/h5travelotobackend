@@ -11,6 +11,7 @@ import (
 type ListRoomTypeStore interface {
 	ListRoomTypeWithFilter(ctx context.Context,
 		filter *rtsearchmodel.Filter) ([]rtsearchmodel.RoomType, error)
+	Cache(ctx context.Context, key string, rt []rtsearchmodel.RoomType) error
 }
 
 type BookingHandler interface {
@@ -29,6 +30,14 @@ func NewListRoomTypeRepo(rtStore ListRoomTypeStore, bkStore BookingHandler) *lis
 			bkHandler: bkStore,
 		}
 	}
+}
+
+func (repo *listRoomTypeRepo) CacheRoomTypes(ctx context.Context, key string, rts []rtsearchmodel.RoomType) error {
+	err := repo.rtStore.Cache(ctx, key, rts)
+	if err != nil {
+		return common.ErrToCacheEntity(rtsearchmodel.EntityName, err)
+	}
+	return nil
 }
 
 func (repo *listRoomTypeRepo) ListRoomType(ctx context.Context,

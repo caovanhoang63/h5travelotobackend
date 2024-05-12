@@ -8,7 +8,6 @@ import (
 	hotelmodel "h5travelotobackend/search/module/hotel/model"
 	rtsearchmodel "h5travelotobackend/search/module/roomtype/model"
 	"log"
-	"time"
 )
 
 type ListHotelStore interface {
@@ -39,7 +38,6 @@ func (repo *listHotelRepo) ListHotelWithFilter(ctx context.Context,
 		return nil, common.ErrInternal(err)
 	}
 	var jobs []asyncjob.Job
-	cacheTime := time.Now().Unix()
 	for i := range result {
 		job := asyncjob.NewJob(func(ctx context.Context) error {
 			result[i].ListAvailableRoomType, err = repo.rTHandler.ListAvailableRt(ctx, &rtsearchmodel.Filter{
@@ -50,7 +48,7 @@ func (repo *listHotelRepo) ListHotelWithFilter(ctx context.Context,
 				MinPrice:     filter.MinPrice,
 				RoomQuantity: filter.RoomQuantity,
 				Customer:     filter.Customer,
-				CacheKey:     fmt.Sprintf("%v:hotel:%v", cacheTime, result[i].Id),
+				CacheKey:     fmt.Sprintf("%v:hotel:%v", filter.QueryTime, result[i].Id),
 			})
 			if err != nil {
 				return common.ErrInternal(err)

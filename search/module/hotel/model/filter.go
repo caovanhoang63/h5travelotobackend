@@ -35,11 +35,13 @@ type Filter struct {
 	MinPrice     *float64          `json:"min_price" form:"min_price"`
 	StartDate    *common.CivilDate `json:"start_date" form:"start_date"`
 	EndDate      *common.CivilDate `json:"end_date" form:"end_date"`
-	Customer     float32           `json:"customer"`
+	Customer     float32           `json:"-"`
+	QueryTime    int64             `json:"query_time"`
 }
 
 func (f *Filter) SetDefault() {
 	f.Customer = float32(f.Adults) + float32(f.Children)/2.0
+	f.QueryTime = time.Now().Unix()
 	if f.MinPrice == nil {
 		f.MinPrice = new(float64)
 		*f.MinPrice = 0

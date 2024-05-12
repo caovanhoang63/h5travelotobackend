@@ -19,14 +19,14 @@ func (s *sqlStore) Update(ctx context.Context, id int, update *roomtypemodel.Roo
 func (s *sqlStore) IncreaseTotalRoom(ctx context.Context, id int) error {
 	if err := s.db.Table(roomtypemodel.RoomType{}.TableName()).
 		Where("id = ?", id).
-		Update("total_room", gorm.Expr("total_room + ?", 1)).Error; err != nil {
+		UpdateColumn("total_room", gorm.Expr("total_room + ?", 1)).Error; err != nil {
 		return common.ErrDb(err)
 	}
 	return nil
 }
 
 func (s *sqlStore) DecreaseTotalRoom(ctx context.Context, id int) error {
-	if err := s.db.Table(roomtypemodel.RoomType{}.TableName()).
+	if err := s.db.Table(roomtypemodel.RoomType{}.TableName()).Session(&gorm.Session{AllowGlobalUpdate: true}).
 		Where("id = ?", id).
 		Update("total_room", gorm.Expr("total_room - ?", 1)).Error; err != nil {
 		return common.ErrDb(err)

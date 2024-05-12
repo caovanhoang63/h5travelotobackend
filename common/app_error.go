@@ -147,6 +147,13 @@ func ErrTooManyRequest(ip, api string, err error) *AppError {
 		fmt.Sprintf("TOO_MANY_REQUEST"))
 }
 
+func ErrToCacheEntity(entity string, err error) *AppError {
+	return NewCustomError(
+		err,
+		fmt.Sprintf("Cannot cache %s", strings.ToLower(entity)),
+		fmt.Sprintf("CANNOT_CACHE_%s", strings.ToUpper(entity)))
+}
+
 var DocumentNotFound = errors.New("document not found")
 var RecordNotFound = errors.New("record not found")
 var RateLimited = errors.New("rate limited")

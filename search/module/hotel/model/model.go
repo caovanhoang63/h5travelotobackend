@@ -27,6 +27,7 @@ type Hotel struct {
 	Images                *common.Images             `json:"images"`
 	DisplayPrice          *decimal.Decimal           `json:"display_price"`
 	ListAvailableRoomType []rtsearchmodel.RoomType   `json:"-"`
+	QueryTime             int64                      `json:"query_time"`
 }
 
 func (h *Hotel) Mask(isAdmin bool) {

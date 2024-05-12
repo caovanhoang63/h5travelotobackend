@@ -73,37 +73,37 @@ func NewJob(handler JobHandler) *job {
 }
 
 func (j *job) Execute(ctx context.Context) error {
-	j.state = StateRunning
+	//j.state = StateRunning
+	//
+	//var err error
+	//err = j.handler(ctx)
+	//if err != nil {
+	//	j.state = StateFailed
+	//	return err
+	//}
+	//
+	//j.state = StateCompleted
+	//
+	//return nil
+	ch := make(chan error)
+	ctxJob, doneFunc := context.WithCancel(ctx)
 
-	var err error
-	err = j.handler(ctx)
-	if err != nil {
-		j.state = StateFailed
-		return err
-	}
+	go func() {
+		j.state = StateRunning
+		var err error
 
-	j.state = StateCompleted
+		err = j.handler(ctxJob)
 
-	return nil
-	//ch := make(chan error)
-	//ctxJob, doneFunc := context.WithCancel(ctx)
-	//
-	//go func() {
-	//	j.state = StateRunning
-	//	var err error
-	//
-	//	err = j.handler(ctxJob)
-	//
-	//	if err != nil {
-	//		j.state = StateFailed
-	//		ch <- err
-	//		return
-	//	}
-	//
-	//	j.state = StateCompleted
-	//	ch <- err
-	//}()
-	//
+		if err != nil {
+			j.state = StateFailed
+			ch <- err
+			return
+		}
+
+		j.state = StateCompleted
+		ch <- err
+	}()
+
 	//for {
 	//	select {
 	//	case <-j.stopChan:
@@ -112,15 +112,15 @@ func (j *job) Execute(ctx context.Context) error {
 	//		fmt.Println("Hello world")
 	//	}
 	//}
-	//
-	//select {
-	//case err := <-ch:
-	//	doneFunc()
-	//	return err
-	//case <-j.stopChan:
-	//	doneFunc()
-	//	return nil
-	//}
+
+	select {
+	case err := <-ch:
+		doneFunc()
+		return err
+	case <-j.stopChan:
+		doneFunc()
+		return nil
+	}
 	//return <-ch
 }
 

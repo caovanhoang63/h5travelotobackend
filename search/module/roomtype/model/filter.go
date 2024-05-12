@@ -8,7 +8,7 @@ import (
 )
 
 type Filter struct {
-	CacheKey     string            `json:"cache_key"`
+	CacheKey     string            `json:"-"`
 	HotelId      int               `json:"hotel_id"`
 	Customer     float32           `json:"customer"`
 	MinPrice     *float64          `json:"min_price"`
