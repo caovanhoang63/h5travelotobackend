@@ -5,29 +5,48 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"h5travelotobackend/common"
 	"strconv"
+	"time"
 )
 
 type Filter struct {
-	CacheKey     string            `json:"-"`
-	HotelId      int               `json:"hotel_id"`
-	Customer     float32           `json:"customer"`
-	MinPrice     *float64          `json:"min_price"`
-	MaxPrice     *float64          `json:"max_price"`
+	QueryTime    int64             `json:"query_time" form:"query_time"`
+	HotelId      int               `json:"-" form:"-"`
+	HotelFakeId  *common.UID       `json:"hotel_id" form:"hotel_id" binding:"required"`
+	Customer     float32           `json:"-"`
+	MinPrice     *float64          `json:"min_price" form:"min_price"`
+	MaxPrice     *float64          `json:"max_price" form:"max_price"`
 	RoomQuantity int               `json:"room_quantity" form:"room_quantity"`
-	StartDate    *common.CivilDate `json:"start_date"`
-	EndDate      *common.CivilDate `json:"end_date"`
+	StartDate    *common.CivilDate `json:"start_date" form:"start_date" binding:"required"`
+	EndDate      *common.CivilDate `json:"end_date" form:"end_date" binding:"required"`
+	Adult        int               `json:"adult" form:"adult"`
+	Child        int               `json:"child" form:"child"`
+}
+
+func (f *Filter) Mask(isAdmin bool) {
+	f.HotelFakeId = common.NewUIDP(uint32(f.HotelId), common.DbTypeHotel, 0)
+}
+
+func (f *Filter) UnMask(isAdmin bool) {
+	f.HotelId = int(f.HotelFakeId.GetLocalID())
 }
 
 func (f *Filter) SetDefault() {
+	if f.QueryTime == 0 {
+		f.QueryTime = time.Now().Unix()
+	}
+
 	if f.MinPrice == nil {
 		f.MinPrice = new(float64)
 		*f.MinPrice = 0
 	}
-
 	if f.MaxPrice == nil {
 		f.MaxPrice = new(float64)
 		*f.MaxPrice = 100000000
 	}
+}
+
+func (f *Filter) SetHotelId(hotelId int) {
+	f.HotelId = hotelId
 }
 
 func (f *Filter) ToSearchRequest() (*search.Request, error) {

@@ -26,6 +26,7 @@ const (
 
 var (
 	defaultRetryTime = []time.Duration{time.Second, time.Second * 5, time.Second * 10}
+	queryRetryTime   = []time.Duration{500 * time.Millisecond, time.Second, time.Second * 2}
 )
 
 type JobHandler func(ctx context.Context) error
@@ -63,6 +64,20 @@ func NewJob(handler JobHandler) *job {
 		config: jobConfig{
 			MaxTimeout: defaultMaxTimeout,
 			Retires:    defaultRetryTime,
+		},
+		handler:    handler,
+		retryIndex: -1,
+		state:      StateInit,
+		stopChan:   make(chan bool),
+	}
+	return &j
+}
+
+func NewQueryJob(handler JobHandler) *job {
+	j := job{
+		config: jobConfig{
+			MaxTimeout: defaultMaxTimeout,
+			Retires:    queryRetryTime,
 		},
 		handler:    handler,
 		retryIndex: -1,
@@ -112,15 +127,17 @@ func (j *job) Execute(ctx context.Context) error {
 	//		fmt.Println("Hello world")
 	//	}
 	//}
-
-	select {
-	case err := <-ch:
-		doneFunc()
-		return err
-	case <-j.stopChan:
-		doneFunc()
-		return nil
+	for {
+		select {
+		case err := <-ch:
+			doneFunc()
+			return err
+		case <-j.stopChan:
+			doneFunc()
+			return nil
+		}
 	}
+
 	//return <-ch
 }
 

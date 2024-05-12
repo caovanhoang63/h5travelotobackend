@@ -8,6 +8,7 @@ import (
 	"h5travelotobackend/common"
 	rtsearchmodel "h5travelotobackend/search/module/roomtype/model"
 	"strconv"
+	"strings"
 )
 
 func (s *store) ListRoomTypeWithFilter(ctx context.Context,
@@ -37,15 +38,30 @@ func (s *store) ListRoomTypeWithFilter(ctx context.Context,
 		for _, hit := range res.Hits.Hits {
 			var json []byte
 			var roomType rtsearchmodel.RoomType
+			var strFields rtsearchmodel.RoomTypeStrFields
 			json, err = hit.Source_.MarshalJSON()
 			if err != nil {
 				return nil, common.ErrInternal(err)
 			}
 			err = json2.Unmarshal(json, &roomType)
 			if err != nil {
-
 				return nil, common.ErrInternal(err)
 			}
+			err = json2.Unmarshal(json, &strFields)
+			if strFields.Bed != nil {
+				strings.Trim(*strFields.Bed, "\"")
+				if err := json2.Unmarshal([]byte(*strFields.Bed), &roomType.Bed); err != nil {
+					return nil, common.ErrInternal(err)
+				}
+			}
+
+			if strFields.Images != nil {
+				strings.Trim(*strFields.Images, "\"")
+				if err := json2.Unmarshal([]byte(*strFields.Images), &roomType.Images); err != nil {
+					return nil, common.ErrInternal(err)
+				}
+			}
+
 			roomType.Id, err = strconv.Atoi(hit.Id_)
 
 			if err != nil {
@@ -58,4 +74,14 @@ func (s *store) ListRoomTypeWithFilter(ctx context.Context,
 	}
 
 	return nil, nil
+}
+
+func (s *store) GetAvailableRoomTypeInCache(ctx context.Context,
+	key string) (jsonByte []byte, err error) {
+
+	val, err := s.rdb.Get(ctx, key).Bytes()
+	if err != nil {
+		return nil, common.ErrDb(err)
+	}
+	return val, nil
 }

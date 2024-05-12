@@ -154,6 +154,13 @@ func ErrToCacheEntity(entity string, err error) *AppError {
 		fmt.Sprintf("CANNOT_CACHE_%s", strings.ToUpper(entity)))
 }
 
+func ErrNoCacheEntity(entity string, err error) *AppError {
+	return NewCustomError(
+		err,
+		fmt.Sprintf("Cannot get %s from cache", strings.ToLower(entity)),
+		fmt.Sprintf("NO_CACHE_%s", strings.ToUpper(entity)))
+}
+
 var DocumentNotFound = errors.New("document not found")
 var RecordNotFound = errors.New("record not found")
 var RateLimited = errors.New("rate limited")

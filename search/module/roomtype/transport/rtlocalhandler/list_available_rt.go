@@ -1,4 +1,4 @@
-package rtSearchlocalHdl
+package rtSearchlocalhdl
 
 import (
 	"golang.org/x/net/context"
@@ -9,6 +9,7 @@ import (
 	rtsearchmodel "h5travelotobackend/search/module/roomtype/model"
 	rtsearchrepo "h5travelotobackend/search/module/roomtype/repo"
 	rtsearchstorage "h5travelotobackend/search/module/roomtype/storage"
+	"h5travelotobackend/search/utils"
 	"log"
 )
 
@@ -36,15 +37,19 @@ func (l *listAvailableRoomTypeHandler) ListAvailableRt(ctx context.Context,
 
 	for i := range rts {
 		rts[i].Mask(false)
+		log.Println("Room type: ", rts[i].FakeId)
 	}
+	filter.Mask(false)
 
 	//Cache available room types
 	if err = asyncjob.NewJob(func(ctx context.Context) error {
-		err := rtHandlerRepo.CacheRoomTypes(ctx, filter.CacheKey, rts)
+		key := utils.GenCacheKeyForQuery(filter.QueryTime, filter.HotelId)
+		err := rtHandlerRepo.CacheRoomTypes(ctx, key, rts, filter)
 		if err != nil {
 			return err
 		}
-		log.Println("cache key: ", filter.CacheKey)
+
+		log.Println("cache key: ", key)
 		return nil
 	}).Execute(ctx); err != nil {
 		log.Println("Error while caching room types: ", err)

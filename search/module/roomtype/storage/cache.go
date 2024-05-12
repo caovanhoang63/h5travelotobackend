@@ -8,16 +8,15 @@ import (
 	"time"
 )
 
-func (s *store) Cache(ctx context.Context, key string, rt []rtsearchmodel.RoomType) error {
-	jsonByte, err := json.Marshal(rt)
+func (s *store) Cache(ctx context.Context, key string, rts []rtsearchmodel.RoomType, filter *rtsearchmodel.Filter) error {
+	data := common.NewSuccessResponse(rts, nil, filter)
+	jsonByte, err := json.Marshal(data)
 	if err != nil {
 		return common.ErrInternal(err)
 	}
 
-	sttCmd := s.rdb.Set(ctx, key, jsonByte, time.Minute*5)
-
-	if sttCmd.Err() != nil {
-		return common.ErrDb(sttCmd.Err())
+	if err := s.rdb.Set(ctx, key, jsonByte, time.Minute*5).Err(); err != nil {
+		return common.ErrDb(err)
 	}
 
 	return nil

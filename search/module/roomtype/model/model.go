@@ -9,14 +9,11 @@ const IndexName = "room_types_enriched"
 
 type RoomType struct {
 	common.SqlModel `json:",inline"`
-	HotelId         int            `json:"hotel_id"`
 	Name            string         `json:"name"`
 	MaxCustomer     int            `json:"max_customer"`
 	Area            *float64       `json:"area"`
-	Bed             *common.Bed    `json:"bed_str"`
-	Images          *common.Images `json:"images"`
-	BedStr          *string        `json:"bed"`
-	ImagesStr       *string        `json:"images_str"`
+	Bed             *common.Bed    `json:"bedJson"`
+	Images          *common.Images `json:"imagesJson"`
 	Price           *float64       `json:"price"`
 	TotalRoom       int            `json:"total_room"`
 	PayInHotel      int            `json:"pay_in_hotel"`
@@ -28,4 +25,9 @@ type RoomType struct {
 
 func (rt *RoomType) Mask(isAdmin bool) {
 	rt.FakeId = common.NewUIDP(uint32(rt.Id), common.DbTypeRoomType, 0)
+}
+
+type RoomTypeStrFields struct {
+	Bed    *string `json:"bed"`
+	Images *string `json:"images"`
 }

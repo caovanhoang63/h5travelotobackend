@@ -11,7 +11,7 @@ import (
 type ListRoomTypeStore interface {
 	ListRoomTypeWithFilter(ctx context.Context,
 		filter *rtsearchmodel.Filter) ([]rtsearchmodel.RoomType, error)
-	Cache(ctx context.Context, key string, rt []rtsearchmodel.RoomType) error
+	Cache(ctx context.Context, key string, rts []rtsearchmodel.RoomType, filter *rtsearchmodel.Filter) error
 }
 
 type BookingHandler interface {
@@ -32,8 +32,8 @@ func NewListRoomTypeRepo(rtStore ListRoomTypeStore, bkStore BookingHandler) *lis
 	}
 }
 
-func (repo *listRoomTypeRepo) CacheRoomTypes(ctx context.Context, key string, rts []rtsearchmodel.RoomType) error {
-	err := repo.rtStore.Cache(ctx, key, rts)
+func (repo *listRoomTypeRepo) CacheRoomTypes(ctx context.Context, key string, rts []rtsearchmodel.RoomType, filter *rtsearchmodel.Filter) error {
+	err := repo.rtStore.Cache(ctx, key, rts, filter)
 	if err != nil {
 		return common.ErrToCacheEntity(rtsearchmodel.EntityName, err)
 	}
@@ -58,7 +58,7 @@ func (repo *listRoomTypeRepo) ListRoomType(ctx context.Context,
 			rts[i].AvailableRoom = 0
 			continue
 		}
-		job := asyncjob.NewJob(func(ctx context.Context) error {
+		job := asyncjob.NewQueryJob(func(ctx context.Context) error {
 
 			booked, err := repo.bkHandler.CountBookedRoom(ctx, rts[i].Id, filter.StartDate, filter.EndDate)
 

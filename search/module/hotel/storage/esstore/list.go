@@ -54,6 +54,7 @@ func (s *esStore) ListHotel(ctx context.Context,
 					return nil, common.ErrInternal(err)
 				}
 			}
+
 			hotel.Id, err = strconv.Atoi(hit.Id_)
 			if err != nil {
 				return nil, common.ErrInternal(err)
