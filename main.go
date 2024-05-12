@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"crypto/tls"
-	"fmt"
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -15,30 +14,34 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"h5travelotobackend/component/appContext"
+	"h5travelotobackend/component/logger/mylogger"
 	rabbitpubsub "h5travelotobackend/component/pubsub/rabbitmq"
 	"h5travelotobackend/component/uploadprovider"
 	"h5travelotobackend/middleware"
 	"h5travelotobackend/skio"
 	"h5travelotobackend/subcriber"
-	"log"
 	"net/http"
 	"os"
 	"time"
 )
 
 func main() {
+	// Set up logger
+	logger := mylogger.NewLogger("h5traveloto", nil)
+
+	logger.Println("Starting server...")
 	isDev := true
 
 	if isDev {
 		err := godotenv.Load(".dev.env")
 		if err != nil {
-			log.Fatal("Error loading .env file")
+			logger.Fatal("Error loading .env file")
 		}
 	} else {
 		gin.SetMode(gin.ReleaseMode)
 		err := godotenv.Load(".env")
 		if err != nil {
-			log.Fatal("Error loading .env file")
+			logger.Fatal("Error loading .env file")
 		}
 	}
 
@@ -76,30 +79,30 @@ func main() {
 
 	es, err := elasticsearch.NewTypedClient(esCfg)
 	if err != nil {
-		log.Println("Error creating the client: ", err)
+		logger.Error("Error creating the client: ", err)
 	} else {
-		log.Println("Elasticsearch client created")
+		logger.Println("Elasticsearch client created")
 	}
 
 	ping, err := es.Ping().Do(context.Background())
 	if err != nil {
-		log.Println("Error creating the client: ", err)
+		logger.Error("Error creating the client: ", err)
 	} else {
-		log.Println("Elasticsearch ping: ", ping)
+		logger.Println("Elasticsearch ping: ", ping)
 	}
 	//// End Set up Elasticsearch Connection
 	//
 	//// Set up Redis Connection
 	redisConnOpt, err := redis.ParseURL(redisConnString)
 	if err != nil {
-		log.Println("Error parsing Redis URL: ", err)
+		logger.Error("Error parsing Redis URL: ", err)
 	}
 	redisClient := redis.NewClient(redisConnOpt)
 	_, err = redisClient.Ping(context.Background()).Result()
 	if err != nil {
-		log.Println("Error connecting to Redis: ", err)
+		logger.Error("Error connecting to Redis: ", err)
 	} else {
-		log.Println("Connected to Redis")
+		logger.Println("Connected to Redis")
 	}
 	//// End Set up Redis Connection
 
@@ -123,7 +126,7 @@ func main() {
 	if err := client.Database("h5traveloto").RunCommand(context.TODO(), bson.D{{"ping", 1}}).Err(); err != nil {
 		panic(err)
 	}
-	fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
+	logger.Println("Pinged your deployment. You successfully connected to MongoDB!")
 	mongodb := client.Database("h5traveloto")
 	/***************************************************************/
 	/***************************************************************/
@@ -133,7 +136,7 @@ func main() {
 	/***************************************************************/
 	db, err := gorm.Open(mysql.Open(mySqlConnString), &gorm.Config{})
 	if err != nil {
-		log.Fatal(db, err)
+		logger.Fatal(db, err)
 	}
 	db = db.Debug()
 	/***************************************************************/
@@ -157,12 +160,12 @@ func main() {
 	/***************************************************************/
 	rabbitConn, err := amqp.Dial(rabbitMqConnString)
 	if err != nil {
-		log.Fatal("Fail to connect rabbitMQ! ", err)
+		logger.Fatal("Fail to connect rabbitMQ! ", err)
 	}
 	defer rabbitConn.Close()
 	ch, err := rabbitConn.Channel()
 	if err != nil {
-		log.Fatal("Fail to open channel! ", err)
+		logger.Fatal("Fail to open channel! ", err)
 	}
 
 	pb := rabbitpubsub.NewRabbitPubSub(ch)
@@ -170,7 +173,7 @@ func main() {
 	/***************************************************************/
 
 	// Set up App Context
-	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey, s3Provider, pb, es, redisClient)
+	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey, s3Provider, pb, es, redisClient, nil)
 
 	r := gin.New()
 	r.Use(middleware.Recover(appCtx))
@@ -194,19 +197,19 @@ func main() {
 
 	err = subcriber.NewEngine(appCtx).Start()
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 	}
 
 	rtEngine := skio.NewEngine()
 	appCtx.SetRealTimeEngine(rtEngine)
 	if err := rtEngine.Run(appCtx, r); err != nil {
-		log.Println(err)
+		logger.Println(err)
 	}
 
 	r.StaticFile("/socket/hotel", "./hotel.html")
 	r.StaticFile("/socket/customer", "./customer.html")
 
 	if err := r.Run(); err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 	}
 }
