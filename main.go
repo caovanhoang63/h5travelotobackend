@@ -27,7 +27,7 @@ import (
 )
 
 func main() {
-	isDev := true
+	isDev := false
 
 	if isDev {
 		err := godotenv.Load(".dev.env")
