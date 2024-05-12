@@ -56,6 +56,7 @@ func (repo *listHotelRepo) ListHotelWithFilter(ctx context.Context,
 			}
 			return nil
 		})
+
 		jobs = append(jobs, job)
 	}
 

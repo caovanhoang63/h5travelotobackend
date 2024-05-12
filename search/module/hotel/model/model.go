@@ -1,7 +1,6 @@
 package hotelmodel
 
 import (
-	"github.com/shopspring/decimal"
 	"h5travelotobackend/common"
 	rtsearchmodel "h5travelotobackend/search/module/roomtype/model"
 )
@@ -25,9 +24,8 @@ type Hotel struct {
 	Ward                  *common.AdministrativeUnit `json:"ward"`
 	Logo                  *common.Image              `json:"logo"`
 	Images                *common.Images             `json:"images"`
-	DisplayPrice          *decimal.Decimal           `json:"display_price"`
+	DisplayPrice          *float64                   `json:"display_price"`
 	ListAvailableRoomType []rtsearchmodel.RoomType   `json:"-"`
-	QueryTime             int64                      `json:"query_time"`
 }
 
 func (h *Hotel) Mask(isAdmin bool) {

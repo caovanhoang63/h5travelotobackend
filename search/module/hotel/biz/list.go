@@ -36,6 +36,8 @@ func (biz *listHotelBiz) ListHotelWithFilter(ctx context.Context,
 	for i := len(result) - 1; i >= 0; i-- {
 		if result[i].ListAvailableRoomType == nil {
 			result = append(result[:i], result[i+1:]...)
+		} else {
+			result[i].DisplayPrice = result[i].ListAvailableRoomType[0].Price
 		}
 	}
 
