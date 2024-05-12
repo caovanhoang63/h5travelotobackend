@@ -182,7 +182,6 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 
 	// search
 	search := v1.Group("/search")
-	search.Use(middleware.RequireAuth(appCtx))
 	search.GET("/suggestions", ginsuggestion.ListSuggestion(appCtx))
 	search.GET("/hotels", ginhotelsearch.ListHotel(appCtx))
 
