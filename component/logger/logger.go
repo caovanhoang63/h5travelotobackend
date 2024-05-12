@@ -3,5 +3,7 @@ package logger
 type Logger interface {
 	Error(...interface{})
 	Warn(...interface{})
-	Info(...interface{})
+	Println(...interface{})
+	Fatal(...interface{})
+	Debug(...interface{})
 }
