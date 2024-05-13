@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/net/context"
+	"h5travelotobackend/component/cacher"
 	"time"
 )
 
@@ -11,7 +12,6 @@ func (r *RedisCacher) Set(ctx context.Context,
 	key string,
 	value interface{},
 	expiration time.Duration) error {
-	r.logger.Println("KEY", key)
 	marshal, err := r.marshal(value)
 	if err != nil {
 		return err
@@ -33,7 +33,7 @@ func (r *RedisCacher) Get(ctx context.Context, key string) (string, error) {
 		r.logger.Error("Falied to get key: ", key, " with error: ", get.Err())
 	}
 	if errors.Is(get.Err(), redis.Nil) {
-		return "", errors.New("key not found")
+		return "", cacher.ErrKeyNotFound
 	}
 	return get.Val(), get.Err()
 

@@ -1,6 +1,7 @@
 package cacher
 
 import (
+	"errors"
 	"golang.org/x/net/context"
 	"time"
 )
@@ -49,5 +50,5 @@ type Cacher interface {
 }
 
 var (
-	ErrKeyNotFound = "key not found"
+	ErrKeyNotFound = errors.New("key not found")
 )
