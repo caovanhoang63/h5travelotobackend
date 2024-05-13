@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"crypto/tls"
+	"encoding/json"
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -14,6 +15,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"h5travelotobackend/component/appContext"
+	"h5travelotobackend/component/cacher/rediscacher"
 	"h5travelotobackend/component/logger/mylogger"
 	rabbitpubsub "h5travelotobackend/component/pubsub/rabbitmq"
 	"h5travelotobackend/component/uploadprovider"
@@ -30,7 +32,7 @@ func main() {
 	logger := mylogger.NewLogger("h5traveloto", nil)
 
 	logger.Println("Starting server...")
-	isDev := false
+	isDev := true
 
 	if isDev {
 		err := godotenv.Load(".dev.env")
@@ -172,8 +174,25 @@ func main() {
 	/***************************************************************/
 	/***************************************************************/
 
+	//Set up cacher
+
+	redisCacher := rediscacher.NewRedisCacher(redisClient,
+		"h5traveloto",
+		json.Marshal,
+		json.Unmarshal,
+		0*time.Minute,
+		mylogger.NewLogger("redisCacher", nil))
+
 	// Set up App Context
-	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey, s3Provider, pb, es, redisClient, logger)
+	appCtx := appContext.NewAppContext(db,
+		mongodb,
+		systemSecretKey,
+		s3Provider,
+		pb,
+		es,
+		redisClient,
+		logger,
+		redisCacher)
 
 	r := gin.New()
 	r.Use(middleware.Recover(appCtx))

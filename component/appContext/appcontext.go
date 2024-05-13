@@ -5,6 +5,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
+	"h5travelotobackend/component/cacher"
 	"h5travelotobackend/component/logger"
 	"h5travelotobackend/component/pubsub"
 	"h5travelotobackend/component/uploadprovider"
@@ -21,6 +22,7 @@ type AppContext interface {
 	GetElasticSearchClient() *elasticsearch.TypedClient
 	GetRedisClient() *redis.Client
 	GetLogger() logger.Logger
+	GetCacher() cacher.Cacher
 }
 
 type appContext struct {
@@ -33,6 +35,7 @@ type appContext struct {
 	esClient       *elasticsearch.TypedClient
 	redisClient    *redis.Client
 	logger         logger.Logger
+	cacher         cacher.Cacher
 }
 
 func NewAppContext(db *gorm.DB,
@@ -42,7 +45,8 @@ func NewAppContext(db *gorm.DB,
 	pubsub pubsub.Pubsub,
 	es *elasticsearch.TypedClient,
 	redisClient *redis.Client,
-	logger logger.Logger) *appContext {
+	logger logger.Logger,
+	cacher cacher.Cacher) *appContext {
 	return &appContext{
 		db:             db,
 		mongodb:        mongodb,
@@ -52,6 +56,7 @@ func NewAppContext(db *gorm.DB,
 		esClient:       es,
 		redisClient:    redisClient,
 		logger:         logger,
+		cacher:         cacher,
 	}
 }
 
@@ -87,4 +92,8 @@ func (appCtx *appContext) GetRedisClient() *redis.Client {
 
 func (appCtx *appContext) GetLogger() logger.Logger {
 	return appCtx.logger
+}
+
+func (appCtx *appContext) GetCacher() cacher.Cacher {
+	return appCtx.cacher
 }
