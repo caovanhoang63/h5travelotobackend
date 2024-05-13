@@ -24,6 +24,8 @@ func ListDistrictsByProvinceCode(appCtx appContext.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(districts))
+		response := common.SimpleSuccessResponse(districts)
+		c.JSON(http.StatusOK, response)
+		c.Set("response", response)
 	}
 }

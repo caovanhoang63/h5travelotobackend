@@ -7,6 +7,7 @@ import (
 	hotelbiz "h5travelotobackend/module/hotels/biz"
 	hotelmodel "h5travelotobackend/module/hotels/model"
 	hotelstorage "h5travelotobackend/module/hotels/storage"
+	"net/http"
 )
 
 func UpdateHotel(appCtx appContext.AppContext) gin.HandlerFunc {
@@ -17,17 +18,18 @@ func UpdateHotel(appCtx appContext.AppContext) gin.HandlerFunc {
 		}
 
 		var data hotelmodel.HotelUpdate
-		if err := c.ShouldBind(&data); err != nil {
+		if err = c.ShouldBind(&data); err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
 
 		store := hotelstorage.NewSqlStore(appCtx.GetGormDbConnection())
 		biz := hotelbiz.NewUpdateHotelBiz(store, appCtx.GetPubSub())
-		if err := biz.UpdateHotel(c.Request.Context(), int(uid.GetLocalID()), &data); err != nil {
+		if err = biz.UpdateHotel(c.Request.Context(), int(uid.GetLocalID()), &data); err != nil {
 			panic(err)
 		}
 
-		c.JSON(200, common.SimpleSuccessResponse(uid))
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
+		c.Set(common.CacheKey, common.GenKeyForDelApiCache("hotels", c.Param("hotel-id")))
 
 	}
 }

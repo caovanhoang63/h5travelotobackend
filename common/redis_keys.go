@@ -2,10 +2,16 @@ package common
 
 import "fmt"
 
-func GetRateLimitKey(clientIp string, api string) string {
+const CacheKey = "cache_key"
+
+func GenRateLimitKey(clientIp string, api string) string {
 	return fmt.Sprintf("rate_limit_count:%s:%s", clientIp, api)
 }
 
-func GetApiCacheKey(url string) string {
+func GenApiCacheKey(url string) string {
 	return fmt.Sprintf("cache:%s", url)
+}
+
+func GenKeyForDelApiCache(entity string, id string) string {
+	return fmt.Sprintf("cache:v/%s/%s", entity, id)
 }

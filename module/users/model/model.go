@@ -86,11 +86,11 @@ func (UserLogin) TableName() string {
 }
 
 type UserUpdate struct {
-	LastName    string            `json:"last_name" gorm:"column:last_name;"`
-	Firstname   string            `json:"first_name" gorm:"column:first_name;"`
-	Phone       string            `json:"phone" gorm:"column:phone;"`
+	LastName    *string           `json:"last_name" gorm:"column:last_name;"`
+	Firstname   *string           `json:"first_name" gorm:"column:first_name;"`
+	Phone       *string           `json:"phone,omitempty" gorm:"column:phone;"`
 	Avatar      *common.Image     `json:"avatar,omitempty" gorm:"column:avatar;type:json;"`
-	Gender      string            `json:"gender" gorm:"column:gender"`
+	Gender      *string           `json:"gender,omitempty" gorm:"column:gender"`
 	DateOfBirth *common.CivilDate `json:"date_of_birth" gorm:"column:date_of_birth"`
 }
 
@@ -99,12 +99,14 @@ func (UserUpdate) TableName() string {
 }
 
 func (u *UserUpdate) Validate() error {
-	if common.IsEmpty(u.Firstname) || common.IsEmpty(u.LastName) {
+	if u.Phone != nil && !common.IsPhoneNumber(*u.Phone) {
+		return ErrInvalidPhone
+	}
+	if u.Firstname != nil && common.IsEmpty(*u.Firstname) {
 		return ErrNameIsEmpty
 	}
-
-	if !common.IsEmpty(u.Phone) && !common.IsPhoneNumber(u.Phone) {
-		return ErrInvalidPhone
+	if u.LastName != nil && common.IsEmpty(*u.LastName) {
+		return ErrNameIsEmpty
 	}
 	return nil
 }

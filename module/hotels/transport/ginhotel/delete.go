@@ -6,6 +6,7 @@ import (
 	"h5travelotobackend/component/appContext"
 	hotelbiz "h5travelotobackend/module/hotels/biz"
 	hotelstorage "h5travelotobackend/module/hotels/storage"
+	"net/http"
 )
 
 func DeleteHotel(appCtx appContext.AppContext) gin.HandlerFunc {
@@ -21,7 +22,7 @@ func DeleteHotel(appCtx appContext.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(200, common.SimpleSuccessResponse(uid))
-
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(uid))
+		c.Set(common.CacheKey, common.GenKeyForDelApiCache("hotels", c.Param("hotel-id")))
 	}
 }

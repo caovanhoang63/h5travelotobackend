@@ -6,6 +6,7 @@ import (
 	"h5travelotobackend/component/appContext"
 	hotelbiz "h5travelotobackend/module/hotels/biz"
 	hotelstorage "h5travelotobackend/module/hotels/storage"
+	"net/http"
 )
 
 func GetHotelById(appCtx appContext.AppContext) gin.HandlerFunc {
@@ -22,8 +23,8 @@ func GetHotelById(appCtx appContext.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 		data.Mask(false)
-
-		c.JSON(200, common.SimpleSuccessResponse(data))
-		c.Set("response", data)
+		response := common.SimpleSuccessResponse(data)
+		c.JSON(http.StatusOK, response)
+		c.Set("response", response)
 	}
 }

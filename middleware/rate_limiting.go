@@ -15,12 +15,13 @@ func RateLimiting(appCtx appContext.AppContext, rateLimit, second int64) func(ct
 	return func(c *gin.Context) {
 		clientIp := c.ClientIP()
 		api := c.FullPath()
-		key := common.GetRateLimitKey(clientIp, api)
+		key := common.GenRateLimitKey(clientIp, api)
 
 		err := incRequestCount(c.Request.Context(), appCtx.GetRedisClient(), key, rateLimit, second)
 		if err != nil {
 			if errors.Is(err, common.RateLimited) {
 				c.AbortWithStatusJSON(http.StatusTooManyRequests, common.ErrTooManyRequest(clientIp, api, err))
+
 			}
 			c.AbortWithStatusJSON(http.StatusInternalServerError, common.ErrInternal(err))
 		}
@@ -29,6 +30,15 @@ func RateLimiting(appCtx appContext.AppContext, rateLimit, second int64) func(ct
 	}
 
 }
+
+//func banUserIp(ctx context.Context, rdb *redis.Client, clientIp string, second int64) error {
+//	//key := common.GenBanUserKey(clientIp)
+//	err := rdb.Set(ctx, key, 1, time.Duration(second)*time.Second).Err()
+//	if err != nil {
+//		return common.ErrDb(err)
+//	}
+//	return nil
+//}
 
 func incRequestCount(ctx context.Context,
 	rdb *redis.Client,

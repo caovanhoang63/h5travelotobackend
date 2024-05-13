@@ -17,8 +17,8 @@ func ListAllProvinces(appCtx appContext.AppContext) gin.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
-
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(provinces))
-
+		response := common.SimpleSuccessResponse(provinces)
+		c.JSON(http.StatusOK, response)
+		c.Set("response", response)
 	}
 }

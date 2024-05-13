@@ -24,6 +24,8 @@ func ListWardsByDistrictCode(appCtx appContext.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(wards))
+		response := common.SimpleSuccessResponse(wards)
+		c.JSON(http.StatusOK, response)
+		c.Set("response", response)
 	}
 }
