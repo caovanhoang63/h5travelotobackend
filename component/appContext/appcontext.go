@@ -5,6 +5,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
+	"h5travelotobackend/component/logger"
 	"h5travelotobackend/component/pubsub"
 	"h5travelotobackend/component/uploadprovider"
 	"h5travelotobackend/skio"
@@ -19,6 +20,7 @@ type AppContext interface {
 	GetRealTimeEngine() skio.RealtimeEngine
 	GetElasticSearchClient() *elasticsearch.TypedClient
 	GetRedisClient() *redis.Client
+	GetLogger() logger.Logger
 }
 
 type appContext struct {
@@ -30,6 +32,7 @@ type appContext struct {
 	rtEngine       skio.RealtimeEngine
 	esClient       *elasticsearch.TypedClient
 	redisClient    *redis.Client
+	logger         logger.Logger
 }
 
 func NewAppContext(db *gorm.DB,
@@ -38,7 +41,8 @@ func NewAppContext(db *gorm.DB,
 	provider uploadprovider.UploadProvider,
 	pubsub pubsub.Pubsub,
 	es *elasticsearch.TypedClient,
-	redisClient *redis.Client) *appContext {
+	redisClient *redis.Client,
+	logger logger.Logger) *appContext {
 	return &appContext{
 		db:             db,
 		mongodb:        mongodb,
@@ -47,6 +51,7 @@ func NewAppContext(db *gorm.DB,
 		pubSub:         pubsub,
 		esClient:       es,
 		redisClient:    redisClient,
+		logger:         logger,
 	}
 }
 
@@ -78,4 +83,8 @@ func (appCtx *appContext) GetElasticSearchClient() *elasticsearch.TypedClient {
 
 func (appCtx *appContext) GetRedisClient() *redis.Client {
 	return appCtx.redisClient
+}
+
+func (appCtx *appContext) GetLogger() logger.Logger {
+	return appCtx.logger
 }

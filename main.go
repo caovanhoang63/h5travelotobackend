@@ -30,7 +30,7 @@ func main() {
 	logger := mylogger.NewLogger("h5traveloto", nil)
 
 	logger.Println("Starting server...")
-	isDev := true
+	isDev := false
 
 	if isDev {
 		err := godotenv.Load(".dev.env")
@@ -173,7 +173,7 @@ func main() {
 	/***************************************************************/
 
 	// Set up App Context
-	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey, s3Provider, pb, es, redisClient, nil)
+	appCtx := appContext.NewAppContext(db, mongodb, systemSecretKey, s3Provider, pb, es, redisClient, logger)
 
 	r := gin.New()
 	r.Use(middleware.Recover(appCtx))
