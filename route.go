@@ -54,7 +54,7 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 
 	// hotel api
 	hotels.POST("/", middleware.RoleRequired(appCtx, common.RoleOwner), ginhotel.CreateHotel(appCtx))
-	hotels.GET("/:hotel-id", ginhotel.GetHotelById(appCtx))
+	hotels.GET("/:hotel-id", middleware.CacheMiddleware(appCtx), ginhotel.GetHotelById(appCtx))
 	hotels.GET("/list", ginhotel.ListHotel(appCtx))
 	hotels.DELETE("/:hotel-id", middleware.RoleRequired(appCtx, common.RoleOwner), middleware.IsHotelWorker(appCtx), ginhotel.DeleteHotel(appCtx))
 	hotels.PATCH("/:hotel-id", middleware.RoleRequired(appCtx, common.RoleOwner, common.RoleManager), middleware.IsHotelWorker(appCtx), ginhotel.UpdateHotel(appCtx))

@@ -24,5 +24,6 @@ func GetHotelById(appCtx appContext.AppContext) gin.HandlerFunc {
 		data.Mask(false)
 
 		c.JSON(200, common.SimpleSuccessResponse(data))
+		c.Set("response", data)
 	}
 }

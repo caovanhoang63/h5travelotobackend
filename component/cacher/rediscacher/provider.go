@@ -10,7 +10,7 @@ type RedisCacher struct {
 	redisClient *redis.Client
 	keyPrefix   string
 	marshal     func(value interface{}) ([]byte, error)
-	unmarshal   func(b []byte, value *interface{}) error
+	unmarshal   func(b []byte, value interface{}) error
 	ttl         time.Duration
 	logger      logger.Logger
 }
@@ -18,7 +18,7 @@ type RedisCacher struct {
 func NewRedisCacher(redisClient *redis.Client,
 	keyPrefix string,
 	marshal func(value interface{}) ([]byte, error),
-	unmarshal func(b []byte, value *interface{}) error,
+	unmarshal func(b []byte, value interface{}) error,
 	ttl time.Duration, logger logger.Logger) *RedisCacher {
 	return &RedisCacher{
 		redisClient: redisClient,

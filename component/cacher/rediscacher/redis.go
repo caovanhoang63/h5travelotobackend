@@ -1,12 +1,22 @@
 package rediscacher
 
 import (
+	"errors"
+	"github.com/redis/go-redis/v9"
 	"golang.org/x/net/context"
 	"time"
 )
 
-func (r *RedisCacher) Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error {
-	set := r.redisClient.Set(ctx, key, value, expiration)
+func (r *RedisCacher) Set(ctx context.Context,
+	key string,
+	value interface{},
+	expiration time.Duration) error {
+	r.logger.Println("KEY", key)
+	marshal, err := r.marshal(value)
+	if err != nil {
+		return err
+	}
+	set := r.redisClient.Set(ctx, key, marshal, expiration)
 	if set.Err() != nil {
 		r.logger.Error("Falied to set key: ",
 			key, " with value: ",
@@ -17,12 +27,14 @@ func (r *RedisCacher) Set(ctx context.Context, key string, value interface{}, ex
 	r.logger.Println("Set key: ", key, " with value: ", value, " and expiration: ", expiration)
 	return set.Err()
 }
-func (r *RedisCacher) Get(ctx context.Context, key string) (interface{}, error) {
+func (r *RedisCacher) Get(ctx context.Context, key string) (string, error) {
 	get := r.redisClient.Get(ctx, key)
 	if get.Err() != nil {
 		r.logger.Error("Falied to get key: ", key, " with error: ", get.Err())
 	}
-	r.logger.Debug("Get key: ", key, " with value: ", get.Val())
+	if errors.Is(get.Err(), redis.Nil) {
+		return "", errors.New("key not found")
+	}
 	return get.Val(), get.Err()
 
 }
