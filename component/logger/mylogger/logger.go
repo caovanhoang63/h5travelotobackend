@@ -21,7 +21,7 @@ type Logger struct {
 }
 
 func (l Logger) Fatal(v ...interface{}) {
-	output := fmt.Sprintf("[FATAL] [%s]: %s", l.prefix, fmt.Sprintf("%s", v...))
+	output := fmt.Sprintf("[FATAL] [%s]: %s", l.prefix, fmt.Sprint(v...))
 	if l.config.isPersistent {
 		l.WriteToFile(output)
 	}
@@ -29,7 +29,7 @@ func (l Logger) Fatal(v ...interface{}) {
 }
 
 func (l Logger) Error(v ...interface{}) {
-	output := fmt.Sprintf("[ERROR] [%s]: %s", l.prefix, fmt.Sprintf("%s", v...))
+	output := fmt.Sprintf("[ERROR] [%s]: %s", l.prefix, fmt.Sprint(v...))
 	log.Println(errorColor, output, resetColor)
 	if l.config.isPersistent {
 		l.WriteToFile(output)
@@ -37,7 +37,7 @@ func (l Logger) Error(v ...interface{}) {
 }
 
 func (l Logger) Warn(v ...interface{}) {
-	output := fmt.Sprintf("[WARN] [%s]: %s", l.prefix, fmt.Sprintf("%s", v...))
+	output := fmt.Sprintf("[WARN] [%s]: %s", l.prefix, fmt.Sprint(v...))
 	log.Println(warnColor, output, resetColor)
 	if l.config.isPersistent {
 		l.WriteToFile(output)
@@ -48,7 +48,7 @@ func (l Logger) Println(v ...interface{}) {
 	if !l.config.debugMode {
 		return
 	}
-	output := fmt.Sprintf("[INFO]  [%s]: %s", l.prefix, fmt.Sprintf("%s", v...))
+	output := fmt.Sprintf("[INFO]  [%s]: %s", l.prefix, fmt.Sprint(v...))
 	log.Println(infoColor, output, resetColor)
 	if l.config.isPersistent {
 		l.WriteToFile(output)
@@ -59,7 +59,7 @@ func (l Logger) Debug(v ...interface{}) {
 	if !l.config.debugMode {
 		return
 	}
-	output := fmt.Sprintf("[DEBUG]  [%s]:[%s]", l.prefix, fmt.Sprintf("%s", v...))
+	output := fmt.Sprintf("[DEBUG]  [%s]: %s", l.prefix, fmt.Sprint(v...))
 	log.Println(debugColor, output, debugColor)
 	if l.config.isPersistent {
 		l.WriteToFile(output)
