@@ -24,7 +24,9 @@ func NewListSuggestBiz(store ListSuggestStore) *listSuggestBiz {
 func (biz *listSuggestBiz) ListSuggestions(ctx context.Context,
 	input *suggestmodel.SuggestRequest,
 ) (*suggestmodel.SuggestResponse, error) {
+	if input == nil {
 
+	}
 	response, err := biz.store.ListSuggestions(ctx, input)
 	if input.SearchText == "" {
 		return nil, common.ErrInvalidRequest(errors.New("search text is empty"))

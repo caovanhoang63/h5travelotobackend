@@ -46,6 +46,9 @@ func ListAvailableRoomType(appCtx appContext.AppContext) gin.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+		for i := range rts {
+			rts[i].Mask(false)
+		}
 
 		c.JSON(http.StatusOK, common.NewSuccessResponse(rts, nil, filter))
 	}
