@@ -32,7 +32,7 @@ func main() {
 	logger := mylogger.NewLogger("h5traveloto", nil)
 
 	logger.Println("Starting server...")
-	isDev := true
+	isDev := false
 
 	if isDev {
 		err := godotenv.Load(".dev.env")
@@ -228,7 +228,7 @@ func main() {
 	r.StaticFile("/socket/hotel", "./hotel.html")
 	r.StaticFile("/socket/customer", "./customer.html")
 
-	if err := r.Run(); err != nil {
+	if err = r.Run(); err != nil {
 		logger.Fatal(err)
 	}
 }

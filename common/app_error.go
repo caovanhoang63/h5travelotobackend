@@ -140,11 +140,13 @@ func ErrCannotPublishMessage(topic string, err error) *AppError {
 		fmt.Sprintf("CANNOT_PUBLISH_%s", strings.ToUpper(topic)))
 }
 
-func ErrTooManyRequest(ip, api string, err error) *AppError {
-	return NewCustomError(
+func ErrTooManyRequest(api string, err error) *AppError {
+	return NewFullErrorResponse(
+		http.StatusTooManyRequests,
 		err,
-		fmt.Sprintf("Too many request from %s to %s", ip, api),
-		fmt.Sprintf("TOO_MANY_REQUEST"))
+		fmt.Sprintf("Too many requests to %s", api),
+		err.Error(),
+		"TOO_MANY_REQUEST")
 }
 
 func ErrToCacheEntity(entity string, err error) *AppError {

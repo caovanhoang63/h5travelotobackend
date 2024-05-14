@@ -28,9 +28,12 @@ import (
 	"h5travelotobackend/search/module/hotel/transport/ginhotelsearch"
 	"h5travelotobackend/search/module/roomtype/transport/ginrtsearch"
 	"h5travelotobackend/search/module/suggest/transport/ginsuggestion"
+	"time"
 )
 
 func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
+	v1.Use(middleware.CheckBannedToRequest(appCtx), middleware.RateLimitingByIp(appCtx, 500, time.Hour))
+
 	v1.POST("/upload", ginupload.UploadImage(appCtx))
 	v1.POST("/register", ginuser.RegisterUser(appCtx))
 	v1.POST("/authenticate", ginuser.UserLogin(appCtx))
