@@ -97,7 +97,7 @@ services:
       - |
         echo "Installing Connector"
         confluent-hub install --no-prompt debezium/debezium-connector-mysql:1.7.0
-        confluent-hub install --no-prompt confluentinc/kafka-connect-elasticsearch:11.1.3
+        confluent-hub install --no-prompt confluentinc/kafka-connect-elasticsearch:latest
         #
         echo "Launching Kafka Connect worker"
         /etc/confluent/docker/run &
@@ -319,7 +319,7 @@ services:
     container_name: redis
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
-      - ./redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
       - redis-data:/data
     ports:
       - "6379:6379"
