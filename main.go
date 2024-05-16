@@ -7,7 +7,6 @@ import (
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/redis/go-redis/v9"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -17,7 +16,7 @@ import (
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/component/cacher/rediscacher"
 	"h5travelotobackend/component/logger/mylogger"
-	rabbitpubsub "h5travelotobackend/component/pubsub/rabbitmq"
+	rdpubsub "h5travelotobackend/component/pubsub/redis"
 	"h5travelotobackend/component/uploadprovider"
 	"h5travelotobackend/middleware"
 	"h5travelotobackend/skio"
@@ -32,7 +31,7 @@ func main() {
 	logger := mylogger.NewLogger("h5traveloto", nil)
 
 	logger.Println("Starting server...")
-	isDev := false
+	isDev := true
 
 	if isDev {
 		err := godotenv.Load(".dev.env")
@@ -57,7 +56,7 @@ func main() {
 	s3Domain := os.Getenv("S3_DOMAIN")
 	mySqlConnString := os.Getenv("MYSQL_CONN_STRING")
 	mongoDbConnString := os.Getenv("MONGODB_CONN_STRING")
-	rabbitMqConnString := os.Getenv("RABBITMQ_CONN_STRING")
+	//rabbitMqConnString := os.Getenv("RABBITMQ_CONN_STRING")
 	esURL := os.Getenv("ES_URL")
 	esUserName := os.Getenv("ES_USERNAME")
 	esPassword := os.Getenv("ES_PASSWORD")
@@ -160,17 +159,19 @@ func main() {
 	// Set up RabbitMq Connection
 	/***************************************************************/
 	/***************************************************************/
-	rabbitConn, err := amqp.Dial(rabbitMqConnString)
-	if err != nil {
-		logger.Fatal("Fail to connect rabbitMQ! ", err)
-	}
-	defer rabbitConn.Close()
-	ch, err := rabbitConn.Channel()
-	if err != nil {
-		logger.Fatal("Fail to open channel! ", err)
-	}
 
-	pb := rabbitpubsub.NewRabbitPubSub(ch)
+	//rabbitConn, err := amqp.Dial(rabbitMqConnString)
+	//if err != nil {
+	//	logger.Fatal("Fail to connect rabbitMQ! ", err)
+	//}
+	//defer rabbitConn.Close()
+	//ch, err := rabbitConn.Channel()
+	//if err != nil {
+	//	logger.Fatal("Fail to open channel! ", err)
+	//}
+	//
+	//pb := rabbitpubsub.NewRabbitPubSub(ch)
+
 	/***************************************************************/
 	/***************************************************************/
 
@@ -183,12 +184,15 @@ func main() {
 		0*time.Minute,
 		mylogger.NewLogger("redisCacher", nil))
 
+	// ======= Set up Redis PubSub =========
+	redisPubSub := rdpubsub.NewRedisPubSub(redisClient)
+
 	// Set up App Context
 	appCtx := appContext.NewAppContext(db,
 		mongodb,
 		systemSecretKey,
 		s3Provider,
-		pb,
+		redisPubSub,
 		es,
 		redisClient,
 		logger,
