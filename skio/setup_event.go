@@ -32,6 +32,10 @@ func Setup(appCtx AppContext, engine *rtEngine) {
 		fmt.Println("closed", reason)
 	})
 
+	server.OnEvent("/", "ping", func(s socketio.Conn) {
+		s.Emit("pong")
+	})
+
 	// authenticate messages
 	// 1. Check the access token
 	// 	1.1. If the access token or userId is invalid, sends message
