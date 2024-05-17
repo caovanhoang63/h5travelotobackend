@@ -45,6 +45,16 @@ func NewUnauthorized(root error, msg, log, key string) *AppError {
 	}
 }
 
+func NewResourceNotFound(entity string) *AppError {
+	return &AppError{
+		StatusCode: http.StatusNotFound,
+		RootErr:    RecordNotFound,
+		Message:    fmt.Sprintf("%s not found", entity),
+		Log:        RecordNotFound.Error(),
+		Key:        "RESOURCE_NOT_FOUND",
+	}
+}
+
 func NewCustomError(root error, msg string, key string) *AppError {
 	if root != nil {
 		return NewErrorResponse(root, msg, root.Error(), key)

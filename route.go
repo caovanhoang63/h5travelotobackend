@@ -15,6 +15,7 @@ import (
 	"h5travelotobackend/module/hoteldetails/transport/ginhoteldetail"
 	"h5travelotobackend/module/hotelfacilities/transport/ginhotelfacilities"
 	"h5travelotobackend/module/hotels/transport/ginhotel"
+	"h5travelotobackend/module/hotelsave/transport/ginhotelsave"
 	"h5travelotobackend/module/hoteltypes/transport/ginhoteltype"
 	"h5travelotobackend/module/provinces/transport/ginprovinces"
 	"h5travelotobackend/module/review/transport/ginreview"
@@ -32,7 +33,7 @@ import (
 )
 
 func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
-	v1.Use(middleware.CheckBannedToRequest(appCtx), middleware.RateLimitingByIp(appCtx, 500, time.Hour))
+	v1.Use(middleware.CheckBannedToRequest(appCtx), middleware.RateLimitingByIp(appCtx, 500, time.Minute))
 
 	v1.POST("/upload", ginupload.UploadImage(appCtx))
 	v1.POST("/register", ginuser.RegisterUser(appCtx))
@@ -219,4 +220,13 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	rtSearch.GET("/", ginrtsearch.ListAvailableRoomType(appCtx))
 	// ===================== Search =====================
 
+	// ===================== Save Hotel =====================
+	saveHotel := v1.Group("hotels")
+	saveHotel.Use(middleware.RequireAuth(appCtx))
+	saveHotel.POST("/:hotel-id/save", ginhotelsave.UserSaveHotel(appCtx))
+	saveHotel.DELETE("/:hotel-id/unsave", ginhotelsave.UserUnSaveHotel(appCtx))
+	saveHotel.GET("/:hotel-id/saved", ginhotelsave.IsHotelSaved(appCtx))
+	saveHotel.GET("/saved", ginhotelsave.ListHotelSavedByUser(appCtx))
+
+	// ===================== Save Hotel =====================
 }
