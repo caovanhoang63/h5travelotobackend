@@ -34,7 +34,7 @@ import (
 )
 
 func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
-	v1.Use(middleware.CheckBannedToRequest(appCtx), middleware.RateLimitingByIp(appCtx, 10, time.Minute))
+	v1.Use(middleware.CheckBannedToRequest(appCtx), middleware.RateLimitingByIp(appCtx, 500, time.Minute))
 
 	v1.POST("/upload", ginupload.UploadImage(appCtx))
 	v1.POST("/register", ginuser.RegisterUser(appCtx))
