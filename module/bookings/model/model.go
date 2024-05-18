@@ -63,6 +63,12 @@ type BookingCreate struct {
 	EndDate         *common.CivilDate `json:"end_date" gorm:"column:end_date"`
 }
 
+type UpdateAmountResponse struct {
+	TotalAmount    float64 `json:"total_amount"`
+	DiscountAmount float64 `json:"discount_amount"`
+	FinalAmount    float64 `json:"final_amount"`
+}
+
 func (b *BookingCreate) UnMask() {
 	b.HotelId = int(b.HotelFakeId.GetLocalID())
 	b.RoomTypeId = int(b.RoomTypeFakeId.GetLocalID())
@@ -79,6 +85,14 @@ func (BookingCreate) TableName() string {
 }
 
 type BookingUpdate struct {
+	DealId         *int     `json:"deal_id"`
+	DiscountAmount *float64 `json:"-" gorm:"column:discount_amount"`
+	FinalAmount    *float64 `json:"-" gorm:"column:final_amount"`
+}
+
+type BookingUpdateDeal struct {
+	DealId    *int `json:"deal_id"`
+	BookingId int  `json:"booking_id"`
 }
 
 func (BookingUpdate) TableName() string {
@@ -102,10 +116,6 @@ var (
 		"ERR_INVALID_DEAL",
 	)
 )
-
-type BookingAddDeal struct {
-	DealId *int `json:"deal_id"`
-}
 
 var (
 	ErrOccupancyEmpty        = errors.New("occupancy can not be empty")

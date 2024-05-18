@@ -5,7 +5,6 @@ import (
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/pubsub"
 	"h5travelotobackend/module/bookings/model"
-	dealmodel "h5travelotobackend/module/deals/model"
 	"log"
 	"time"
 )
@@ -24,18 +23,9 @@ type FindRoomTypeStore interface {
 	) (*common.DTORoomType, error)
 }
 
-type DealStore interface {
-	FindWithCondition(
-		ctx context.Context,
-		condition map[string]interface{},
-		moreKeys ...string,
-	) (*dealmodel.Deal, error)
-}
-
 type createBookingBiz struct {
 	bookingStore  CreateBookingStore
 	roomTypeStore FindRoomTypeStore
-	dealStore     DealStore
 	pb            pubsub.Pubsub
 }
 
@@ -113,41 +103,6 @@ func (biz *createBookingBiz) Create(
 	}
 	return nil
 
-}
-
-func ValidateDeal(b *bookingmodel.BookingCreate, d *dealmodel.Deal) error {
-	if d.Status == 0 {
-		return bookingmodel.ErrDealNotAvailable
-	}
-
-	if d.HotelId != b.HotelId {
-		return bookingmodel.ErrDealNotAvailable
-	}
-
-	if d.RoomTypeId != 0 && d.RoomTypeId != b.RoomTypeId {
-		return bookingmodel.ErrDealNotAvailable
-	}
-
-	if d.StartDate.After(*b.StartDate) || d.ExpiryDate.Before(*b.EndDate) {
-		return bookingmodel.ErrDealNotAvailable
-	}
-	if !d.IsUnlimited && d.TotalQuantity <= 0 {
-		return bookingmodel.ErrDealNotAvailable
-	}
-
-	if b.TotalAmount < d.MinPrice {
-		return bookingmodel.ErrDealNotAvailable
-	}
-	return nil
-}
-
-func CalculateDiscountAmount(d *dealmodel.Deal, b *bookingmodel.BookingCreate) error {
-	if d.DiscountType == "percent" {
-		b.DiscountAmount = b.TotalAmount * d.DiscountPercent
-	} else {
-		b.DiscountAmount = d.DiscountAmount
-	}
-	return nil
 }
 
 func ValidateBooking(f *bookingmodel.BookingCreate) error {
