@@ -8,17 +8,21 @@ const EntityName = "Booking"
 
 type Booking struct {
 	common.SqlModel  `json:",inline"`
-	HotelId          int                `json:"-" gorm:"column:hotel_id"`
-	Hotel            *common.Hotel      `json:"hotel,omitempty" gorm:"foreignKey:HotelId;preload:false"`
-	UserFakeId       *common.UID        `json:"user_id"`
-	UserId           int                `json:"-" gorm:"column:user_id"`
-	User             *common.SimpleUser `json:"user,omitempty" gorm:"foreignKey:UserId;preload:false"`
-	RoomTypeId       int                `json:"-" gorm:"column:room_type_id"`
-	RoomTypeFakeId   *common.UID        `json:"room_type_id" gorm:"-"`
-	RoomQuantity     int                `json:"room_quantity" gorm:"column:room_quantity"`
-	CustomerQuantity int                `json:"customer_quantity" gorm:"column:customer_quantity"`
-	StartDate        *common.CivilDate  `json:"start_date" gorm:"column:start_date"`
-	EndDate          *common.CivilDate  `json:"end_date" gorm:"column:end_date"`
+	HotelId          int               `json:"-" gorm:"column:hotel_id"`
+	Hotel            *common.Hotel     `json:"hotel,omitempty" gorm:"foreignKey:HotelId;preload:false"`
+	UserFakeId       *common.UID       `json:"user_id"`
+	UserId           int               `json:"-" gorm:"column:user_id"`
+	RoomTypeId       int               `json:"-" gorm:"column:room_type_id"`
+	RoomTypeFakeId   *common.UID       `json:"room_type_id" gorm:"-"`
+	RoomQuantity     int               `json:"room_quantity" gorm:"column:room_quantity"`
+	DealId           int               `json:"deal_id" gorm:"column:deal_id"`
+	CustomerQuantity int               `json:"customer_quantity" gorm:"column:customer_quantity"`
+	TotalAmount      float64           `json:"total_amount" gorm:"column:total_amount"`
+	DiscountAmount   float64           `json:"discount_amount" gorm:"column:discount_amount"`
+	FinalAmount      float64           `json:"final_amount" gorm:"column:final_amount"`
+	Currency         string            `json:"currency" gorm:"column:currency"`
+	StartDate        *common.CivilDate `json:"start_date" gorm:"column:start_date"`
+	EndDate          *common.CivilDate `json:"end_date" gorm:"column:end_date"`
 }
 
 func (Booking) TableName() string {
@@ -31,9 +35,6 @@ func (b *Booking) Mask(isAdmin bool) {
 	b.RoomTypeFakeId = common.NewUIDP(uint32(b.RoomTypeId), common.DbTypeRoomType, 0)
 	if b.Hotel != nil {
 		b.Hotel.Mask(isAdmin)
-	}
-	if b.User != nil {
-		b.User.Mask(isAdmin)
 	}
 }
 
