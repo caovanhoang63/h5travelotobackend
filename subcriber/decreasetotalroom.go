@@ -12,7 +12,7 @@ import (
 
 func DecreaseTotalRoomWhenCreateNewRoom(appCtx appContext.AppContext, ctx context.Context) consumerJob {
 	return consumerJob{
-		Title: "Increase total room when create new room",
+		Title: "Decrease total room when delete room",
 		Handler: func(ctx context.Context, message *pubsub.Message) error {
 			var roomType common.DTORoomType
 			if err := json.Unmarshal(message.Data, &roomType); err != nil {

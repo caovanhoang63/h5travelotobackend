@@ -11,7 +11,7 @@ import (
 
 func UpdateHotelReviewWhenUserDeleteReview(appCtx appContext.AppContext, ctx context.Context) consumerJob {
 	return consumerJob{
-		Title: "update hotel review when user review hotel",
+		Title: "update hotel review when user delete review hotel",
 		Handler: func(ctx context.Context, message *pubsub.Message) error {
 			var review common.DTOReview
 
