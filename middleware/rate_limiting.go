@@ -43,7 +43,7 @@ func RateLimitingByIp(appCtx appContext.AppContext, threshHold int64, expiration
 		err := incRequestCount(c.Request.Context(), appCtx.GetRedisClient(), key, threshHold, expiration)
 		if err != nil {
 			if errors.Is(err, common.RateLimited) {
-				err = banUser(c.Request.Context(), appCtx.GetRedisClient(), common.GenBanUserIpKey(clientIp), 30*time.Minute)
+				err = banUser(c.Request.Context(), appCtx.GetRedisClient(), common.GenBanUserIpKey(clientIp), 30*time.Second)
 				if err != nil {
 					log.Printf("Error banning user ip: %v", err)
 				}

@@ -27,6 +27,9 @@ func ListHotelSavedByUser(appCtx appContext.AppContext) gin.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+		for i := range data {
+			data[i].Mask(false)
+		}
 
 		c.JSON(http.StatusOK, common.NewSuccessResponse(data, paging, nil))
 	}

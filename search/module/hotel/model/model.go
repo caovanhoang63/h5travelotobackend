@@ -24,7 +24,7 @@ type Hotel struct {
 	Ward                  *common.AdministrativeUnit `json:"ward"`
 	Logo                  *common.Image              `json:"logo"`
 	Images                *common.Images             `json:"images"`
-	DisplayPrice          *float64                   `json:"display_price"`
+	DisplayPrice          *float64                   `json:"display_price,omitempty"`
 	ListAvailableRoomType []rtsearchmodel.RoomType   `json:"-"`
 }
 

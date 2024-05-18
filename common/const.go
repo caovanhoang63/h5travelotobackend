@@ -23,6 +23,7 @@ const (
 	DbTypeRoomFacility      = 15
 	DbTypeDeal              = 16
 	DbTypeInvoice           = 17
+	DbTypeHotelCollection   = 18
 )
 
 // RecordStatus is a type to represent the status of a record
@@ -70,3 +71,5 @@ const IsDebug = false
 const (
 	VND = "VND"
 )
+
+const DbTimeStampLayout = "2006-01-02T15:04:05.999999"

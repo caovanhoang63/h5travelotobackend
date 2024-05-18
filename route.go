@@ -17,6 +17,7 @@ import (
 	"h5travelotobackend/module/hotels/transport/ginhotel"
 	"h5travelotobackend/module/hotelsave/transport/ginhotelsave"
 	"h5travelotobackend/module/hoteltypes/transport/ginhoteltype"
+	"h5travelotobackend/module/htcollection/transport/ginhtcollection"
 	"h5travelotobackend/module/provinces/transport/ginprovinces"
 	"h5travelotobackend/module/review/transport/ginreview"
 	ginroomfacilities "h5travelotobackend/module/roomfacilities/transport/ginhotelfacilities"
@@ -33,7 +34,7 @@ import (
 )
 
 func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
-	v1.Use(middleware.CheckBannedToRequest(appCtx), middleware.RateLimitingByIp(appCtx, 500, time.Minute))
+	v1.Use(middleware.CheckBannedToRequest(appCtx), middleware.RateLimitingByIp(appCtx, 10, time.Minute))
 
 	v1.POST("/upload", ginupload.UploadImage(appCtx))
 	v1.POST("/register", ginuser.RegisterUser(appCtx))
@@ -227,6 +228,19 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	saveHotel.DELETE("/:hotel-id/unsave", ginhotelsave.UserUnSaveHotel(appCtx))
 	saveHotel.GET("/:hotel-id/saved", ginhotelsave.IsHotelSaved(appCtx))
 	saveHotel.GET("/saved", ginhotelsave.ListHotelSavedByUser(appCtx))
-
 	// ===================== Save Hotel =====================
+
+	// ===================== Hotel Collection =====================
+	collection := v1.Group("collections")
+	collection.Use(middleware.RequireAuth(appCtx))
+	collection.POST("/", ginhtcollection.CreateCollection(appCtx))
+	collection.GET("", ginhtcollection.ListUserCollections(appCtx))
+	collection.GET("/:collection-id", ginhtcollection.FindCollectionById(appCtx))
+	collection.PATCH("/:collection-id", ginhtcollection.UpdateCollection(appCtx))
+	collection.DELETE("/:collection-id", ginhtcollection.DeleteCollection(appCtx))
+	collection.POST("/:collection-id/hotels/:hotel-id", ginhtcollection.AddHotelToCollection(appCtx))
+	collection.DELETE("/:collection-id/hotels/:hotel-id", ginhtcollection.RemoveHotelFromCollection(appCtx))
+	collection.GET("/:collection-id/hotels", ginhtcollection.ListHotelInCollection(appCtx))
+
+	// ===================== Hotel Collection =====================
 }

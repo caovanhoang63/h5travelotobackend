@@ -15,6 +15,7 @@ type Hotel struct {
 	Ward         *Ward     `json:"ward,inline" gorm:"foreignKey:WardCode;references:Code"`
 	Star         int       `json:"star" gorm:"star"`
 	TotalRating  int       `json:"total_rating" gorm:"total_rating"`
+	AvgRating    float64   `json:"avg_rating" gorm:"avg_rating"`
 }
 
 func (Hotel) TableName() string {
@@ -26,8 +27,9 @@ func (data *Hotel) Mask(isAdmin bool) {
 }
 
 type Province struct {
-	Code int    `json:"code" gorm:"column:code"`
-	Name string `json:"name" gorm:"column:name"`
+	Code     int    `json:"code" gorm:"column:code"`
+	Name     string `json:"name" gorm:"column:name"`
+	FullName string `json:"full_name" gorm:"column:full_name"`
 }
 
 func (Province) TableName() string {
@@ -35,8 +37,9 @@ func (Province) TableName() string {
 }
 
 type District struct {
-	Code int    `json:"code" gorm:"column:code"`
-	Name string `json:"name" gorm:"column:name"`
+	Code     int    `json:"code" gorm:"column:code"`
+	Name     string `json:"name" gorm:"column:name"`
+	FullName string `json:"full_name" gorm:"column:full_name"`
 }
 
 func (District) TableName() string {
@@ -44,8 +47,9 @@ func (District) TableName() string {
 }
 
 type Ward struct {
-	Code int    `json:"code" gorm:"column:code"`
-	Name string `json:"name" gorm:"column:name"`
+	Code     int    `json:"code" gorm:"column:code"`
+	Name     string `json:"name" gorm:"column:name"`
+	FullName string `json:"full_name" gorm:"column:full_name"`
 }
 
 func (Ward) TableName() string {

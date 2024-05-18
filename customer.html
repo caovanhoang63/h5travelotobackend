@@ -24,7 +24,7 @@
 
         // Socket connect to server
         const socket = io("", { transports: ['websocket'] });
-        const Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJfaWQiOjI2LCJyb2xlIjoiY3VzdG9tZXIiLCJFeHBpcnkiOjB9LCJleHAiOjE3MTUzNTc4NzcsImlhdCI6MTcxNTM1NDI3N30.w8JexewUfHJSYPxD1-lGTJCveDn1MItyLm_ocSk4_JI";
+        const Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJfaWQiOjIwLCJyb2xlIjoib3duZXIiLCJFeHBpcnkiOjB9LCJleHAiOjE3MTg1MjI4MDEsImlhdCI6MTcxNTkzMDgwMX0.f6ucf-A9W5izbodJbAWe-aqdLbKY9LZi5w8bcGQ01Ug";
         socket.on('connect', () => {
             console.log('Client connected');
             socket.emit('authenticate', Token);
