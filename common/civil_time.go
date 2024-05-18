@@ -3,6 +3,7 @@ package common
 import (
 	"database/sql/driver"
 	"errors"
+	"math"
 	"strings"
 	"time"
 )
@@ -13,6 +14,14 @@ type CivilDate time.Time
 
 func (c *CivilDate) After(d CivilDate) bool {
 	return time.Time(*c).After(time.Time(d))
+}
+
+func (c *CivilDate) Before(d CivilDate) bool {
+	return time.Time(*c).Before(time.Time(d))
+}
+
+func (c *CivilDate) DateDiff(d CivilDate) int {
+	return int(math.Abs(time.Time(*c).Sub(time.Time(d)).Hours()) / 24)
 }
 
 func (c *CivilDate) ToString() string {

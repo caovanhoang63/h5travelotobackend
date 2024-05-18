@@ -18,6 +18,7 @@ type Deal struct {
 	Description       string            `json:"description" gorm:"column:description;"`
 	TotalQuantity     int               `json:"total_quantity" gorm:"column:total_quantity;"`
 	AvailableQuantity int               `json:"available_quantity" gorm:"column:available_quantity;"`
+	MinPrice          float64           `json:"min_price" gorm:"column:min_price;"`
 	DiscountType      string            `json:"discount_type" gorm:"column:discount_type;"`
 	DiscountAmount    float64           `json:"discount_amount" gorm:"column:discount_amount;"`
 	DiscountPercent   float64           `json:"discount_percent" gorm:"column:discount_percent;"`
@@ -63,6 +64,7 @@ type DealUpdate struct {
 	HotelFakeId       *common.UID   `json:"hotel_id" gorm:"-"`
 	RoomTypeId        int           `json:"-" gorm:"column:room_type_id;"`
 	RoomTypeFakeId    *common.UID   `json:"room_type_id" gorm:"-"`
+	MinPrice          *float64      `json:"min_price" gorm:"column:min_price;"`
 	Image             *common.Image `json:"image" gorm:"column:image;"`
 	Description       string        `json:"description" gorm:"column:description;"`
 	TotalQuantity     int           `json:"total_quantity" gorm:"column:total_quantity;"`

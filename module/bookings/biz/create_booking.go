@@ -5,11 +5,15 @@ import (
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/pubsub"
 	"h5travelotobackend/module/bookings/model"
+	dealmodel "h5travelotobackend/module/deals/model"
 	"log"
+	"time"
 )
 
 type CreateBookingStore interface {
 	Create(ctx context.Context, data *bookingmodel.BookingCreate) error
+	CountBookedRoom(ctx context.Context, rtId int,
+		startDate *common.CivilDate, endDate *common.CivilDate) (*int, error)
 }
 
 type FindRoomTypeStore interface {
@@ -20,14 +24,23 @@ type FindRoomTypeStore interface {
 	) (*common.DTORoomType, error)
 }
 
+type DealStore interface {
+	FindWithCondition(
+		ctx context.Context,
+		condition map[string]interface{},
+		moreKeys ...string,
+	) (*dealmodel.Deal, error)
+}
+
 type createBookingBiz struct {
-	store             CreateBookingStore
-	findRoomTypeStore FindRoomTypeStore
-	pb                pubsub.Pubsub
+	bookingStore  CreateBookingStore
+	roomTypeStore FindRoomTypeStore
+	dealStore     DealStore
+	pb            pubsub.Pubsub
 }
 
 func NewCreateBookingBiz(store CreateBookingStore, typeStore FindRoomTypeStore, pb pubsub.Pubsub) *createBookingBiz {
-	return &createBookingBiz{store: store, findRoomTypeStore: typeStore, pb: pb}
+	return &createBookingBiz{bookingStore: store, roomTypeStore: typeStore, pb: pb}
 }
 
 func (biz *createBookingBiz) Create(
@@ -35,7 +48,11 @@ func (biz *createBookingBiz) Create(
 	data *bookingmodel.BookingCreate,
 	requester common.Requester) error {
 
-	roomType, err := biz.findRoomTypeStore.FindDTODataWithCondition(ctx, map[string]interface{}{"id": data.RoomTypeId})
+	if err := ValidateBooking(data); err != nil {
+		return common.ErrInvalidRequest(err)
+	}
+
+	roomType, err := biz.roomTypeStore.FindDTODataWithCondition(ctx, map[string]interface{}{"id": data.RoomTypeId})
 	if err != nil {
 		if err == common.RecordNotFound {
 			return bookingmodel.ErrInvalidRoomType
@@ -46,7 +63,43 @@ func (biz *createBookingBiz) Create(
 	if roomType.Status == 0 || roomType.HotelId != data.HotelId {
 		return bookingmodel.ErrInvalidRoomType
 	}
-	err = biz.store.Create(ctx, data)
+
+	booked, err := biz.bookingStore.CountBookedRoom(ctx, data.RoomTypeId, data.StartDate, data.EndDate)
+	if err != nil {
+		return common.ErrInternal(err)
+	}
+
+	if booked == nil {
+		booked = new(int)
+		*booked = 0
+	}
+
+	if *booked+data.RoomQuantity > roomType.TotalRoom {
+		return bookingmodel.ErrRoomNotAvailable
+	}
+
+	data.TotalAmount = roomType.Price * float64(data.RoomQuantity) * float64(data.EndDate.DateDiff(*data.StartDate))
+	log.Println(roomType.Price)
+	data.DiscountAmount = 0
+	data.Currency = common.VND
+	//if data.DealId != nil {
+	//	deal, err := biz.dealStore.FindWithCondition(ctx, map[string]interface{}{"id": *data.DealId})
+	//	if err != nil {
+	//		return common.ErrInvalidRequest(err)
+	//	}
+	//	err = ValidateDeal(data, deal)
+	//	if err != nil {
+	//		return common.ErrInvalidRequest(err)
+	//	}
+	//	err = CalculateDiscountAmount(deal, data)
+	//	if err != nil {
+	//		return common.ErrInternal(err)
+	//	}
+	//}
+
+	data.FinalAmount = data.TotalAmount - data.DiscountAmount
+
+	err = biz.bookingStore.Create(ctx, data)
 	if err != nil {
 		return common.ErrCannotCreateEntity(bookingmodel.EntityName, err)
 	}
@@ -60,4 +113,64 @@ func (biz *createBookingBiz) Create(
 	}
 	return nil
 
+}
+
+func ValidateDeal(b *bookingmodel.BookingCreate, d *dealmodel.Deal) error {
+	if d.Status == 0 {
+		return bookingmodel.ErrDealNotAvailable
+	}
+
+	if d.HotelId != b.HotelId {
+		return bookingmodel.ErrDealNotAvailable
+	}
+
+	if d.RoomTypeId != 0 && d.RoomTypeId != b.RoomTypeId {
+		return bookingmodel.ErrDealNotAvailable
+	}
+
+	if d.StartDate.After(*b.StartDate) || d.ExpiryDate.Before(*b.EndDate) {
+		return bookingmodel.ErrDealNotAvailable
+	}
+	if !d.IsUnlimited && d.TotalQuantity <= 0 {
+		return bookingmodel.ErrDealNotAvailable
+	}
+
+	if b.TotalAmount < d.MinPrice {
+		return bookingmodel.ErrDealNotAvailable
+	}
+	return nil
+}
+
+func CalculateDiscountAmount(d *dealmodel.Deal, b *bookingmodel.BookingCreate) error {
+	if d.DiscountType == "percent" {
+		b.DiscountAmount = b.TotalAmount * d.DiscountPercent
+	} else {
+		b.DiscountAmount = d.DiscountAmount
+	}
+	return nil
+}
+
+func ValidateBooking(f *bookingmodel.BookingCreate) error {
+	if f.RoomQuantity <= 0 {
+		return bookingmodel.ErrRoomQuantityIsZero
+	}
+	if f.Adults+f.Children == 0 {
+		return bookingmodel.ErrOccupancyEmpty
+	}
+	if f.StartDate == nil {
+		return bookingmodel.ErrStartIsEmpty
+	}
+	if f.EndDate == nil {
+		return bookingmodel.ErrEndIsEmpty
+	}
+
+	if f.StartDate.After(*f.EndDate) {
+		return bookingmodel.ErrStartDateAfterEndDate
+	}
+	now := time.Now()
+	if !f.StartDate.After(common.CivilDate(now)) {
+		return bookingmodel.ErrStartInPass
+	}
+
+	return nil
 }

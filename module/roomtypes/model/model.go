@@ -43,7 +43,7 @@ type RoomTypeCreate struct {
 	Images          *common.Images `json:"images" gorm:"column:images;"`
 	BreakFast       bool           `json:"break_fast" gorm:"column:break_fast;"`
 	FreeCancel      bool           `json:"free_cancel" gorm:"column:free_cancel;"`
-	FacilityIds     []string       `json:"facility_ids" gorm:"-"`
+	FacilityIds     []int          `json:"facility_ids" gorm:"-"`
 }
 
 func (RoomTypeCreate) TableName() string {
