@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 	"h5travelotobackend/component/cacher"
 	"h5travelotobackend/component/logger"
+	"h5travelotobackend/component/payment/vnpay"
 	"h5travelotobackend/component/pubsub"
 	"h5travelotobackend/component/uploadprovider"
 	"h5travelotobackend/skio"
@@ -23,6 +24,7 @@ type AppContext interface {
 	GetRedisClient() *redis.Client
 	GetLogger() logger.Logger
 	GetCacher() cacher.Cacher
+	GetVnPay() *vnpay.VnPay
 }
 
 type appContext struct {
@@ -36,6 +38,7 @@ type appContext struct {
 	redisClient    *redis.Client
 	logger         logger.Logger
 	cacher         cacher.Cacher
+	vnPay          *vnpay.VnPay
 }
 
 func NewAppContext(db *gorm.DB,
@@ -46,7 +49,8 @@ func NewAppContext(db *gorm.DB,
 	es *elasticsearch.TypedClient,
 	redisClient *redis.Client,
 	logger logger.Logger,
-	cacher cacher.Cacher) *appContext {
+	cacher cacher.Cacher,
+	vnPay *vnpay.VnPay) *appContext {
 	return &appContext{
 		db:             db,
 		mongodb:        mongodb,
@@ -57,6 +61,7 @@ func NewAppContext(db *gorm.DB,
 		redisClient:    redisClient,
 		logger:         logger,
 		cacher:         cacher,
+		vnPay:          vnPay,
 	}
 }
 
@@ -96,4 +101,7 @@ func (appCtx *appContext) GetLogger() logger.Logger {
 
 func (appCtx *appContext) GetCacher() cacher.Cacher {
 	return appCtx.cacher
+}
+func (appCtx *appContext) GetVnPay() *vnpay.VnPay {
+	return appCtx.vnPay
 }

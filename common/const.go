@@ -73,3 +73,8 @@ const (
 )
 
 const DbTimeStampLayout = "2006-01-02T15:04:05.999999"
+
+const (
+	PaymentMethodVnPay = "vnpay"
+	PaymentMethodMomo  = "momo"
+)

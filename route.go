@@ -27,6 +27,7 @@ import (
 	"h5travelotobackend/module/users/transport/ginuser"
 	"h5travelotobackend/module/ward/transport/ginward"
 	"h5travelotobackend/module/worker/transport/ginworker"
+	"h5travelotobackend/payment/module/payin/transport/ginpayin"
 	"h5travelotobackend/search/module/hotel/transport/ginhotelsearch"
 	"h5travelotobackend/search/module/roomtype/transport/ginrtsearch"
 	"h5travelotobackend/search/module/suggest/transport/ginsuggestion"
@@ -243,4 +244,13 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	collection.GET("/:collection-id/hotels", ginhtcollection.ListHotelInCollection(appCtx))
 
 	// ===================== Hotel Collection =====================
+
+	// ===================== Payment  =====================
+	payment := v1.Group("payment")
+	payment.Use(middleware.RequireAuth(appCtx))
+
+	vnPay := payment.Group("vnpay")
+	vnPay.GET("/pay-in", ginpayin.PayIn(appCtx))
+	vnPay.GET("/ipn", ginpayin.VnpIPN(appCtx))
+
 }

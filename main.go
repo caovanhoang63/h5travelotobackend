@@ -17,6 +17,7 @@ import (
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/component/cacher/rediscacher"
 	"h5travelotobackend/component/logger/mylogger"
+	"h5travelotobackend/component/payment/vnpay"
 	rabbitpubsub "h5travelotobackend/component/pubsub/rabbitmq"
 	"h5travelotobackend/component/uploadprovider"
 	"h5travelotobackend/middleware"
@@ -62,7 +63,10 @@ func main() {
 	esUserName := os.Getenv("ES_USERNAME")
 	esPassword := os.Getenv("ES_PASSWORD")
 	redisConnString := os.Getenv("REDIS_CONN_STRING")
+	vnPayTmnCode := os.Getenv("VNP_TMNCODE")
+	vnPayHashSecret := os.Getenv("VNP_HASHSECRET")
 
+	serverIp := os.Getenv("SERVER_IP")
 	// Set up Elasticsearch Connection
 	esCfg := elasticsearch.Config{
 		Addresses: []string{
@@ -188,6 +192,12 @@ func main() {
 	// ======= Set up Redis PubSub =========
 	//redisPubSub := rdpubsub.NewRedisPubSub(redisClient)
 
+	// ======= Set up Redis PubSub =========
+
+	// ======= Set up vnPay =========
+	vnPay := vnpay.NewVnPay(vnPayHashSecret, vnPayTmnCode, serverIp)
+	// ======= Set up vnPay =========
+
 	// Set up App Context
 	appCtx := appContext.NewAppContext(db,
 		mongodb,
@@ -197,7 +207,8 @@ func main() {
 		es,
 		redisClient,
 		logger,
-		redisCacher)
+		redisCacher,
+		vnPay)
 
 	r := gin.New()
 	r.Use(middleware.Recover(appCtx))
