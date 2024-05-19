@@ -7,15 +7,16 @@ type PaymentInfo struct {
 	BookingFakeId *common.UID `json:"booking_id" form:"booking_id" binding:"required"`
 	DealId        int         `json:"-"`
 	DealFakeId    *common.UID `json:"deal_id" form:"deal_id"`
+	Currency      string      `json:"currency" form:"currency" binding:"required"`
 }
 
 type PaymentInfoResponse struct {
-	PaymentUrl string `json:"payment_url"`
-	Currency   string `json:"currency"`
-	BookingId  string `json:"booking_id"`
-	Method     string `json:"method"`
-	DealId     string `json:"deal_id"`
-	Amount     int    `json:"amount"`
+	PaymentUrl string      `json:"payment_url"`
+	Currency   string      `json:"currency"`
+	BookingId  *common.UID `json:"booking_id"`
+	Method     string      `json:"method"`
+	DealId     *common.UID `json:"deal_id"`
+	Amount     int         `json:"amount"`
 }
 
 func (p *PaymentInfo) UnMask() error {
