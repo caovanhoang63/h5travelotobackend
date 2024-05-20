@@ -43,14 +43,14 @@ func (s *esStore) ListHotel(ctx context.Context,
 			}
 			err = json2.Unmarshal(json, &hotelImage)
 			if hotelImage.LogoStr != nil {
-				strings.Trim(*hotelImage.ImagesStr, "\"")
+				strings.Trim(*hotelImage.LogoStr, "\"")
 				if err := json2.Unmarshal([]byte(*hotelImage.LogoStr), &hotel.Logo); err != nil {
 					return nil, common.ErrInternal(err)
 				}
 			}
 			if hotelImage.ImagesStr != nil {
-				strings.Trim(*hotelImage.LogoStr, "\"")
-				if err := json2.Unmarshal([]byte(*hotelImage.ImagesStr), &hotel.Images); err != nil {
+				strings.Trim(*hotelImage.ImagesStr, "\"")
+				if err = json2.Unmarshal([]byte(*hotelImage.ImagesStr), &hotel.Images); err != nil {
 					return nil, common.ErrInternal(err)
 				}
 			}

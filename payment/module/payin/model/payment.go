@@ -1,4 +1,4 @@
-package paymentmodel
+package payinmodel
 
 import "h5travelotobackend/common"
 

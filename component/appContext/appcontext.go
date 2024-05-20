@@ -10,6 +10,7 @@ import (
 	"h5travelotobackend/component/payment/vnpay"
 	"h5travelotobackend/component/pubsub"
 	"h5travelotobackend/component/uploadprovider"
+	"h5travelotobackend/component/uuid"
 	"h5travelotobackend/skio"
 )
 
@@ -25,6 +26,7 @@ type AppContext interface {
 	GetLogger() logger.Logger
 	GetCacher() cacher.Cacher
 	GetVnPay() *vnpay.VnPay
+	GetUUID() uuid.Uuid
 }
 
 type appContext struct {
@@ -39,6 +41,7 @@ type appContext struct {
 	logger         logger.Logger
 	cacher         cacher.Cacher
 	vnPay          *vnpay.VnPay
+	uuid           uuid.Uuid
 }
 
 func NewAppContext(db *gorm.DB,
@@ -50,7 +53,8 @@ func NewAppContext(db *gorm.DB,
 	redisClient *redis.Client,
 	logger logger.Logger,
 	cacher cacher.Cacher,
-	vnPay *vnpay.VnPay) *appContext {
+	vnPay *vnpay.VnPay,
+	uuid uuid.Uuid) *appContext {
 	return &appContext{
 		db:             db,
 		mongodb:        mongodb,
@@ -62,6 +66,7 @@ func NewAppContext(db *gorm.DB,
 		logger:         logger,
 		cacher:         cacher,
 		vnPay:          vnPay,
+		uuid:           uuid,
 	}
 }
 
@@ -104,4 +109,7 @@ func (appCtx *appContext) GetCacher() cacher.Cacher {
 }
 func (appCtx *appContext) GetVnPay() *vnpay.VnPay {
 	return appCtx.vnPay
+}
+func (appCtx *appContext) GetUUID() uuid.Uuid {
+	return appCtx.uuid
 }

@@ -20,9 +20,11 @@ import (
 	"h5travelotobackend/component/payment/vnpay"
 	rabbitpubsub "h5travelotobackend/component/pubsub/rabbitmq"
 	"h5travelotobackend/component/uploadprovider"
+	"h5travelotobackend/component/uuid/googleuuid"
 	"h5travelotobackend/middleware"
 	"h5travelotobackend/skio"
 	"h5travelotobackend/subcriber"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -33,7 +35,7 @@ func main() {
 	logger := mylogger.NewLogger("h5traveloto", nil)
 
 	logger.Println("Starting server...")
-	isDev := false
+	isDev := true
 
 	if isDev {
 		err := godotenv.Load(".dev.env")
@@ -198,6 +200,15 @@ func main() {
 	vnPay := vnpay.NewVnPay(vnPayHashSecret, vnPayTmnCode, serverIp)
 	// ======= Set up vnPay =========
 
+	// ======= UUID ========
+	uuid := googleuuid.NewGoogleUUID()
+	// ======= UUID ========
+	str, err := uuid.Generate()
+	if err != nil {
+	}
+
+	log.Println(str)
+
 	// Set up App Context
 	appCtx := appContext.NewAppContext(db,
 		mongodb,
@@ -208,7 +219,8 @@ func main() {
 		redisClient,
 		logger,
 		redisCacher,
-		vnPay)
+		vnPay,
+		uuid)
 
 	r := gin.New()
 	r.Use(middleware.Recover(appCtx))

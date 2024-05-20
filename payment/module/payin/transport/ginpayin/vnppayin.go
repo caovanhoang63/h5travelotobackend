@@ -6,8 +6,6 @@ import (
 	"h5travelotobackend/component/appContext"
 	paymentmodel "h5travelotobackend/payment/module/payin/model"
 	"net/http"
-	"strconv"
-	"time"
 )
 
 func PayIn(appCtx appContext.AppContext) gin.HandlerFunc {
@@ -24,8 +22,10 @@ func PayIn(appCtx appContext.AppContext) gin.HandlerFunc {
 
 		vnPay := appCtx.GetVnPay()
 
-		now := strconv.Itoa(time.Now().Nanosecond())
-		url := vnPay.NewPayInUrl(100000, info.BookingFakeId.String(), c.ClientIP(), now)
+		//now := strconv.Itoa(time.Now().Nanosecond())
+		txnRef, _ := appCtx.GetUUID().Generate()
+
+		url := vnPay.NewPayInUrl(100000, info.BookingFakeId.String(), c.ClientIP(), txnRef)
 
 		response := paymentmodel.PaymentInfoResponse{
 			PaymentUrl: url,
