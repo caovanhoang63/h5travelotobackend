@@ -72,7 +72,7 @@ func (f *Filter) Validate() error {
 	}
 
 	now := time.Now()
-	if !f.StartDate.After(common.CivilDate(now)) {
+	if !(f.StartDate.After(common.CivilDate(now)) || (f.StartDate.IsEqual(common.CivilDate(now)))) {
 		return ErrStartInPass
 	}
 
