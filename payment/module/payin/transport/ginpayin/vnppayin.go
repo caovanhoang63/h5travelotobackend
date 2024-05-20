@@ -4,35 +4,46 @@ import (
 	"github.com/gin-gonic/gin"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
+	"h5travelotobackend/module/bookings/transport/bklocalhandler"
+	payinbiz "h5travelotobackend/payment/module/payin/biz"
 	paymentmodel "h5travelotobackend/payment/module/payin/model"
+	payinstore "h5travelotobackend/payment/module/payin/store"
+	"h5travelotobackend/payment/module/paymentevent/transport/pelocalhandler"
 	"net/http"
 )
 
 func PayIn(appCtx appContext.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var info paymentmodel.PaymentInfo
-
+		requester := c.MustGet(common.CurrentUser).(common.Requester)
+		var info paymentmodel.PaymentBookingCreate
 		if err := c.ShouldBind(&info); err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
-
 		if err := info.UnMask(); err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
 
+		info.Method = common.PaymentMethodVnPay
+		store := payinstore.NewStore(appCtx.GetGormDbConnection())
+		peStore := pelocalhandler.NewPELocalHandler(appCtx)
+		bkStore := bklocalhandler.NewCountBookedRoomLocalHandler(appCtx)
+		biz := payinbiz.NewPayInBiz(store, peStore, bkStore)
+		err := biz.NewPaymentBooking(c, requester, &info)
+
+		if err != nil {
+			panic(err)
+		}
+
 		vnPay := appCtx.GetVnPay()
-
-		//now := strconv.Itoa(time.Now().Nanosecond())
-		txnRef, _ := appCtx.GetUUID().Generate()
-
-		url := vnPay.NewPayInUrl(100000, info.BookingFakeId.String(), c.ClientIP(), txnRef)
+		url := vnPay.NewPayInUrl(info.Amount, info.Currency, info.BookingFakeId.String(), c.ClientIP(), info.TxnId)
 
 		response := paymentmodel.PaymentInfoResponse{
 			PaymentUrl: url,
-			Amount:     1000000,
-			Currency:   common.VND,
+			Amount:     info.Amount,
+			Currency:   info.Currency,
 			BookingId:  info.BookingFakeId,
 			Method:     common.PaymentMethodVnPay,
+			TxnId:      info.TxnId,
 		}
 
 		if info.DealFakeId != nil {

@@ -1,4 +1,4 @@
-package payinstore
+package pestore
 
 import "gorm.io/gorm"
 

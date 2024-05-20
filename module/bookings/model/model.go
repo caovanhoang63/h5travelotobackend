@@ -91,8 +91,8 @@ type BookingUpdate struct {
 }
 
 type BookingUpdateDeal struct {
-	DealId    *int `json:"deal_id"`
-	BookingId int  `json:"booking_id"`
+	DealId    int `json:"deal_id"`
+	BookingId int `json:"booking_id"`
 }
 
 func (BookingUpdate) TableName() string {

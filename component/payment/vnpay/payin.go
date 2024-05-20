@@ -4,7 +4,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha512"
 	"encoding/hex"
-	"h5travelotobackend/common"
 	"time"
 )
 
@@ -25,12 +24,13 @@ type payInParams struct {
 	VnpBankCode   string `json:"vnp_BankCode"`
 }
 
-func newPayInParams(Amount int, ip, orderInfo, txnRef string) *payInParams {
+func newPayInParams(Amount int, ip, orderInfo, txnRef, currency string) *payInParams {
 	return &payInParams{
 		VnpAmount:    Amount,
 		VnpIpAddr:    ip,
 		VnpOrderInfo: orderInfo,
 		VnpTxnRef:    txnRef,
+		VnpCurrCode:  currency,
 	}
 }
 
@@ -39,7 +39,7 @@ func (p *payInParams) BuildUrl(pay *VnPay) string {
 	param := "vnp_Amount=" + "1000000000" +
 		"&vnp_Command=" + commandPay +
 		"&vnp_CreateDate=" + time.Now().Format(vnPayTimeLayout) +
-		"&vnp_CurrCode=" + common.VND +
+		"&vnp_CurrCode=" + p.VnpCurrCode +
 		"&vnp_IpAddr=" + "127.0.0.1" +
 		"&vnp_Locale=" + localeVn +
 		"&vnp_OrderInfo=" + p.VnpOrderInfo +

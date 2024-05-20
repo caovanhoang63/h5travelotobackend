@@ -78,3 +78,16 @@ const (
 	PaymentMethodVnPay = "vnpay"
 	PaymentMethodMomo  = "momo"
 )
+
+const (
+	PaymentStatusNotStarted = "not_started"
+	PaymentStatusExecuting  = "executing"
+	PaymentStatusSuccess    = "success"
+	PaymentStatusFailed     = "failed"
+	PaymentStatusExpired    = "expired"
+)
+
+const (
+	PaymentTypePayIn  = "pay_in"
+	PaymentTypePayOut = "pay_out"
+)
