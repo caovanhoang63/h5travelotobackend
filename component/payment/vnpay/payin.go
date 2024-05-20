@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha512"
 	"encoding/hex"
+	"strconv"
 	"time"
 )
 
@@ -36,7 +37,7 @@ func newPayInParams(Amount int, ip, orderInfo, txnRef, currency string) *payInPa
 
 func (p *payInParams) BuildUrl(pay *VnPay) string {
 	baseUrl := "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?"
-	param := "vnp_Amount=" + "1000000000" +
+	param := "vnp_Amount=" + strconv.Itoa(p.VnpAmount) +
 		"&vnp_Command=" + commandPay +
 		"&vnp_CreateDate=" + time.Now().Format(vnPayTimeLayout) +
 		"&vnp_CurrCode=" + p.VnpCurrCode +
@@ -44,7 +45,7 @@ func (p *payInParams) BuildUrl(pay *VnPay) string {
 		"&vnp_Locale=" + localeVn +
 		"&vnp_OrderInfo=" + p.VnpOrderInfo +
 		"&vnp_OrderType=" + orderType +
-		"&vnp_ReturnUrl=" + "https%3A%2F%2Fsandbox.vnPayment.vn%2Fmerchant_webapi%2Fmerchant.html" +
+		"&vnp_ReturnUrl=" + "https%3A%2F%2Fh5traveloto.site" +
 		"&vnp_TmnCode=" + pay.tmnCode +
 		"&vnp_TxnRef=" + p.VnpTxnRef +
 		"&vnp_Version=" + version

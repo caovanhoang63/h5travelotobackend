@@ -1,11 +1,13 @@
 package payinbiz
 
 import (
+	"errors"
 	"golang.org/x/net/context"
 	"h5travelotobackend/common"
 	bookingmodel "h5travelotobackend/module/bookings/model"
 	payinmodel "h5travelotobackend/payment/module/payin/model"
 	paymenteventmodel "h5travelotobackend/payment/module/paymentevent/model"
+	"log"
 )
 
 type BookingStore interface {
@@ -15,6 +17,7 @@ type BookingStore interface {
 
 type PaymentBookingStore interface {
 	Create(ctx context.Context, create *payinmodel.PaymentBookingCreate) error
+	FindExecutingOrSuccessByBookingId(ctx context.Context, bookingId int) (*payinmodel.PaymentBooking, error)
 }
 
 type PaymentEventStore interface {
@@ -36,8 +39,19 @@ func NewPayInBiz(pbStore PaymentBookingStore, peStore PaymentEventStore, bkstore
 }
 
 func (biz *payInBiz) NewPaymentBooking(ctx context.Context, requester common.Requester, create *payinmodel.PaymentBookingCreate) error {
+	old, err := biz.pbStore.FindExecutingOrSuccessByBookingId(ctx, create.BookingId)
+
+	if err != nil && !errors.Is(err, common.RecordNotFound) {
+		return common.ErrInternal(err)
+	}
+
+	if old != nil {
+		log.Println(old)
+		return payinmodel.ErrPaymentSuccessfullOrExecuting
+	}
+
 	if create.DealId != 0 {
-		err := biz.bkStore.UpdateDeal(ctx, create.BookingId, create.DealId)
+		err = biz.bkStore.UpdateDeal(ctx, create.BookingId, create.DealId)
 		if err != nil {
 			return common.ErrInvalidRequest(err)
 		}
@@ -64,6 +78,5 @@ func (biz *payInBiz) NewPaymentBooking(ctx context.Context, requester common.Req
 	if err = biz.pbStore.Create(ctx, create); err != nil {
 		return common.ErrCannotCreateEntity("Transaction", err)
 	}
-
 	return nil
 }

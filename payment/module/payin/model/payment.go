@@ -80,3 +80,18 @@ func (p *PaymentBookingCreate) UnMask() error {
 	}
 	return nil
 }
+
+type PaymentBookingUpdateStatus struct {
+	PaymentStatus string `json:"payment_status" form:"payment_status" binding:"required"`
+}
+
+func (p PaymentBookingUpdateStatus) TableName() string {
+	return PaymentBooking{}.TableName()
+}
+
+var (
+	ErrPaymentSuccessfullOrExecuting = common.NewCustomError(
+		nil,
+		"Payment is already successfull or executing",
+		"ErrPaymentSuccessfullOrExecuting")
+)

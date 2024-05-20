@@ -17,10 +17,14 @@ type VnPay struct {
 	localIp    string
 }
 
+func (v *VnPay) CheckSum(url string) bool {
+
+	return true
+}
+
 func (v *VnPay) NewPayInUrl(amount float64, currency, bookingId, ip, txnRef string) string {
-	vnpAmount := int(amount)
-	orderInfo := fmt.Sprintf("%s%d", bookingId, vnpAmount)
-	params := newPayInParams(vnpAmount, ip, orderInfo, txnRef, currency)
+	orderInfo := fmt.Sprintf("%s", bookingId)
+	params := newPayInParams(int(amount)*100, ip, orderInfo, txnRef, currency)
 	return params.BuildUrl(v)
 }
 

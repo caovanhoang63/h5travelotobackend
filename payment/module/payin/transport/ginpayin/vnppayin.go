@@ -9,11 +9,13 @@ import (
 	paymentmodel "h5travelotobackend/payment/module/payin/model"
 	payinstore "h5travelotobackend/payment/module/payin/store"
 	"h5travelotobackend/payment/module/paymentevent/transport/pelocalhandler"
+	"log"
 	"net/http"
 )
 
 func PayIn(appCtx appContext.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		log.Println(c.Request.URL.String())
 		requester := c.MustGet(common.CurrentUser).(common.Requester)
 		var info paymentmodel.PaymentBookingCreate
 		if err := c.ShouldBind(&info); err != nil {
