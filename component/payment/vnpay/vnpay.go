@@ -1,11 +1,7 @@
 package vnpay
 
 import (
-	"crypto/hmac"
-	"crypto/sha512"
-	"encoding/hex"
 	"fmt"
-	"hash"
 )
 
 const vnPayTimeLayout = "20060102150405"
@@ -19,7 +15,6 @@ type VnPay struct {
 	hashSecret string
 	tmnCode    string
 	localIp    string
-	hash       hash.Hash
 }
 
 func (v *VnPay) NewPayInUrl(amount int, bookingId, ip, txnRef string) string {
@@ -33,17 +28,10 @@ func (v *VnPay) NewPayInUrl(amount int, bookingId, ip, txnRef string) string {
 //	return params.BuildUrl(v)
 //}
 
-func (v *VnPay) hashString(data string) string {
-	v.hash.Write([]byte(data))
-	return hex.EncodeToString(v.hash.Sum(nil))
-}
-
 func NewVnPay(hashSecret, tmnCode, localIp string) *VnPay {
-	hash := hmac.New(sha512.New, []byte(hashSecret))
 	return &VnPay{
 		hashSecret: hashSecret,
 		tmnCode:    tmnCode,
 		localIp:    localIp,
-		hash:       hash,
 	}
 }

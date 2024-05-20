@@ -1,6 +1,9 @@
 package vnpay
 
 import (
+	"crypto/hmac"
+	"crypto/sha512"
+	"encoding/hex"
 	"h5travelotobackend/common"
 	"time"
 )
@@ -45,5 +48,7 @@ func (p *payInParams) BuildUrl(pay *VnPay) string {
 		"&vnp_TmnCode=" + pay.tmnCode +
 		"&vnp_TxnRef=" + p.VnpTxnRef +
 		"&vnp_Version=" + version
-	return baseUrl + param + "&vnp_SecureHash=" + pay.hashString(param)
+	hasher := hmac.New(sha512.New, []byte(pay.hashSecret))
+	hasher.Write([]byte(param))
+	return baseUrl + param + "&vnp_SecureHash=" + hex.EncodeToString(hasher.Sum(nil))
 }
