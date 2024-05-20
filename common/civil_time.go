@@ -28,6 +28,10 @@ func (c *CivilDate) ToString() string {
 	return time.Time(*c).Format(CivilDateFormat)
 }
 
+func (c *CivilDate) IsEqual(d CivilDate) bool {
+	return c.DateDiff(d) == 0
+}
+
 func (c *CivilDate) UnmarshalJSON(b []byte) error {
 	value := strings.Trim(string(b), `"`) //get rid of "
 	if value == "" || value == "null" {
