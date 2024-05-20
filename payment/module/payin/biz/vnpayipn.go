@@ -9,11 +9,6 @@ import (
 	"log"
 )
 
-type UpdatPBStatusStore interface {
-	FindExecutingOrSuccessByBookingId(ctx context.Context, bookingId int) (*payinmodel.PaymentBooking, error)
-	UpdateStatus(ctx context.Context, txnId string, status *payinmodel.PaymentBookingUpdateStatus) error
-}
-
 type vnpIPNBiz struct {
 	bkStore BookingStore
 	pbStore UpdatPBStatusStore
