@@ -1,4 +1,7 @@
 FROM alpine
+
+RUN apk add --no-cache tzdata
+ENV TZ="Asia/Ho_Chi_Minh"
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 RUN update-ca-certificates
 
