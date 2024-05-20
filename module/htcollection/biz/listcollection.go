@@ -4,6 +4,7 @@ import (
 	"golang.org/x/net/context"
 	"h5travelotobackend/common"
 	htcollection "h5travelotobackend/module/htcollection/model"
+	"log"
 )
 
 type ListCollectionStore interface {
@@ -29,11 +30,12 @@ func (biz *listCollectionBiz) ListCollectionsWithCondition(ctx context.Context,
 	paging *common.Paging,
 	requester common.Requester) ([]htcollection.HotelCollection, error) {
 
-	cond := map[string]interface{}{"user_id": requester.GetUserId()}
+	cond := map[string]interface{}{}
 
 	if filter.UserId != requester.GetUserId() && requester.GetRole() != common.RoleAdmin {
 		cond["is_private"] = false
 	}
+	log.Println("cond", cond)
 	result, err := biz.store.ListCollectionWithCondition(ctx, cond,
 		filter, paging)
 	if err != nil {

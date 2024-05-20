@@ -45,7 +45,7 @@ func (p *payInParams) BuildUrl(pay *VnPay) string {
 		"&vnp_Locale=" + localeVn +
 		"&vnp_OrderInfo=" + p.VnpOrderInfo +
 		"&vnp_OrderType=" + orderType +
-		"&vnp_ReturnUrl=" + "https%3A%2F%2Fh5traveloto.site" +
+		"&vnp_ReturnUrl=" + "https%3A%2F%2Fapi.h5traveloto.site%2Fv1%2Fpayment%2Fvnpay%2Fipn" +
 		"&vnp_TmnCode=" + pay.tmnCode +
 		"&vnp_TxnRef=" + p.VnpTxnRef +
 		"&vnp_Version=" + version

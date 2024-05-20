@@ -247,9 +247,12 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 
 	// ===================== Payment  =====================
 	payment := v1.Group("payment")
-
+	payment.Use(middleware.RequireAuth(appCtx))
 	vnPay := payment.Group("vnpay")
 	vnPay.GET("/pay-in", ginpayin.PayIn(appCtx))
-	vnPay.GET("/ipn", ginpayin.VnpIPN(appCtx))
+
+	paymentIPN := v1.Group("payment")
+	vnPayIPN := paymentIPN.Group("vnpay")
+	vnPayIPN.GET("/ipn", ginpayin.VnpIPN(appCtx))
 
 }
