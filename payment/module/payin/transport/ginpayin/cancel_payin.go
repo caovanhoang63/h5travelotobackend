@@ -13,6 +13,7 @@ import (
 
 func CancelPayIn(appCtx appContext.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		requester := c.MustGet(common.CurrentUser).(common.Requester)
 		txnId := c.Param("txn_id")
 		if txnId == "" {
 			panic(common.ErrInvalidRequest(errors.New("txn_id not found")))
@@ -20,9 +21,9 @@ func CancelPayIn(appCtx appContext.AppContext) gin.HandlerFunc {
 		update := payinmodel.PaymentBookingUpdateStatus{PaymentStatus: common.PaymentStatusFailed}
 
 		store := payinstore.NewStore(appCtx.GetGormDbConnection())
-		biz := payinbiz.NewUpdatePBStatusBiz(store, appCtx.GetPubSub())
+		biz := payinbiz.NewUpdatePBStatusBiz(store)
 
-		if err := biz.UpdateStatus(c.Request.Context(), txnId, &update); err != nil {
+		if err := biz.UpdateStatus(c.Request.Context(), requester, txnId, &update); err != nil {
 			panic(err)
 		}
 

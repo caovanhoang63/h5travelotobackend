@@ -29,7 +29,8 @@ func VnpIPN(appCtx appContext.AppContext) gin.HandlerFunc {
 		store := payinstore.NewStore(appCtx.GetGormDbConnection())
 		peStore := pelocalhandler.NewPELocalHandler(appCtx)
 		bkStore := bklocalhandler.NewCountBookedRoomLocalHandler(appCtx)
-		biz := payinbiz.NewVnpIPNBiz(store, peStore, bkStore, appCtx.GetVnPay())
+		successBiz := payinbiz.NewSuccessPBBiz(store, appCtx.GetPubSub())
+		biz := payinbiz.NewVnpIPNBiz(store, peStore, bkStore, appCtx.GetVnPay(), successBiz)
 
 		log.Println(c.Request.URL.String())
 		c.JSON(http.StatusOK, *biz.HandleIPNRequest(c.Request.Context(), &ipn))

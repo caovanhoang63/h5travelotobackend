@@ -100,4 +100,14 @@ var (
 		nil,
 		"Payment is already successfull or executing",
 		"ErrPaymentSuccessfullOrExecuting")
+	ErrCannotFindTransaction = common.NewCustomError(
+		common.RecordNotFound,
+		"Cannot find transaction",
+		"ErrCannotFindTransaction",
+	)
+	ErrPaymentStatusAlreadyUpdated = common.NewCustomError(
+		nil,
+		"Payment status already updated",
+		"ErrPaymentStatusAlreadyUpdated",
+	)
 )

@@ -75,6 +75,7 @@ func (engine *consumerEngine) Start() error {
 		NewMessage(engine.appCtx, context.Background())); err != nil {
 		log.Println("Err:", err)
 	}
+
 	return nil
 }
 
