@@ -23,6 +23,16 @@ func (s *sqlStore) ListBookingWithCondition(
 		if filter.HotelId > 0 {
 			db = db.Where("hotel_id = ?", f.HotelId)
 		}
+		if filter.State != "" {
+			db = db.Where("state = ?", f.State)
+		}
+		if filter.StartDate != nil && filter.EndDate != nil {
+			db = db.Where("start_date >= ? AND end_date <= ?", filter.StartDate, filter.EndDate)
+		}
+		if filter.PayInHotel {
+			db = db.Where("pay_in_hotel = ?", filter.PayInHotel)
+
+		}
 	}
 
 	if err := db.Count(&paging.Total).Error; err != nil {
@@ -46,6 +56,10 @@ func (s *sqlStore) ListBookingWithCondition(
 
 	if err := db.Limit(paging.Limit).Order("id desc").Find(&result).Error; err != nil {
 		return nil, err
+	}
+
+	for i := range result {
+		result[i].CheckExpired()
 	}
 
 	if len(result) > 0 {

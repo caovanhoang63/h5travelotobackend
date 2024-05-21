@@ -3,6 +3,7 @@ package bookingmodel
 import (
 	"errors"
 	"h5travelotobackend/common"
+	"time"
 )
 
 const EntityName = "Booking"
@@ -23,8 +24,18 @@ type Booking struct {
 	DiscountAmount  float64           `json:"discount_amount" gorm:"column:discount_amount"`
 	FinalAmount     float64           `json:"final_amount" gorm:"column:final_amount"`
 	Currency        string            `json:"currency" gorm:"column:currency"`
+	State           string            `json:"state" gorm:"column:state"`
+	PayInHotel      bool              `json:"pay_in_hotel" gorm:"column:pay_in_hotel"`
 	StartDate       *common.CivilDate `json:"start_date" gorm:"column:start_date"`
 	EndDate         *common.CivilDate `json:"end_date" gorm:"column:end_date"`
+}
+
+func (b *Booking) CheckExpired() {
+	if b.State == common.BookingStatePending {
+		if time.Now().Sub(*b.CreatedAt).Hours() > 1 {
+			b.State = common.BookingStateExpired
+		}
+	}
 }
 
 func (Booking) TableName() string {

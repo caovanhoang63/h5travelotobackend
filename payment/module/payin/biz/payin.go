@@ -61,6 +61,12 @@ func (biz *payInBiz) NewPaymentBooking(ctx context.Context, requester common.Req
 	if err != nil {
 		return common.ErrInvalidRequest(err)
 	}
+	if booking != nil {
+		if !(booking.State == common.BookingStatePending ||
+			(booking.State == common.BookingStateCheckIn && booking.PayInHotel)) {
+			return common.ErrInvalidRequest(err)
+		}
+	}
 
 	peCreate := paymenteventmodel.PaymentEventCreate{
 		CustomerId:  requester.GetUserId(),

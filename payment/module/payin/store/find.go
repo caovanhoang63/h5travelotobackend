@@ -24,7 +24,7 @@ func (s *store) FindExecutingOrSuccessByBookingId(ctx context.Context, bookingId
 	if err := s.db.WithContext(ctx).
 		Where("booking_id = ?", bookingId).
 		Where("payment_status = 'success' OR" +
-			" (payment_status = 'executing' AND TIMESTAMPDIFF(HOUR, created_at, NOW()) < 1 )").
+			" (payment_status = 'executing' AND TIMESTAMPDIFF(HOUR, NOW(),created_at ) < 1 )").
 		First(&result).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, common.RecordNotFound

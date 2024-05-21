@@ -16,6 +16,9 @@ func (s *sqlStore) CountBookedRoom(ctx context.Context, rtId int,
 	row := db.Where("room_type_id = ? ", rtId).
 		Where("(start_date between (?) and (?)) or (end_date between (?) and (?))",
 			startDate, endDate, startDate, endDate).
+		Not("state IN (?) OR"+
+			" (state = 'pending' AND TIMESTAMPDIFF(HOUR, created_at, NOW()) >= 1 )",
+			[]string{"canceled", "deleted", "expired"}).
 		Select("sum(room_quantity)").Row()
 
 	if row.Err() != nil {
