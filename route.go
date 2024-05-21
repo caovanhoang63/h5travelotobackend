@@ -252,6 +252,7 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	vnPay.GET("/pay-in", ginpayin.PayIn(appCtx))
 	payment.POST("/execute/:txn_id", ginpayin.ExecutePayIn(appCtx))
 	payment.POST("/cancel/:txn_id", ginpayin.CancelPayIn(appCtx))
+	payment.GET("/success/:booking_id", ginpayin.GetPaymentSuccessBooking(appCtx))
 
 	paymentIPN := v1.Group("payment")
 	vnPayIPN := paymentIPN.Group("vnpay")

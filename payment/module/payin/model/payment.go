@@ -19,8 +19,8 @@ type PaymentBooking struct {
 	Currency       string      `json:"currency" gorm:"column:currency"`
 	Method         string      `json:"method" gorm:"column:method"`
 	PaymentStatus  string      `json:"payment_status" gorm:"column:payment_status"`
-	LedgerUpdated  bool        `json:"ledger_updated" gorm:"column:ledger_updated"`
-	WalletUpdated  bool        `json:"wallet_updated" gorm:"column:wallet_updated"`
+	LedgerUpdated  bool        `json:"-" gorm:"column:ledger_updated"`
+	WalletUpdated  bool        `json:"-" gorm:"column:wallet_updated"`
 	Status         int         `json:"status" gorm:"column:status"`
 	CreatedAt      *time.Time  `json:"created_at" gorm:"column:created_at"`
 	UpdatedAt      *time.Time  `json:"updated_at" gorm:"column:updated_at"`
@@ -36,7 +36,13 @@ func (p PaymentBooking) TableName() string {
 	return "payment_bookings"
 }
 
-func (p *PaymentBooking) Mask(isAdmin bool) error {
+func (p *PaymentBooking) Mask(isAdmin bool) {
+	p.BookingFakeID = common.NewUIDP(uint32(p.BookingId), common.DbTypeBooking, 0)
+	p.HotelFakeId = common.NewUIDP(uint32(p.HotelId), common.DbTypeHotel, 0)
+	p.CustomerFakeId = common.NewUIDP(uint32(p.CustomerId), common.DbTypeUser, 0)
+}
+
+func (p *PaymentBooking) UnMask(isAdmin bool) {
 	if p.BookingFakeID != nil {
 		p.BookingId = int(p.BookingFakeID.GetLocalID())
 	}
@@ -46,7 +52,7 @@ func (p *PaymentBooking) Mask(isAdmin bool) error {
 	if p.HotelFakeId != nil {
 		p.HotelId = int(p.HotelFakeId.GetLocalID())
 	}
-	return nil
+
 }
 
 type PaymentBookingCreate struct {
@@ -109,5 +115,10 @@ var (
 		nil,
 		"Payment status already updated",
 		"ErrPaymentStatusAlreadyUpdated",
+	)
+	ErrBookingExpiredOrWrongPaymentMethod = common.NewCustomError(
+		nil,
+		"Booking expired or wrong payment method",
+		"ErrBookingExpiredOrWrongPaymentMethod",
 	)
 )

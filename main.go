@@ -24,7 +24,6 @@ import (
 	"h5travelotobackend/middleware"
 	"h5travelotobackend/skio"
 	"h5travelotobackend/subcriber"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -147,6 +146,7 @@ func main() {
 		logger.Fatal(db, err)
 	}
 	db = db.Debug()
+
 	/***************************************************************/
 	/***************************************************************/
 
@@ -203,11 +203,6 @@ func main() {
 	// ======= UUID ========
 	uuid := googleuuid.NewGoogleUUID()
 	// ======= UUID ========
-	str, err := uuid.Generate()
-	if err != nil {
-	}
-
-	log.Println(str)
 
 	// Set up App Context
 	appCtx := appContext.NewAppContext(db,

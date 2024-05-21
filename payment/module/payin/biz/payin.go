@@ -17,7 +17,8 @@ type BookingStore interface {
 
 type PaymentBookingStore interface {
 	Create(ctx context.Context, create *payinmodel.PaymentBookingCreate) error
-	FindExecutingOrSuccessByBookingId(ctx context.Context, bookingId int) (*payinmodel.PaymentBooking, error)
+	FindExecutingOrSuccessByBookingId(ctx context.Context, bookingId int,
+	) (*payinmodel.PaymentBooking, error)
 }
 
 type PaymentEventStore interface {
@@ -46,7 +47,6 @@ func (biz *payInBiz) NewPaymentBooking(ctx context.Context, requester common.Req
 	}
 
 	if old != nil {
-		log.Println(old)
 		return payinmodel.ErrPaymentSuccessfullOrExecuting
 	}
 
@@ -62,9 +62,11 @@ func (biz *payInBiz) NewPaymentBooking(ctx context.Context, requester common.Req
 		return common.ErrInvalidRequest(err)
 	}
 	if booking != nil {
+		log.Println("booking", booking.CreatedAt)
+		log.Println("Booking state: ", booking.State)
 		if !(booking.State == common.BookingStatePending ||
 			(booking.State == common.BookingStateCheckIn && booking.PayInHotel)) {
-			return common.ErrInvalidRequest(err)
+			return payinmodel.ErrBookingExpiredOrWrongPaymentMethod
 		}
 	}
 
