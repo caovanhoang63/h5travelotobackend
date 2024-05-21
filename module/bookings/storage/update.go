@@ -16,3 +16,14 @@ func (s *sqlStore) Update(ctx context.Context, id int, data *bookingmodel.Bookin
 	}
 	return nil
 }
+
+func (s *sqlStore) UpdateStateToPaid(ctx context.Context, id int) error {
+	if err := s.db.WithContext(ctx).
+		Table(bookingmodel.Booking{}.TableName()).
+		Where("id = ?", id).
+		Update("state", common.BookingStatePaid).
+		Error; err != nil {
+		return common.ErrDb(err)
+	}
+	return nil
+}

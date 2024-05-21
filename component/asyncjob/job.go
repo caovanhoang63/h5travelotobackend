@@ -25,8 +25,19 @@ const (
 )
 
 var (
-	defaultRetryTime = []time.Duration{time.Second, time.Second * 5, time.Second * 10}
-	queryRetryTime   = []time.Duration{500 * time.Millisecond, time.Second, time.Second * 2}
+	defaultRetryTime = []time.Duration{
+		time.Second,
+		time.Second * 5,
+		time.Second * 10,
+		time.Second * 20,
+		time.Second * 40,
+		time.Second * 80,
+		time.Second * 160,
+		time.Second * 360,
+		time.Second * 720,
+		time.Second * 1440,
+	}
+	queryRetryTime = []time.Duration{500 * time.Millisecond, time.Second, time.Second * 2}
 )
 
 type JobHandler func(ctx context.Context) error

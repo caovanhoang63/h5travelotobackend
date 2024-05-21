@@ -5,6 +5,7 @@ import (
 	"golang.org/x/net/context"
 	"h5travelotobackend/common"
 	payinmodel "h5travelotobackend/payment/module/payin/model"
+	"log"
 )
 
 type UpdatPBStatusStore interface {
@@ -29,6 +30,9 @@ func (biz *updatePBStatusBiz) UpdateStatus(ctx context.Context, requester common
 		}
 		return common.ErrInternal(err)
 	}
+
+	log.Println("Requester: ", requester.GetUserId())
+	log.Println("CustomerID: ", pb.CustomerId)
 
 	if requester.GetUserId() != pb.CustomerId && requester.GetRole() != common.RoleAdmin {
 		return common.ErrNoPermission(nil)

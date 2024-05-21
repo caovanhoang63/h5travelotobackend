@@ -6,7 +6,8 @@ import (
 	payinmodel "h5travelotobackend/payment/module/payin/model"
 )
 
-func (s *store) Create(ctx context.Context, create *payinmodel.PaymentBookingCreate) error {
+func (s *store) Create(ctx context.Context,
+	create *payinmodel.PaymentBookingCreate) error {
 	if err := s.db.WithContext(ctx).Create(create).Error; err != nil {
 		return common.ErrDb(err)
 	}

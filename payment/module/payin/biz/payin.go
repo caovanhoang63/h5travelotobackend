@@ -74,6 +74,8 @@ func (biz *payInBiz) NewPaymentBooking(ctx context.Context, requester common.Req
 
 	create.Amount = booking.FinalAmount
 	create.TxnId = peCreate.TxnId
+	create.CustomerId = requester.GetUserId()
+	create.HotelId = booking.HotelId
 
 	if err = biz.pbStore.Create(ctx, create); err != nil {
 		return common.ErrCannotCreateEntity("Transaction", err)

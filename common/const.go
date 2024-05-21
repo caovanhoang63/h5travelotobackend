@@ -91,3 +91,14 @@ const (
 	PaymentTypePayIn  = "pay_in"
 	PaymentTypePayOut = "pay_out"
 )
+
+const (
+	BookingStatePending   = "pending"
+	BookingStatePaid      = "paid"
+	BookingStateCanceled  = "canceled"
+	BookingStateCheckIn   = "check-in"
+	BookingStateCheckOut  = "check-out"
+	BookingStateDeleted   = "deleted"
+	BookingStateExpired   = "expired"
+	BookingStateConfirmed = "confirmed"
+)

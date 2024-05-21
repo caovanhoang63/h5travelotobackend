@@ -23,7 +23,11 @@ func (biz *successPBStatusBiz) SuccessStatusBiz(ctx context.Context, update *pay
 	if err != nil {
 		return common.ErrInternal(err)
 	}
-	message := pubsub.NewMessage(update)
+	message := pubsub.NewMessage(common.PaymentBooking{
+		TxnId:     update.TxnId,
+		BookingId: update.BookingId,
+		Amount:    update.Amount,
+	})
 	err = biz.pb.Publish(ctx, common.TopicPaymentSuccess, message)
 	if err != nil {
 		log.Println("Error publish message", err)
