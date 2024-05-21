@@ -19,4 +19,6 @@ const (
 
 	TopicUserReviewHotel       = "TopicUserReviewHotel"
 	TopicUserDeleteReviewHotel = "TopicUserDeleteReviewHotel"
+
+	TopicPaymentSuccess = "TopicPaymentSuccess"
 )

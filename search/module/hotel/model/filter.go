@@ -142,7 +142,7 @@ func (f *Filter) ToSearchRequest() (*search.Request, error) {
 			},
 		}, nil
 	} else {
-		field = fmt.Sprintf("%s.%s_code", searchTerm, searchTerm)
+		field = fmt.Sprintf("%s.code", searchTerm)
 		return &search.Request{
 			Query: &types.Query{
 				Bool: &types.BoolQuery{

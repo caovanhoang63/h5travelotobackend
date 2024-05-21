@@ -6,7 +6,6 @@ import (
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/payment/vnpay"
 	payinmodel "h5travelotobackend/payment/module/payin/model"
-	"log"
 )
 
 type vnpIPNBiz struct {
@@ -30,7 +29,6 @@ func (biz *vnpIPNBiz) HandleIPNRequest(ctx context.Context, request *vnpay.IPNRe
 	if err != nil {
 		return vnpay.NewOrderNotFound()
 	}
-	log.Println("Booking ID: ", bkId)
 	bk, err := biz.bkStore.GetBookingById(ctx, bkId)
 	if err != nil {
 		return vnpay.NewOrderNotFound()

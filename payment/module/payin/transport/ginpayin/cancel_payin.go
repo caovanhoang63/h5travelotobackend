@@ -20,7 +20,7 @@ func CancelPayIn(appCtx appContext.AppContext) gin.HandlerFunc {
 		update := payinmodel.PaymentBookingUpdateStatus{PaymentStatus: common.PaymentStatusFailed}
 
 		store := payinstore.NewStore(appCtx.GetGormDbConnection())
-		biz := payinbiz.NewUpdatePBStatusBiz(store)
+		biz := payinbiz.NewUpdatePBStatusBiz(store, appCtx.GetPubSub())
 
 		if err := biz.UpdateStatus(c.Request.Context(), txnId, &update); err != nil {
 			panic(err)

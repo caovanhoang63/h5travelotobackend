@@ -26,6 +26,12 @@ type PaymentBooking struct {
 	UpdatedAt      *time.Time  `json:"updated_at" gorm:"column:updated_at"`
 }
 
+type PaymentSuccessData struct {
+	BookingId int     `json:"booking_id"`
+	TxnId     int     `json:"txn_id"`
+	Amount    float64 `json:"amount"`
+}
+
 func (p PaymentBooking) TableName() string {
 	return "payment_bookings"
 }
