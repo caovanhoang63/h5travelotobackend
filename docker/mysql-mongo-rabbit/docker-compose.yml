@@ -1,4 +1,4 @@
-
+version: '3.1'
 services:
 
   mysql:
@@ -15,6 +15,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - TZ=Asia/Ho_Chi_Minh
     volumes:
       - mysql_data:/bitnami/mysql/data
       - ./data/mysql:/docker-entrypoint-initdb.d

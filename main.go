@@ -34,7 +34,7 @@ func main() {
 	logger := mylogger.NewLogger("h5traveloto", nil)
 
 	logger.Println("Starting server...")
-	isDev := false
+	isDev := true
 
 	if isDev {
 		err := godotenv.Load(".dev.env")
@@ -174,7 +174,10 @@ func main() {
 	defer rabbitConn.Close()
 	ch, err := rabbitConn.Channel()
 	if err != nil {
+
 		logger.Fatal("Fail to open channel! ", err)
+	} else {
+		logger.Println("Connected to RabbitMQ")
 	}
 
 	pb := rabbitpubsub.NewRabbitPubSub(ch)

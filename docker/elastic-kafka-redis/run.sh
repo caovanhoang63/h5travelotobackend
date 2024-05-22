@@ -46,7 +46,7 @@ echo 'waiting to run ksqldb...'
 
 sleep 5
 
-cat ./ksqldb-ddl.sql | docker exec -i ksqldb ksql http://localhost:8088
+#cat ./ksqldb-ddl.sql | docker exec -i ksqldb ksql http://localhost:8088
 
 
 echo 'Done running ksqldb-ddl.sql'
@@ -82,7 +82,7 @@ curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json"
 #
 #
 ## Check the status of the connector
-curl localhost:8083/connectors/elastic-sink-enriched/status/
+#curl localhost:8083/connectors/elastic-sink-enriched/status/
 
 
 
