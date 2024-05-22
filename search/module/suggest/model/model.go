@@ -5,7 +5,7 @@ import (
 	"h5travelotobackend/common"
 )
 
-const IndexName = "hotels_enriched,provinces,districts,wards"
+const IndexName = "hotels_enriched,provinces,districts,wards,landmarks_enriched"
 
 type SuggestRequest struct {
 	SearchText string `json:"search_text" form:"search_text" binding:"required"`

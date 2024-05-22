@@ -28,12 +28,16 @@ func (s *esStore) ListSuggestions(ctx context.Context,
 	boot4 := map[string]types.Float64{
 		"wards": 10.0,
 	}
+	boost5 := map[string]types.Float64{
+		"landmarks_enriched": 90.0,
+	}
+
 	str := strings.Split(input.SearchText, " ")
 	wildCard := "*" + str[len(str)-1] + "*"
 	caseInsensitive := true
 
 	req := &search.Request{
-		IndicesBoost: []map[string]types.Float64{boost1, boost2, boost3, boot4},
+		IndicesBoost: []map[string]types.Float64{boost1, boost2, boost3, boot4, boost5},
 		Query: &types.Query{
 			Bool: &types.BoolQuery{
 				Should: []types.Query{
@@ -56,7 +60,7 @@ func (s *esStore) ListSuggestions(ctx context.Context,
 	}
 
 	do := s.es.Search().
-		Index("hotels_enriched,provinces,districts,wards").
+		Index("hotels_enriched,provinces,districts,wards,landmarks_enriched").
 		Request(req).
 		Size(input.Limit)
 

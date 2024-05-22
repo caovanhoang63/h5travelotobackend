@@ -72,6 +72,21 @@ curl --silent --show-error -k -XPUT -u elastic:oc2nq0mhv8bju1e -H 'Content-Type:
     }}'
 
 
+curl --silent --show-error -k -XPUT -u elastic:oc2nq0mhv8bju1e -H 'Content-Type: application/json' \
+    https://localhost:9200/_index_template/rmoff_template01/ \
+    -d'{
+        "index_patterns": [ "landmarks*" ],
+        "template": {
+            "mappings": {
+                "properties": {
+                    "location_geo_point": {
+                        "type": "geo_point"
+                }
+            }
+        }
+    }}'
+
+
 
 #keytool -import -alias elasticsearch -file es01.crt -keystore truststore.jks
 #keytool -import -alias elasticsearch -file es01.crt -keystore keystore.jks
@@ -79,6 +94,7 @@ curl --silent --show-error -k -XPUT -u elastic:oc2nq0mhv8bju1e -H 'Content-Type:
 # Start Elasticsearch connector
 curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @es-sink-enriched.conf.json
 curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @es-sink-suggest.conf.json
+curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @es-sink-landmark.conf.json
 #
 #
 ## Check the status of the connector

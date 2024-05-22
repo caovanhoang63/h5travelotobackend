@@ -7,6 +7,7 @@ CREATE STREAM HOTEL_DETAILS WITH (KAFKA_TOPIC='mysql-debezium-h5traveloto.h5trav
 CREATE STREAM PROVINCES_BASE WITH (KAFKA_TOPIC='mysql-debezium-h5traveloto.h5traveloto.provinces', PARTITIONS=1 ,VALUE_FORMAT='AVRO');
 CREATE STREAM DISTRICTS_BASE WITH (KAFKA_TOPIC='mysql-debezium-h5traveloto.h5traveloto.districts', PARTITIONS=1 ,VALUE_FORMAT='AVRO');
 CREATE STREAM WARDS_BASE WITH (KAFKA_TOPIC='mysql-debezium-h5traveloto.h5traveloto.wards', PARTITIONS=1 ,VALUE_FORMAT='AVRO');
+CREATE STREAM LANDMARKS WITH (KAFKA_TOPIC='mysql-debezium-h5traveloto.h5traveloto.landmarks', PARTITIONS=1 ,VALUE_FORMAT='AVRO');
 
 CREATE TABLE PROVINCES_TABLE (ID VARCHAR PRIMARY KEY)
     WITH (KAFKA_TOPIC='mysql-debezium-h5traveloto.h5traveloto.provinces',
@@ -122,3 +123,22 @@ FROM HOTELS H
          LEFT JOIN HOTEL_DETAILS HD WITHIN 30 SECONDS ON H.ID = HD.HOTEL_ID
     PARTITION BY H.ID;
 
+CREATE STREAM LANDMARKS_ENRICHED
+AS
+SELECT
+    H.ID AS ID,
+    H.NAME AS "name" ,
+    H.IMAGE AS "images_str",
+    STRUCT("code" := P.CODE, "name" := P.NAME,"full_name" := P.FULL_NAME) AS "province",
+    STRUCT("code" := D.CODE, "name" := D.NAME,"full_name" := D.FULL_NAME) AS "district",
+    STRUCT("code" := W.CODE, "name" := W.NAME,"full_name" := W.FULL_NAME) AS "ward",
+    STRUCT("lat" := H.LAT, "lon" := H.LNG) AS "location",
+    CAST(H.LAT AS VARCHAR)  + ',' + CAST(H.LNG AS VARCHAR) AS "location_geo_point",
+    H.STATUS as "status",
+    H.CREATED_AT as "created_at",
+    H.UPDATED_AT as "updated_at"
+FROM LANDMARKS H
+         LEFT JOIN PROVINCES_TABLE P ON 'Struct{code='+H.PROVINCE_CODE+'}' = P.ID
+         LEFT JOIN DISTRICTS_TABLE D ON 'Struct{code='+H.DISTRICT_CODE+'}' = D.ID
+         LEFT JOIN WARDS_TABLE W ON 'Struct{code='+H.WARD_CODE+'}' = W.ID
+    PARTITION BY H.ID;
