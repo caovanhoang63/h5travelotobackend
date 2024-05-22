@@ -15,6 +15,7 @@ type RoomType struct {
 	Bed             *common.Bed    `json:"bed"`
 	Images          *common.Images `json:"images"`
 	Price           *float64       `json:"price"`
+	Description     *string        `json:"description,omitempty"`
 	TotalRoom       int            `json:"total_room"`
 	PayInHotel      int            `json:"pay_in_hotel"`
 	BreakFast       int            `json:"break_fast"`

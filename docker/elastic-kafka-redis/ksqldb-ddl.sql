@@ -73,6 +73,7 @@ CREATE STREAM ROOM_TYPES_ENRICHED AS
         RT.PRICE AS "price",
         RT.STATUS AS "status",
         RT.TOTAL_ROOM AS "total_room",
+        RT.DESCRIPTION AS "description",
         RT.PAY_IN_HOTEL AS "pay_in_hotel",
         RT.BREAK_FAST AS "break_fast",
         RT.FREE_CANCEL AS "free_cancel",

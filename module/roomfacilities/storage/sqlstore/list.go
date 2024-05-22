@@ -23,3 +23,20 @@ func (s *sqlStore) ListRoomFacilityByType(ctx context.Context, typeId int) ([]ro
 	}
 	return data, nil
 }
+
+func (s *sqlStore) ListFacilitiesOfRoomType(ctx context.Context, hotelId int) ([]roomfacilitymodel.RoomFacility, error) {
+	var facilities []roomfacilitymodel.RoomFacility
+	var ids []int
+
+	db := s.db.Table(roomfacilitymodel.RoomFacilityDetail{}.TableName())
+	if err := db.Where("room_id = ?", hotelId).Pluck("facility_id", &ids).Error; err != nil {
+		return nil, common.ErrDb(err)
+	}
+
+	db = s.db.Table(roomfacilitymodel.RoomFacility{}.TableName())
+	if err := db.Where("id IN (?)", ids).Find(&facilities).Error; err != nil {
+		return nil, common.ErrDb(err)
+	}
+
+	return facilities, nil
+}

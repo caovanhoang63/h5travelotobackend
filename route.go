@@ -102,6 +102,8 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	// ===================== Room Facilities =====================
 	roomFacilities := v1.Group("/rooms/facilities")
 	roomFacilities.GET("/", ginroomfacilities.ListAllRoomFacilities(appCtx))
+
+	v1.GET("/room-types/:room-type-id/facilities", ginroomfacilities.GetFacilitiesOfRoomType(appCtx))
 	// ===================== Room Facilities =====================
 
 	// ===================== Room =====================

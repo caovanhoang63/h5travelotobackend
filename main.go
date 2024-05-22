@@ -21,6 +21,8 @@ import (
 	rabbitpubsub "h5travelotobackend/component/pubsub/rabbitmq"
 	"h5travelotobackend/component/uploadprovider"
 	"h5travelotobackend/component/uuid/googleuuid"
+	"h5travelotobackend/email"
+	"h5travelotobackend/email/gosmtp"
 	"h5travelotobackend/middleware"
 	"h5travelotobackend/skio"
 	"h5travelotobackend/subcriber"
@@ -30,11 +32,12 @@ import (
 )
 
 func main() {
+
 	// Set up logger
 	logger := mylogger.NewLogger("h5traveloto", nil)
 
 	logger.Println("Starting server...")
-	isDev := true
+	isDev := false
 
 	if isDev {
 		err := godotenv.Load(".dev.env")
@@ -66,8 +69,17 @@ func main() {
 	redisConnString := os.Getenv("REDIS_CONN_STRING")
 	vnPayTmnCode := os.Getenv("VNP_TMNCODE")
 	vnPayHashSecret := os.Getenv("VNP_HASHSECRET")
-
+	emailAddr := os.Getenv("EMAIL_ADDR")
+	emailPassword := os.Getenv("EMAIL_PASSWORD")
 	serverIp := os.Getenv("SERVER_IP")
+
+	gmail := gosmtp.NewGoMail("smtp.gmail.com", "587", emailAddr, emailPassword)
+
+	mail := email.NewRecoverPasswordMail("caovanhoang204@gmail.com", "1233")
+
+	gmail.Send(*mail)
+	return
+
 	// Set up Elasticsearch Connection
 	esCfg := elasticsearch.Config{
 		Addresses: []string{
