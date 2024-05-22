@@ -33,22 +33,22 @@ import (
 
 func main() {
 
-	// Set up logger
-	logger := mylogger.NewLogger("h5traveloto", nil)
+	// Set up log
+	log := mylogger.NewLogger("h5traveloto", nil)
 
-	logger.Println("Starting server...")
+	log.Println("Starting server...")
 	isDev := false
 
 	if isDev {
 		err := godotenv.Load(".dev.env")
 		if err != nil {
-			logger.Fatal("Error loading .env file")
+			log.Fatal("Error loading .env file")
 		}
 	} else {
 		gin.SetMode(gin.ReleaseMode)
 		err := godotenv.Load(".env")
 		if err != nil {
-			logger.Fatal("Error loading .env file")
+			log.Fatal("Error loading .env file")
 		}
 	}
 
@@ -74,9 +74,20 @@ func main() {
 	serverIp := os.Getenv("SERVER_IP")
 	gmail := gosmtp.NewGoMail("smtp.gmail.com", "587", emailAddr, emailPassword)
 
+	mail1 := email.NewRecoverPasswordMail("aaa", "123123")
 	mailEngine := email.NewEngine(gmail)
 
-	mailEngine.Start()
+	err := mailEngine.Start()
+	if err != nil {
+		log.Error("MAIL ENGINE DOWN")
+	}
+
+	mailEngine.Send(*mail1)
+	mailEngine.Send(*mail1)
+	mailEngine.Send(*mail1)
+	mailEngine.Send(*mail1)
+	mailEngine.Send(*mail1)
+	mailEngine.Send(*mail1)
 
 	// Set up Elasticsearch Connection
 	esCfg := elasticsearch.Config{
@@ -96,30 +107,30 @@ func main() {
 
 	es, err := elasticsearch.NewTypedClient(esCfg)
 	if err != nil {
-		logger.Error("Error creating the client: ", err)
+		log.Error("Error creating the client: ", err)
 	} else {
-		logger.Println("Elasticsearch client created")
+		log.Println("Elasticsearch client created")
 	}
 
 	ping, err := es.Ping().Do(context.Background())
 	if err != nil {
-		logger.Error("Error creating the client: ", err)
+		log.Error("Error creating the client: ", err)
 	} else {
-		logger.Println("Elasticsearch ping: ", ping)
+		log.Println("Elasticsearch ping: ", ping)
 	}
 	//// End Set up Elasticsearch Connection
 	//
 	//// Set up Redis Connection
 	redisConnOpt, err := redis.ParseURL(redisConnString)
 	if err != nil {
-		logger.Error("Error parsing Redis URL: ", err)
+		log.Error("Error parsing Redis URL: ", err)
 	}
 	redisClient := redis.NewClient(redisConnOpt)
 	_, err = redisClient.Ping(context.Background()).Result()
 	if err != nil {
-		logger.Error("Error connecting to Redis: ", err)
+		log.Error("Error connecting to Redis: ", err)
 	} else {
-		logger.Println("Connected to Redis")
+		log.Println("Connected to Redis")
 	}
 	//// End Set up Redis Connection
 
@@ -143,7 +154,7 @@ func main() {
 	if err := client.Database("h5traveloto").RunCommand(context.TODO(), bson.D{{"ping", 1}}).Err(); err != nil {
 		panic(err)
 	}
-	logger.Println("Pinged your deployment. You successfully connected to MongoDB!")
+	log.Println("Pinged your deployment. You successfully connected to MongoDB!")
 	mongodb := client.Database("h5traveloto")
 	/***************************************************************/
 	/***************************************************************/
@@ -153,7 +164,7 @@ func main() {
 	/***************************************************************/
 	db, err := gorm.Open(mysql.Open(mySqlConnString), &gorm.Config{})
 	if err != nil {
-		logger.Fatal(db, err)
+		log.Fatal(db, err)
 	}
 	db = db.Debug()
 
@@ -179,15 +190,15 @@ func main() {
 
 	rabbitConn, err := amqp.Dial(rabbitMqConnString)
 	if err != nil {
-		logger.Fatal("Fail to connect rabbitMQ! ", err)
+		log.Fatal("Fail to connect rabbitMQ! ", err)
 	}
 	defer rabbitConn.Close()
 	ch, err := rabbitConn.Channel()
 	if err != nil {
 
-		logger.Fatal("Fail to open channel! ", err)
+		log.Fatal("Fail to open channel! ", err)
 	} else {
-		logger.Println("Connected to RabbitMQ")
+		log.Println("Connected to RabbitMQ")
 	}
 
 	pb := rabbitpubsub.NewRabbitPubSub(ch)
@@ -225,7 +236,7 @@ func main() {
 		pb,
 		es,
 		redisClient,
-		logger,
+		log,
 		redisCacher,
 		vnPay,
 		uuid,
@@ -253,19 +264,19 @@ func main() {
 
 	err = subcriber.NewEngine(appCtx).Start()
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 
 	rtEngine := skio.NewEngine()
 	appCtx.SetRealTimeEngine(rtEngine)
 	if err := rtEngine.Run(appCtx, r); err != nil {
-		logger.Println(err)
+		log.Println(err)
 	}
 
 	r.StaticFile("/socket/hotel", "./hotel.html")
 	r.StaticFile("/socket/customer", "./customer.html")
 
 	if err = r.Run(); err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 }

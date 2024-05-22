@@ -1,10 +1,10 @@
 package gosmtp
 
 import (
-	"fmt"
+	"errors"
 	"h5travelotobackend/email"
 	"log"
-	"net/smtp"
+	"time"
 )
 
 type GoMail struct {
@@ -24,11 +24,14 @@ func NewGoMail(smtpHost, smtpPort, sender, password string) *GoMail {
 }
 
 func (g *GoMail) Send(mail email.Mail) error {
-	auth := smtp.PlainAuth("", g.sender, g.password, g.smtpHost)
-	err := smtp.SendMail(g.smtpHost+":"+g.smtpPort, auth, g.sender, mail.Recipient, mail.Body)
-	if err != nil {
-		fmt.Println(err)
-	}
+	//auth := smtp.PlainAuth("", g.sender, g.password, g.smtpHost)
+	//err := smtp.SendMail(g.smtpHost+":"+g.smtpPort, auth, g.sender, mail.Recipient, mail.Body)
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	time.Sleep(time.Second * 2)
+
 	log.Println("Email send!")
-	return nil
+
+	return errors.New("")
 }

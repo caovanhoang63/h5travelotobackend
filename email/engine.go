@@ -11,7 +11,7 @@ import (
 
 type Engine interface {
 	Send(mail Mail)
-	Start()
+	Start() error
 	Stop()
 }
 
@@ -43,7 +43,7 @@ func NewEngine(mailSender MailSender) *engine {
 	}
 }
 
-func (e *engine) Start() {
+func (e *engine) Start() error {
 	go func() {
 		defer common.AppRecover()
 		for {
@@ -70,9 +70,20 @@ func (e *engine) Start() {
 			select {
 			case job := <-e.worker:
 				go func() {
-					err := job.Execute(context.Background())
-					if err != nil {
-						log.Println(err)
+					defer common.AppRecover()
+					if err := job.Execute(context.Background()); err != nil {
+						for {
+							log.Println(err)
+							if job.State() == asyncjob.StateRetryFailed {
+								log.Println("Err")
+								break
+							}
+
+							if job.Retry(context.Background()) == nil {
+								log.Println("Success")
+								break
+							}
+						}
 					}
 				}()
 			case <-e.done:
@@ -80,6 +91,7 @@ func (e *engine) Start() {
 			}
 		}
 	}()
+	return nil
 }
 
 func (e *engine) Stop() {
