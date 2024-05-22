@@ -84,6 +84,7 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 		middleware.RoleRequired(appCtx, common.RoleOwner, common.RoleManager),
 		middleware.IsHotelWorker(appCtx),
 		ginhotel.UpdateHotel(appCtx))
+	hotelsWrite.POST("/:hotel-id/click", ginhotel.UserClick(appCtx))
 	// ===================== Hotel =====================
 
 	// ===================== Hotel Detail =====================

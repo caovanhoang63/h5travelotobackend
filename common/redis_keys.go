@@ -35,3 +35,7 @@ func GenBanUserIpKey(ip string) string {
 }
 
 // ==================== Rate limiting ===========================
+
+func GenUserRecentViewedKey(id int) string {
+	return fmt.Sprintf("recent_viewed:%v", id)
+}
