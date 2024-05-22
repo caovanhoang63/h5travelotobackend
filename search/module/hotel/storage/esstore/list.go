@@ -46,7 +46,7 @@ func (s *esStore) ListHotel(ctx context.Context,
 			err = json2.Unmarshal(json, &hotelImage)
 			if hotelImage.LogoStr != nil {
 				strings.Trim(*hotelImage.LogoStr, "\"")
-				if err := json2.Unmarshal([]byte(*hotelImage.LogoStr), &hotel.Logo); err != nil {
+				if err = json2.Unmarshal([]byte(*hotelImage.LogoStr), &hotel.Logo); err != nil {
 					return nil, common.ErrInternal(err)
 				}
 			}
@@ -110,7 +110,7 @@ func (s *esStore) ListRandomHotels(ctx context.Context, limit int) ([]hotelmodel
 			err = json2.Unmarshal(json, &hotelImage)
 			if hotelImage.LogoStr != nil {
 				strings.Trim(*hotelImage.LogoStr, "\"")
-				if err := json2.Unmarshal([]byte(*hotelImage.LogoStr), &hotel.Logo); err != nil {
+				if err = json2.Unmarshal([]byte(*hotelImage.LogoStr), &hotel.Logo); err != nil {
 					return nil, common.ErrInternal(err)
 				}
 			}
