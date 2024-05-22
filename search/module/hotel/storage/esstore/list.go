@@ -133,3 +133,54 @@ func (s *esStore) ListRandomHotels(ctx context.Context, limit int) ([]hotelmodel
 
 	return result, err
 }
+
+func (s *esStore) ListByIds(ctx context.Context, ids []int) ([]hotelmodel.Hotel, error) {
+	var result []hotelmodel.Hotel
+	var idsStr []string
+	for _, i := range ids {
+
+		idsStr = append(idsStr, strconv.Itoa(i))
+	}
+	res, err := s.es.Mget().Index(hotelmodel.IndexName).Ids(idsStr...).Do(ctx)
+	if err != nil {
+		return nil, common.ErrDb(err)
+	}
+
+	for _, doc := range res.Docs {
+		hit := doc.(*types.GetResult)
+		var json []byte
+		var hotel hotelmodel.Hotel
+		var hotelImage hotelmodel.HotelImage
+		json, err = hit.Source_.MarshalJSON()
+		if err != nil {
+			return nil, common.ErrInternal(err)
+		}
+		err = json2.Unmarshal(json, &hotel)
+		if err != nil {
+			return nil, common.ErrInternal(err)
+		}
+		if hotel.Status == 0 {
+			continue
+		}
+		err = json2.Unmarshal(json, &hotelImage)
+		if hotelImage.LogoStr != nil {
+			strings.Trim(*hotelImage.LogoStr, "\"")
+			if err = json2.Unmarshal([]byte(*hotelImage.LogoStr), &hotel.Logo); err != nil {
+				return nil, common.ErrInternal(err)
+			}
+		}
+		if hotelImage.ImagesStr != nil {
+			strings.Trim(*hotelImage.ImagesStr, "\"")
+			if err = json2.Unmarshal([]byte(*hotelImage.ImagesStr), &hotel.Images); err != nil {
+				return nil, common.ErrInternal(err)
+			}
+		}
+		hotel.Id, err = strconv.Atoi(hit.Id_)
+		if err != nil {
+			return nil, common.ErrInternal(err)
+		}
+		hotel.Mask(false)
+		result = append(result, hotel)
+	}
+	return result, nil
+}

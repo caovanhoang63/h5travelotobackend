@@ -37,7 +37,7 @@ var (
 		time.Second * 720,
 		time.Second * 1440,
 	}
-	queryRetryTime = []time.Duration{500 * time.Millisecond, time.Second, time.Second * 2}
+	queryRetryTime = []time.Duration{100 * time.Millisecond}
 )
 
 type JobHandler func(ctx context.Context) error
