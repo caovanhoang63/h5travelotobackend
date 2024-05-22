@@ -72,13 +72,11 @@ func main() {
 	emailAddr := os.Getenv("EMAIL_ADDR")
 	emailPassword := os.Getenv("EMAIL_PASSWORD")
 	serverIp := os.Getenv("SERVER_IP")
-
 	gmail := gosmtp.NewGoMail("smtp.gmail.com", "587", emailAddr, emailPassword)
 
-	mail := email.NewRecoverPasswordMail("caovanhoang204@gmail.com", "1233")
+	mailEngine := email.NewEngine(gmail)
 
-	gmail.Send(*mail)
-	return
+	mailEngine.Start()
 
 	// Set up Elasticsearch Connection
 	esCfg := elasticsearch.Config{
@@ -230,7 +228,8 @@ func main() {
 		logger,
 		redisCacher,
 		vnPay,
-		uuid)
+		uuid,
+		mailEngine)
 
 	r := gin.New()
 	r.Use(middleware.Recover(appCtx))

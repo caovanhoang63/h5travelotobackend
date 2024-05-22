@@ -11,6 +11,7 @@ import (
 	"h5travelotobackend/component/pubsub"
 	"h5travelotobackend/component/uploadprovider"
 	"h5travelotobackend/component/uuid"
+	"h5travelotobackend/email"
 	"h5travelotobackend/skio"
 )
 
@@ -27,6 +28,7 @@ type AppContext interface {
 	GetCacher() cacher.Cacher
 	GetVnPay() *vnpay.VnPay
 	GetUUID() uuid.Uuid
+	GetSendMailEngine() email.Engine
 }
 
 type appContext struct {
@@ -42,6 +44,7 @@ type appContext struct {
 	cacher         cacher.Cacher
 	vnPay          *vnpay.VnPay
 	uuid           uuid.Uuid
+	emailEngine    email.Engine
 }
 
 func NewAppContext(db *gorm.DB,
@@ -54,7 +57,8 @@ func NewAppContext(db *gorm.DB,
 	logger logger.Logger,
 	cacher cacher.Cacher,
 	vnPay *vnpay.VnPay,
-	uuid uuid.Uuid) *appContext {
+	uuid uuid.Uuid,
+	emailEngine email.Engine) *appContext {
 	return &appContext{
 		db:             db,
 		mongodb:        mongodb,
@@ -67,6 +71,7 @@ func NewAppContext(db *gorm.DB,
 		cacher:         cacher,
 		vnPay:          vnPay,
 		uuid:           uuid,
+		emailEngine:    emailEngine,
 	}
 }
 
@@ -112,4 +117,8 @@ func (appCtx *appContext) GetVnPay() *vnpay.VnPay {
 }
 func (appCtx *appContext) GetUUID() uuid.Uuid {
 	return appCtx.uuid
+}
+
+func (appCtx *appContext) GetSendMailEngine() email.Engine {
+	return appCtx.emailEngine
 }

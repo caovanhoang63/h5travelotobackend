@@ -3,6 +3,7 @@ package gosmtp
 import (
 	"fmt"
 	"h5travelotobackend/email"
+	"log"
 	"net/smtp"
 )
 
@@ -28,5 +29,6 @@ func (g *GoMail) Send(mail email.Mail) error {
 	if err != nil {
 		fmt.Println(err)
 	}
+	log.Println("Email send!")
 	return nil
 }
