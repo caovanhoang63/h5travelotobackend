@@ -122,8 +122,9 @@ func ValidateBooking(f *bookingmodel.BookingCreate) error {
 	if f.StartDate.After(*f.EndDate) {
 		return bookingmodel.ErrStartDateAfterEndDate
 	}
+
 	now := time.Now()
-	if !f.StartDate.After(common.CivilDate(now)) {
+	if !(f.StartDate.After(common.CivilDate(now)) || (f.StartDate.IsEqual(common.CivilDate(now)))) {
 		return bookingmodel.ErrStartInPass
 	}
 

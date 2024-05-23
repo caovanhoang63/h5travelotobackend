@@ -31,6 +31,7 @@ func ListMessagesByRoomId(appCtx appContext.AppContext) gin.HandlerFunc {
 		}
 		for i := range messages {
 			messages[i].Mask(false)
+			messages[i].FixTime()
 		}
 		c.JSON(http.StatusOK, common.NewSuccessResponse(messages, paging, nil))
 	}

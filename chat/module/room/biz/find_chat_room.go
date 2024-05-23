@@ -12,9 +12,6 @@ type FindChatRoomStore interface {
 	CreateRoom(ctx context.Context, create *chatroom.RoomCreate) error
 }
 
-type HotelStore interface {
-}
-
 type findChatRoomBiz struct {
 	store FindChatRoomStore
 }

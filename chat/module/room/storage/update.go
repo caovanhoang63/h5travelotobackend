@@ -17,7 +17,7 @@ func (s *mongoStore) HandleNewMessage(ctx context.Context, message *chatroommode
 		{"_id", message.RoomId},
 	}
 	update := bson.D{
-		{"$set", bson.D{{"last_message", message.ID}}},
+		{"$set", bson.D{{"last_message", message}}},
 		{"$inc", bson.D{{"total_message", 1}}},
 	}
 	log.Println("From customer: ", message.IsFromCustomer)

@@ -6,6 +6,7 @@ import (
 	chatstorage "h5travelotobackend/chat/module/room/storage"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
+	hotelstorage "h5travelotobackend/search/module/hotel/storage/esstore"
 	"net/http"
 )
 
@@ -18,7 +19,8 @@ func ListChatRoomByUser(appCtx appContext.AppContext) gin.HandlerFunc {
 		}
 		paging.FullFill()
 		store := chatstorage.NewMongoStore(appCtx.GetMongoConnection())
-		biz := chatbiz.NewListChatRoomByUserBiz(store)
+		hStore := hotelstorage.NewESStore(appCtx.GetElasticSearchClient())
+		biz := chatbiz.NewListChatRoomByUserBiz(store, hStore)
 		data, err := biz.ListChatRoomByUser(c.Request.Context(), requester, &paging)
 		if err != nil {
 			panic(err)

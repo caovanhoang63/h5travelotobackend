@@ -21,12 +21,6 @@ func (s *sqlStore) ListHotelWithCondition(
 			db = db.Where("owner_id = ?", f.OwnerId)
 		}
 
-		if f.Distance > 0 {
-
-			db = db.Where("ACOS( SIN(lat)*SIN(?) + COS(lat)*COS(?)*COS(?-lng) ) * 6371000 < ?",
-				f.Lat, f.Lat, f.Lng, f.Distance)
-		}
-
 		if !common.IsEmpty(f.DistrictCode) {
 			db = db.Where("district_code = ?", f.DistrictCode)
 		}

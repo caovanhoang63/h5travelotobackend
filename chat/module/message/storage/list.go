@@ -34,7 +34,7 @@ func (s *mongoStore) ListMessageWithCondition(ctx context.Context,
 		}
 	}
 
-	option.SetLimit(int64(paging.Limit)).SetSort(bson.D{{Key: "_id", Value: 1}})
+	option.SetLimit(int64(paging.Limit)).SetSort(bson.D{{Key: "_id", Value: -1}})
 
 	coll := s.db.Collection(chatmessagemodel.Message{}.CollectionName())
 	if count, err := coll.CountDocuments(ctx, filterB); err != nil {

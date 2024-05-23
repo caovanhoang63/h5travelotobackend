@@ -12,6 +12,15 @@ type MongoModel struct {
 	UpdatedAt *time.Time          `json:"updated_at" bson:"updated_at"`
 }
 
+func (m *MongoModel) FixTime() {
+	if m.CreatedAt != nil {
+		*m.CreatedAt = m.CreatedAt.Add(time.Hour * 7)
+	}
+	if m.UpdatedAt != nil {
+		*m.UpdatedAt = m.UpdatedAt.Add(time.Hour * 7)
+	}
+}
+
 func (m *MongoModel) OnCreate() {
 	m.Status = 1
 	newTime := time.Now()

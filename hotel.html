@@ -15,7 +15,7 @@
     </div>
     <div id="room">
         <h1>Demo Socket IO</h1>
-        <input id="room-id" placeholder="room-id" value="664eeff720271e5ac6ecaffb" />
+        <input id="room-id" placeholder="room-id" value="664f2a47f8d5f22b7f44e881" />
         <button id="join"> Join </button>
     </div>
 
@@ -27,7 +27,7 @@
     </div>
 
     <script>
-        const socket = io("", { transports: ['websocket'] });
+        const socket = io("https://api.h5traveloto.site", { transports: ['websocket'] })
         var locTimer = null;
         socket.on('connect', () => {
             console.log('Client connected');
@@ -38,7 +38,7 @@
         sendButton.addEventListener('click', () => {
             const message = {
                 message: document.getElementById('message').value,
-                room_id: "664eeff720271e5ac6ecaffb",
+                room_id: "664f2a47f8d5f22b7f44e881",
             }
             socket.emit('message_sent',message)
         });
