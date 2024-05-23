@@ -7,7 +7,6 @@ import (
 	chatmessagemodel "h5travelotobackend/chat/module/message/model"
 	chatmessagestorage "h5travelotobackend/chat/module/message/storage"
 	"h5travelotobackend/common"
-	"log"
 )
 
 func MessageSent(appCtx common.SimpleAppContext,
@@ -22,13 +21,16 @@ func MessageSent(appCtx common.SimpleAppContext,
 			message.IsFromCustomer = false
 		}
 		message.UserFakeId = common.NewUIDP(uint32(user.GetUserId()), common.DbTypeUser, 0)
-		log.Printf("user %v sent: %s\n", user.GetUserId(), message.IsFromCustomer)
 		store := chatmessagestorage.NewMongoStore(appCtx.GetMongoConnection())
 		biz := chatmessagebiz.NewCreateNewMessageBiz(store, appCtx.GetPubSub())
 		if err := biz.CreateMessage(context.TODO(), message); err != nil {
 			s.Emit(common.EventCannotSendMessage, true)
 		}
-		err := rtEngine.EmitToRoom(message.RoomId.String(), common.EventNewMessage, message.Message)
+		roomId, err := message.RoomId.MarshalText()
+		if err != nil {
+			s.Emit(common.EventCannotSendMessage, true)
+		}
+		err = rtEngine.EmitToRoom(string(roomId), common.EventNewMessage, message)
 		if err != nil {
 			s.Emit(common.EventCannotSendMessage, true)
 		}
