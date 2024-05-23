@@ -44,6 +44,7 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	v1.PATCH("/change-password-forgot/:email", ginuser.ChangePasswordForgot(appCtx))
 	v1.POST("/renew-token", ginuser.RenewToken(appCtx))
 	v1.GET("users/exists", ginuser.CheckExistedEmail(appCtx))
+	v1.GET("/users/check-pin/:email", ginuser.CheckPinPassword(appCtx))
 
 	// ===================== User =====================
 	usersRead := v1.Group("/users", middleware.RequireAuth(appCtx), middleware.CacheMiddleware(appCtx))

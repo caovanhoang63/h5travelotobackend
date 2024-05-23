@@ -66,6 +66,7 @@ type PaymentBookingCreate struct {
 	Method        string      `json:"method" gorm:"column:method"`
 	Amount        float64     `json:"amount" gorm:"column:amount"`
 	Currency      string      `json:"currency" form:"currency" binding:"required" gorm:"column:currency"`
+	CreatedAt     *time.Time  `json:"created_at" gorm:"column:created_at"`
 }
 
 func (p PaymentBookingCreate) TableName() string {
@@ -80,6 +81,7 @@ type PaymentInfoResponse struct {
 	Method     string      `json:"method"`
 	DealId     *common.UID `json:"deal_id"`
 	Amount     float64     `json:"amount"`
+	CreatedAt  *time.Time  `json:"created_at" gorm:"column:created_at"`
 }
 
 func (p *PaymentBookingCreate) UnMask() error {

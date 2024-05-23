@@ -32,7 +32,6 @@ import (
 )
 
 func main() {
-
 	// Set up log
 	log := mylogger.NewLogger("h5traveloto", nil)
 

@@ -37,7 +37,7 @@ func PayIn(appCtx appContext.AppContext) gin.HandlerFunc {
 		}
 
 		vnPay := appCtx.GetVnPay()
-		url := vnPay.NewPayInUrl(info.Amount, info.Currency, info.BookingFakeId.String(), c.ClientIP(), info.TxnId)
+		url := vnPay.NewPayInUrl(info.Amount, info.Currency, info.BookingFakeId.String(), c.ClientIP(), info.TxnId, info.CreatedAt)
 
 		response := paymentmodel.PaymentInfoResponse{
 			PaymentUrl: url,
@@ -46,6 +46,8 @@ func PayIn(appCtx appContext.AppContext) gin.HandlerFunc {
 			BookingId:  info.BookingFakeId,
 			Method:     common.PaymentMethodVnPay,
 			TxnId:      info.TxnId,
+			DealId:     info.DealFakeId,
+			CreatedAt:  info.CreatedAt,
 		}
 
 		if info.DealFakeId != nil {

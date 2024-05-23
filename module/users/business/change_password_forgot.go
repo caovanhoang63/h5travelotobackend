@@ -43,8 +43,6 @@ func (biz *changePasswordForgotBiz) ChangePassword(ctx context.Context,
 		return common.ErrInternal(err)
 	}
 
-	log.Println("pin:", pin)
-	log.Println("cacher pin:", cachePin)
 	pin = fmt.Sprintf("\"%v\"", pin)
 
 	if pin != cachePin {

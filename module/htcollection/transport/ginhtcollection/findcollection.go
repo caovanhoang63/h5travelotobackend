@@ -24,7 +24,7 @@ func FindCollectionById(appCtx appContext.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 		data.Mask(false)
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
 	}
 
 }

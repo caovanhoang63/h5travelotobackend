@@ -25,13 +25,14 @@ type payInParams struct {
 	VnpBankCode   string `json:"vnp_BankCode"`
 }
 
-func newPayInParams(Amount int, ip, orderInfo, txnRef, currency string) *payInParams {
+func newPayInParams(Amount int, ip, orderInfo, txnRef, currency string, createdDate string) *payInParams {
 	return &payInParams{
-		VnpAmount:    Amount,
-		VnpIpAddr:    ip,
-		VnpOrderInfo: orderInfo,
-		VnpTxnRef:    txnRef,
-		VnpCurrCode:  currency,
+		VnpAmount:     Amount,
+		VnpIpAddr:     ip,
+		VnpOrderInfo:  orderInfo,
+		VnpTxnRef:     txnRef,
+		VnpCurrCode:   currency,
+		VnpCreateDate: createdDate,
 	}
 }
 

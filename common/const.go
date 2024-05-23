@@ -102,3 +102,9 @@ const (
 	BookingStateExpired   = "expired"
 	BookingStateConfirmed = "confirmed"
 )
+
+const (
+	RefundReasonUserCancel   = "user_cancel"
+	RefundReasonHotelCancel  = "hotel_cancel"
+	RefundReasonSystemCancel = "system_fail"
+)
