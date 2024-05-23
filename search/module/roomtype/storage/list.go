@@ -57,7 +57,7 @@ func (s *store) ListRoomTypeWithFilter(ctx context.Context,
 
 			if strFields.Images != nil {
 				strings.Trim(*strFields.Images, "\"")
-				if err := json2.Unmarshal([]byte(*strFields.Images), &roomType.Images); err != nil {
+				if err = json2.Unmarshal([]byte(*strFields.Images), &roomType.Images); err != nil {
 					return nil, common.ErrInternal(err)
 				}
 			}

@@ -40,6 +40,8 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	v1.POST("/upload", ginupload.UploadImage(appCtx))
 	v1.POST("/register", ginuser.RegisterUser(appCtx))
 	v1.POST("/authenticate", ginuser.UserLogin(appCtx))
+	v1.POST("/forgot-password/:email", ginuser.ConfirmResetPassword(appCtx))
+	v1.PATCH("/change-password-forgot/:email", ginuser.ChangePasswordForgot(appCtx))
 	v1.POST("/renew-token", ginuser.RenewToken(appCtx))
 	v1.GET("users/exists", ginuser.CheckExistedEmail(appCtx))
 

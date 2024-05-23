@@ -39,3 +39,7 @@ func GenBanUserIpKey(ip string) string {
 func GenUserRecentViewedKey(id int) string {
 	return fmt.Sprintf("recent_viewed:%v", id)
 }
+
+func GenResetPasswordKey(email string) string {
+	return fmt.Sprintf("reset:%s", email)
+}

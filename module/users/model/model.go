@@ -114,6 +114,7 @@ func (u *UserUpdate) Validate() error {
 type UserChangePassword struct {
 	OldPassword string `json:"old_password" gorm:"-"`
 	Password    string `json:"password" gorm:"column:password;"`
+	Pin         string `json:"pin" gorm:"-"`
 }
 
 func (UserChangePassword) TableName() string {
@@ -196,5 +197,10 @@ var (
 		errors.New("old password not match"),
 		"old password not match",
 		"ErrOldPasswordNotMatch",
+	)
+	ErrWrongPinCode = common.NewCustomError(
+		errors.New("wrong pin code"),
+		"wrong pin code",
+		"ErrWrongPinCode",
 	)
 )

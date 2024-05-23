@@ -74,20 +74,12 @@ func main() {
 	serverIp := os.Getenv("SERVER_IP")
 	gmail := gosmtp.NewGoMail("smtp.gmail.com", "587", emailAddr, emailPassword)
 
-	mail1 := email.NewRecoverPasswordMail("aaa", "123123")
 	mailEngine := email.NewEngine(gmail)
 
 	err := mailEngine.Start()
 	if err != nil {
 		log.Error("MAIL ENGINE DOWN")
 	}
-
-	mailEngine.Send(*mail1)
-	mailEngine.Send(*mail1)
-	mailEngine.Send(*mail1)
-	mailEngine.Send(*mail1)
-	mailEngine.Send(*mail1)
-	mailEngine.Send(*mail1)
 
 	// Set up Elasticsearch Connection
 	esCfg := elasticsearch.Config{
