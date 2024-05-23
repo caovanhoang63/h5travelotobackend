@@ -9,9 +9,14 @@
 <body>
     <div>
         <h1>Login</h1>
-        <input id="email" placeholder="email" />
-        <input id="password" placeholder="password" />
+        <input id="email" placeholder="email" value="owner1@gmail.com" />
+        <input id="password" placeholder="password" value="Hh12032004@"/>
         <button id="login">Login</button>
+    </div>
+    <div id="room">
+        <h1>Demo Socket IO</h1>
+        <input id="room-id" placeholder="room-id" value="664eeff720271e5ac6ecaffb" />
+        <button id="join"> Join </button>
     </div>
 
 
@@ -24,7 +29,6 @@
     <script>
         const socket = io("", { transports: ['websocket'] });
         var locTimer = null;
-
         socket.on('connect', () => {
             console.log('Client connected');
         })
@@ -32,9 +36,11 @@
         socket.on('disconnect', () => console.log('Socket is disconnected'))
         const sendButton = document.querySelector('#send');
         sendButton.addEventListener('click', () => {
-            const message = document.getElementById('message').value;
-            console.log(message)
-            socket.emit('chat', { message });
+            const message = {
+                message: document.getElementById('message').value,
+                room_id: "664eeff720271e5ac6ecaffb",
+            }
+            socket.emit('message_sent',message)
         });
 
         const loginButton = document.querySelector('#login')
@@ -53,19 +59,30 @@
                     }
                 }
             )
-                .then((res) => {
-                console.log(res.data);
-
-                    socket.emit('authenticate', res.data.data.access_token.Token);
-
-                })
-                .catch((err) => {
-                console.log(err);
+            .then((res) => {
+            console.log(res.data);
+                socket.emit('authenticate', res.data.data.access_token.Token);
             })
-
+            .catch((err) => {
+            console.log(err);
+            })
         });
 
 
+
+        const joinButton = document.querySelector('#join')
+        joinButton.addEventListener('click', () => {
+            const roomId = document.getElementById('room-id').value;
+            socket.emit('user_joined', roomId);
+        });
+
+        socket.on('joined', (data) => {
+            console.log('Joined room', data)
+        })
+
+        socket.on('new_message', (data) => {
+            console.log('New message', data)
+        })
 
 
 

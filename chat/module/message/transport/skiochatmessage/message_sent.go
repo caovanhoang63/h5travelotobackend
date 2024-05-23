@@ -1,7 +1,6 @@
 package skiochatmessage
 
 import (
-	"fmt"
 	socketio "github.com/googollee/go-socket.io"
 	"golang.org/x/net/context"
 	chatmessagebiz "h5travelotobackend/chat/module/message/biz"
@@ -17,24 +16,18 @@ func MessageSent(appCtx common.SimpleAppContext,
 	return func(s socketio.Conn, message *chatmessagemodel.Message) {
 		user := s.Context().(common.Requester)
 		message.UserId = user.GetUserId()
-		fmt.Println("user role:", user.GetRole())
 		if user.GetRole() == common.RoleCustomer {
 			message.IsFromCustomer = true
 		} else {
 			message.IsFromCustomer = false
 		}
 		message.UserFakeId = common.NewUIDP(uint32(user.GetUserId()), common.DbTypeUser, 0)
-
-		log.Printf("user %v sent: %s\n", user.GetUserId(), message.Message)
-		log.Println("room id: ", message.RoomId)
-
+		log.Printf("user %v sent: %s\n", user.GetUserId(), message.IsFromCustomer)
 		store := chatmessagestorage.NewMongoStore(appCtx.GetMongoConnection())
 		biz := chatmessagebiz.NewCreateNewMessageBiz(store, appCtx.GetPubSub())
-
 		if err := biz.CreateMessage(context.TODO(), message); err != nil {
 			s.Emit(common.EventCannotSendMessage, true)
 		}
-
 		err := rtEngine.EmitToRoom(message.RoomId.String(), common.EventNewMessage, message.Message)
 		if err != nil {
 			s.Emit(common.EventCannotSendMessage, true)

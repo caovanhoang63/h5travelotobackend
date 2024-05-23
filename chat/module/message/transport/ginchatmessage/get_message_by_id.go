@@ -7,6 +7,7 @@ import (
 	chatmessagestorage "h5travelotobackend/chat/module/message/storage"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
+	"log"
 	"net/http"
 )
 
@@ -28,6 +29,7 @@ func GetMessageById(appCtx appContext.AppContext) gin.HandlerFunc {
 		}
 		message.Mask(false)
 
+		log.Println("message: ", message.IsFromCustomer)
 		c.JSON(http.StatusOK, common.SimpleSuccessResponse(message))
 	}
 }

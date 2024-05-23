@@ -9,7 +9,7 @@
 <body>
     <div>
         <h1>Connect to hotel</h1>
-        <input id="hotel-id" placeholder="hotel-id"  value="e532qos8jjM1"/>
+        <input id="hotel-id" placeholder="hotel-id"  value="3w84JgLXnWTTt1"/>
         <button id="join">Join</button>
     </div>
 
@@ -24,7 +24,7 @@
 
         // Socket connect to server
         const socket = io("", { transports: ['websocket'] });
-        const Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJfaWQiOjIwLCJyb2xlIjoib3duZXIiLCJFeHBpcnkiOjB9LCJleHAiOjE3MTg1MjI4MDEsImlhdCI6MTcxNTkzMDgwMX0.f6ucf-A9W5izbodJbAWe-aqdLbKY9LZi5w8bcGQ01Ug";
+        const Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJfaWQiOjE2LCJyb2xlIjoiY3VzdG9tZXIiLCJFeHBpcnkiOjB9LCJleHAiOjE3MTkwNDE1ODksImlhdCI6MTcxNjQ0OTU4OX0.hZ4ShCHApmYhui8Su-QIKInk6FZgEjiD8lDBOfR8Zj0";
         socket.on('connect', () => {
             console.log('Client connected');
             socket.emit('authenticate', Token);
@@ -72,6 +72,10 @@
             socket.emit('message_sent',message)
         });
         // Send message
+
+        socket.on('new_message', (data) => {
+            console.log('New message', data)
+        })
 
     </script>
 </body>

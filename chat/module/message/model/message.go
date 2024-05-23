@@ -14,7 +14,7 @@ type Message struct {
 	Image             *common.Image       `json:"image,omitempty" bson:"image,omitempty"`
 	UserId            int                 `json:"-" bson:"from"`
 	UserFakeId        *common.UID         `json:"from" bson:"-"`
-	IsFromCustomer    bool                `json:"is_from_customer" bson:"-"`
+	IsFromCustomer    bool                `json:"is_from_customer" bson:"is_from_customer"`
 }
 
 func (m *Message) GetChatMessageId() string {
