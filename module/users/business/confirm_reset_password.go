@@ -1,6 +1,7 @@
 package userbiz
 
 import (
+	"errors"
 	"fmt"
 	"golang.org/x/net/context"
 	"h5travelotobackend/common"
@@ -28,8 +29,8 @@ func NewConfirmResetPassword(store CheckExistedEmailStorage, cacher cacher.Cache
 func (biz *ConfirmResetPasswordBiz) ConfirmResetPassword(ctx context.Context, userEmail string) error {
 	user, err := biz.store.FindUser(ctx, map[string]interface{}{"email": userEmail})
 	if err != nil {
-		if err == common.RecordNotFound {
-			return nil
+		if errors.Is(err, common.RecordNotFound) {
+			return usermodel.ErrInvalidEmail
 		}
 		return common.ErrInternal(err)
 	}

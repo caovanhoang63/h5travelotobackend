@@ -9,6 +9,7 @@ WORKDIR /app/
 ADD .env /app/
 ADD ./app /app/
 ADD customer.html /app/
+ADD ./email/ /app/email/
 ADD hotel.html /app/
 # ADD ./zoneinfo.zip /usr/lsocal/go/lib/time/
 ENTRYPOINT ["./app"]

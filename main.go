@@ -14,6 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/component/cacher/rediscacher"
 	"h5travelotobackend/component/logger/mylogger"
@@ -24,6 +25,7 @@ import (
 	"h5travelotobackend/email"
 	"h5travelotobackend/email/gosmtp"
 	"h5travelotobackend/middleware"
+	"h5travelotobackend/payment/module/refund/transport/localrefund"
 	"h5travelotobackend/skio"
 	"h5travelotobackend/subcriber"
 	"net/http"
@@ -34,9 +36,8 @@ import (
 func main() {
 	// Set up log
 	log := mylogger.NewLogger("h5traveloto", nil)
-
 	log.Println("Starting server...")
-	isDev := false
+	isDev := true
 
 	if isDev {
 		err := godotenv.Load(".dev.env")
@@ -233,6 +234,11 @@ func main() {
 		uuid,
 		mailEngine)
 
+	a := localrefund.NewVnPayRefund(appCtx)
+	b := a.VnPayRefund(context.Background(), common.RefundReasonUserCancel, 12)
+	if b != nil {
+		log.Println(b)
+	}
 	r := gin.New()
 	r.Use(middleware.Recover(appCtx))
 	r.Use(middleware.CORSMiddleware())

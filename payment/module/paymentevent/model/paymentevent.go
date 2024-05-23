@@ -1,6 +1,9 @@
 package pemodel
 
-import "time"
+import (
+	"h5travelotobackend/common"
+	"time"
+)
 
 const EntityName = "PaymentEvent"
 
@@ -28,4 +31,11 @@ type PaymentEventCreate struct {
 
 func (p PaymentEventCreate) TableName() string {
 	return PaymentEvent{}.TableName()
+}
+
+func NewErrCannotCreatePaymentEvent(err error) error {
+	return common.NewCustomError(
+		err,
+		" payment event cannot be created",
+		"ErrCannotCreatePaymentEvent")
 }

@@ -35,13 +35,24 @@ type RefundBookingCreate struct {
 	BookingFakeId *common.UID `json:"booking_id" form:"booking_id" binding:"required" gorm:"-"`
 	PayInTxnId    string      `json:"pay_in_txn_id" gorm:"column:pay_in_txn_id"`
 	CustomerId    int         `json:"-" gorm:"customer_id"`
+	UserFakeId    *common.UID `json:"customer_id" gorm:"-"`
 	HotelId       int         `json:"-" gorm:"column:hotel_id"`
+	HotelFakeId   *common.UID `json:"hotel_id" gorm:"-"`
 	TxnId         string      `json:"txn_id" gorm:"column:txn_id"`
 	Method        string      `json:"method" gorm:"column:method"`
 	Amount        float64     `json:"amount" gorm:"column:amount"`
 	Reason        string      `json:"reason" form:"reason" binding:"required" gorm:"column:reason"`
 	Currency      string      `json:"currency" form:"currency" binding:"required" gorm:"column:currency"`
 	CreatedAt     *time.Time  `json:"created_at" gorm:"column:created_at"`
+	PayInDate     *time.Time  `json:"pay_in_dat" gorm:"-"`
+	Type          string      `json:"-" gorm:"-"`
+}
+
+func (r *RefundBookingCreate) Mask(isAdmin bool) {
+	r.BookingFakeId = common.NewUIDP(uint32(r.BookingId), common.DbTypeBooking, 0)
+	r.UserFakeId = common.NewUIDP(uint32(r.CustomerId), common.DbTypeUser, 0)
+	r.HotelFakeId = common.NewUIDP(uint32(r.HotelId), common.DbTypeHotel, 0)
+
 }
 
 func (RefundBookingCreate) TableName() string {

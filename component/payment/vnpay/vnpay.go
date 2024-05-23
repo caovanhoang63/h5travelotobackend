@@ -30,7 +30,8 @@ func (v *VnPay) NewPayInUrl(amount float64, currency, bookingId, ip, txnRef stri
 	return params.BuildUrl(v)
 }
 
-func (v *VnPay) NewRefundUrl(requestId, txnRef, bookingId, createdBy, transType, ip string, amount float64, transDate, createdDate *time.Time) string {
+func (v *VnPay) NewRefundUrl(requestId, txnRef, bookingId, createdBy,
+	transType, ip string, amount float64, transDate, createdDate *time.Time) *RefundParams {
 	orderInfo := fmt.Sprintf("%s", bookingId)
 	transDateStr := transDate.Format(vnPayTimeLayout)
 	createdDateStr := createdDate.Format(vnPayTimeLayout)

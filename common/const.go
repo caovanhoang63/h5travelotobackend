@@ -90,6 +90,7 @@ const (
 const (
 	PaymentTypePayIn  = "pay_in"
 	PaymentTypePayOut = "pay_out"
+	PaymentTypeRefund = "refund"
 )
 
 const (
@@ -107,4 +108,9 @@ const (
 	RefundReasonUserCancel   = "user_cancel"
 	RefundReasonHotelCancel  = "hotel_cancel"
 	RefundReasonSystemCancel = "system_fail"
+)
+
+const (
+	RefundTypeFull    = "full"
+	RefundTypePartial = "partial"
 )
