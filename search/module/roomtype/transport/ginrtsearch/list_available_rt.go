@@ -20,6 +20,7 @@ func ListAvailableRoomType(appCtx appContext.AppContext) gin.HandlerFunc {
 		if err := c.ShouldBind(&filter); err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
+		log.Println("filter: ", filter)
 		filter.UnMask(false)
 
 		rtStore := rtsearchstorage.NewStore(appCtx.GetElasticSearchClient(), appCtx.GetRedisClient())

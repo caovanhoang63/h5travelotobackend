@@ -49,6 +49,9 @@ func (biz *addDealBiz) AddDeal(ctx context.Context, id int, dealId int) error {
 	}
 
 	final := booking.TotalAmount - booking.DiscountAmount
+	if final < 0 {
+		final = 0
+	}
 	update := bookingmodel.BookingUpdate{
 		DealId:         &dealId,
 		DiscountAmount: &booking.DiscountAmount,

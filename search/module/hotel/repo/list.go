@@ -48,8 +48,8 @@ func (repo *listHotelRepo) ListHotelWithFilter(ctx context.Context,
 				RoomQuantity: filter.RoomQuantity,
 				StartDate:    filter.StartDate,
 				EndDate:      filter.EndDate,
-				Adult:        filter.Adults,
-				Child:        filter.Children,
+				Adults:       filter.Adults,
+				Children:     filter.Children,
 			})
 			if err != nil {
 				return common.ErrInternal(err)

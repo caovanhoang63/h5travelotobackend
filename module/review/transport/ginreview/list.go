@@ -42,9 +42,9 @@ func ListReviews(appCtx appContext.AppContext) gin.HandlerFunc {
 
 		for i := range data {
 			data[i].Mask(false)
+			data[i].FixTime()
 		}
 
 		c.JSON(http.StatusOK, common.NewSuccessResponse(data, paging, filter))
 	}
-
 }

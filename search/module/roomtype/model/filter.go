@@ -18,8 +18,8 @@ type Filter struct {
 	RoomQuantity int               `json:"room_quantity" form:"room_quantity"`
 	StartDate    *common.CivilDate `json:"start_date" form:"start_date" binding:"required"`
 	EndDate      *common.CivilDate `json:"end_date" form:"end_date" binding:"required"`
-	Adult        int               `json:"adult" form:"adult"`
-	Child        int               `json:"child" form:"child"`
+	Adults       int               `json:"adults" form:"adults"`
+	Children     int               `json:"children" form:"children"`
 }
 
 func (f *Filter) Mask(isAdmin bool) {

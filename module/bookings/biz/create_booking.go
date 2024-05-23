@@ -69,23 +69,8 @@ func (biz *createBookingBiz) Create(
 	}
 
 	data.TotalAmount = roomType.Price * float64(data.RoomQuantity) * float64(data.EndDate.DateDiff(*data.StartDate))
-	log.Println(roomType.Price)
 	data.DiscountAmount = 0
 	data.Currency = common.VND
-	//if data.DealId != nil {
-	//	deal, err := biz.dealStore.FindWithCondition(ctx, map[string]interface{}{"id": *data.DealId})
-	//	if err != nil {
-	//		return common.ErrInvalidRequest(err)
-	//	}
-	//	err = ValidateDeal(data, deal)
-	//	if err != nil {
-	//		return common.ErrInvalidRequest(err)
-	//	}
-	//	err = CalculateDiscountAmount(deal, data)
-	//	if err != nil {
-	//		return common.ErrInternal(err)
-	//	}
-	//}
 
 	data.FinalAmount = data.TotalAmount - data.DiscountAmount
 
