@@ -10,9 +10,10 @@ import (
 	"h5travelotobackend/email"
 	bookingsqlstorage "h5travelotobackend/module/bookings/storage"
 	hoteldetailsqlstorage "h5travelotobackend/module/hoteldetails/storage"
+	roomtypesqlstorage "h5travelotobackend/module/roomtypes/storage/sqlstorage"
 	userstorage "h5travelotobackend/module/users/storage"
 	hotelstorage "h5travelotobackend/search/module/hotel/storage/esstore"
-	rtsearchstorage "h5travelotobackend/search/module/roomtype/storage"
+	"log"
 	"strconv"
 )
 
@@ -51,12 +52,13 @@ func SendConfirmMail(appCtx appContext.AppContext, ctx context.Context) consumer
 				return err
 			}
 
-			rStore := rtsearchstorage.NewStore(appCtx.GetElasticSearchClient(), appCtx.GetRedisClient())
+			rStore := roomtypesqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
 
-			roomType, err := rStore.GetRoomTypeById(ctx, booking.Id)
+			roomType, err := rStore.FindDataWithCondition(ctx, map[string]interface{}{"id": booking.RoomTypeId})
 			if err != nil {
 				return err
 			}
+			log.Println(roomType.Name)
 
 			var confirmE = common.ConfirmBooking{
 				HotelName:    hotel.Name,

@@ -16,6 +16,7 @@ type Hotel struct {
 	HotelType             int                        `json:"hotel_type"`
 	Hotline               string                     `json:"hotline"`
 	Star                  int                        `json:"star"`
+	Rating                float64                    `json:"rating"`
 	TotalRating           int                        `json:"total_rating"`
 	TotalRoomType         int                        `json:"total_room_type"`
 	Location              *common.Location           `json:"location"`
