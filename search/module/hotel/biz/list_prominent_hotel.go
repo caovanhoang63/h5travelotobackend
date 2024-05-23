@@ -15,12 +15,13 @@ type GetMinPrice interface {
 }
 
 type listProminentHotelBiz struct {
-	store  ListProminentHotelStore
-	rStore GetMinPrice
+	store   ListProminentHotelStore
+	rStore  GetMinPrice
+	rtStore GetRatingStore
 }
 
-func NewListProminentHotelBiz(store ListProminentHotelStore, rStore GetMinPrice) *listProminentHotelBiz {
-	return &listProminentHotelBiz{store: store, rStore: rStore}
+func NewListProminentHotelBiz(store ListProminentHotelStore, rStore GetMinPrice, rtStore GetRatingStore) *listProminentHotelBiz {
+	return &listProminentHotelBiz{store: store, rStore: rStore, rtStore: rtStore}
 }
 
 func (biz *listProminentHotelBiz) ListProminentHotel(ctx context.Context, limit int) ([]hotelmodel.Hotel, error) {
@@ -35,6 +36,8 @@ func (biz *listProminentHotelBiz) ListProminentHotel(ctx context.Context, limit 
 			continue
 		}
 		result[i].DisplayPrice = &p
+		result[i].Rating, result[i].TotalRating, _ = biz.rtStore.GetHotelRating(ctx, result[i].Id)
+
 	}
 
 	return result, nil

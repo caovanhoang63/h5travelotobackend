@@ -8,6 +8,7 @@ import (
 	hotelsearchbiz "h5travelotobackend/search/module/hotel/biz"
 	hotelsearchrepo "h5travelotobackend/search/module/hotel/repo"
 	hotelstorage "h5travelotobackend/search/module/hotel/storage/esstore"
+	hotelsearchrdbstore "h5travelotobackend/search/module/hotel/storage/rdb"
 	rtsearchstorage "h5travelotobackend/search/module/roomtype/storage"
 	"net/http"
 )
@@ -18,7 +19,8 @@ func ListRecentlyViewed(appCtx appContext.AppContext) gin.HandlerFunc {
 		store := hotelstorage.NewESStore(appCtx.GetElasticSearchClient())
 		rStore := rtsearchstorage.NewStore(appCtx.GetElasticSearchClient(), appCtx.GetRedisClient())
 		rdbStore := hotelrdbstore.NewStore(appCtx.GetRedisClient())
-		repo := hotelsearchrepo.NewHotelsByIdsRepo(store, rStore)
+		rtStore := hotelsearchrdbstore.NewStore(appCtx.GetRedisClient())
+		repo := hotelsearchrepo.NewHotelsByIdsRepo(store, rStore, rtStore)
 		biz := hotelsearchbiz.NewListRecentlyViewedBiz(rdbStore, repo)
 		result, err := biz.ListRecentlyViewed(c.Request.Context(), requester.GetUserId())
 		if err != nil {

@@ -13,11 +13,16 @@ type ListHotelRepo interface {
 }
 
 type listHotelBiz struct {
-	repo ListHotelRepo
+	repo    ListHotelRepo
+	rtStore GetRatingStore
 }
 
-func NewListHotelBiz(repo ListHotelRepo) *listHotelBiz {
-	return &listHotelBiz{repo: repo}
+type GetRatingStore interface {
+	GetHotelRating(ctx context.Context, id int) (float64, int, error)
+}
+
+func NewListHotelBiz(repo ListHotelRepo, rtStore GetRatingStore) *listHotelBiz {
+	return &listHotelBiz{repo: repo, rtStore: rtStore}
 }
 
 func (biz *listHotelBiz) ListHotelWithFilter(ctx context.Context,
@@ -38,6 +43,7 @@ func (biz *listHotelBiz) ListHotelWithFilter(ctx context.Context,
 			result = append(result[:i], result[i+1:]...)
 		} else {
 			result[i].DisplayPrice = result[i].ListAvailableRoomType[0].Price
+			result[i].Rating, result[i].TotalRating, _ = biz.rtStore.GetHotelRating(ctx, result[i].Id)
 		}
 	}
 

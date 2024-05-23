@@ -6,6 +6,10 @@ import (
 	hotelmodel "h5travelotobackend/search/module/hotel/model"
 )
 
+type GetRatingStore interface {
+	GetHotelRating(ctx context.Context, id int) (float64, int, error)
+}
+
 type ListByIdsStore interface {
 	ListByIds(ctx context.Context, ids []int) ([]hotelmodel.Hotel, error)
 }
@@ -14,14 +18,16 @@ type GetMinPrice interface {
 }
 
 type listHotelByIdsRepo struct {
-	hStore ListByIdsStore
-	rStore GetMinPrice
+	hStore  ListByIdsStore
+	rStore  GetMinPrice
+	rtStore GetRatingStore
 }
 
-func NewHotelsByIdsRepo(hStore ListByIdsStore, rStore GetMinPrice) *listHotelByIdsRepo {
+func NewHotelsByIdsRepo(hStore ListByIdsStore, rStore GetMinPrice, rtStore GetRatingStore) *listHotelByIdsRepo {
 	return &listHotelByIdsRepo{
-		hStore: hStore,
-		rStore: rStore,
+		hStore:  hStore,
+		rStore:  rStore,
+		rtStore: rtStore,
 	}
 }
 
@@ -37,6 +43,7 @@ func (r *listHotelByIdsRepo) ListHotelByIds(ctx context.Context, ids []int) ([]h
 			continue
 		}
 		hotels[i].DisplayPrice = &a
+		hotels[i].Rating, hotels[i].TotalRating, _ = r.rtStore.GetHotelRating(ctx, hotels[i].Id)
 	}
 
 	return hotels, nil

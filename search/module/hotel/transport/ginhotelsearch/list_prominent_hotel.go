@@ -6,6 +6,7 @@ import (
 	"h5travelotobackend/component/appContext"
 	hotelsearchbiz "h5travelotobackend/search/module/hotel/biz"
 	hotelstorage "h5travelotobackend/search/module/hotel/storage/esstore"
+	hotelsearchrdbstore "h5travelotobackend/search/module/hotel/storage/rdb"
 	rtsearchstorage "h5travelotobackend/search/module/roomtype/storage"
 	"net/http"
 )
@@ -18,7 +19,8 @@ func ListProminentHotels(appCtx appContext.AppContext) gin.HandlerFunc {
 		}
 		store := hotelstorage.NewESStore(appCtx.GetElasticSearchClient())
 		rStore := rtsearchstorage.NewStore(appCtx.GetElasticSearchClient(), appCtx.GetRedisClient())
-		biz := hotelsearchbiz.NewListProminentHotelBiz(store, rStore)
+		rtStore := hotelsearchrdbstore.NewStore(appCtx.GetRedisClient())
+		biz := hotelsearchbiz.NewListProminentHotelBiz(store, rStore, rtStore)
 		hotels, err := biz.ListProminentHotel(c.Request.Context(), limit)
 		if err != nil {
 			panic(err)
