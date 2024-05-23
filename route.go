@@ -216,6 +216,7 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	hotelChat.Use(middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager, common.RoleStaff))
 	hotelChat.Use(middleware.IsHotelWorker(appCtx))
 	hotelChat.GET("/", ginchatroom.ListChatRoomByHotelId(appCtx))
+	v1.GET("/users/chat-rooms", middleware.RequireAuth(appCtx), ginchatroom.ListChatRoomByUser(appCtx))
 	// ===================== Chat =====================
 
 	// ===================== Search =====================

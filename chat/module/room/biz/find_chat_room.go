@@ -34,7 +34,11 @@ func (biz *findChatRoomBiz) FindChatRoom(ctx context.Context,
 			HotelId: hotelId,
 			UserId:  userId,
 		}
-		if err := biz.store.CreateRoom(ctx, roomCreate); err != nil {
+		if err = biz.store.CreateRoom(ctx, roomCreate); err != nil {
+			return nil, common.ErrInternal(err)
+		}
+		room, err = biz.store.FindChatRoom(ctx, userId, hotelId)
+		if err != nil {
 			return nil, common.ErrInternal(err)
 		}
 		room.UserId = userId
