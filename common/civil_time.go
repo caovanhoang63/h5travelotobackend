@@ -12,6 +12,10 @@ const CivilDateFormat = "02-01-2006"
 
 type CivilDate time.Time
 
+func (c *CivilDate) String() string {
+	return time.Time(*c).Format(CivilDateFormat)
+}
+
 func (c *CivilDate) After(d CivilDate) bool {
 	return time.Time(*c).After(time.Time(d))
 }

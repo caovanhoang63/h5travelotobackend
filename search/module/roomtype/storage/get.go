@@ -1,11 +1,13 @@
 package rtsearchstorage
 
 import (
+	"encoding/json"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"golang.org/x/net/context"
 	"h5travelotobackend/common"
 	rtsearchmodel "h5travelotobackend/search/module/roomtype/model"
+	"strconv"
 )
 
 func (s *store) GetMinPriceByHotelId(ctx context.Context, hotelId int) (float64, error) {
@@ -42,4 +44,26 @@ func (s *store) GetMinPriceByHotelId(ctx context.Context, hotelId int) (float64,
 	}
 
 	return float, nil
+}
+
+func (s *store) GetRoomTypeById(ctx context.Context, id int) (*rtsearchmodel.RoomType, error) {
+	hit, err := s.es.Get(rtsearchmodel.IndexName, strconv.Itoa(id)).Do(ctx)
+	if err != nil {
+		return nil, common.ErrDb(err)
+	}
+	var roomType rtsearchmodel.RoomType
+	jsonData, err := hit.Source_.MarshalJSON()
+	if err != nil {
+		return nil, common.ErrInternal(err)
+	}
+	err = json.Unmarshal(jsonData, &roomType)
+	if err != nil {
+		return nil, common.ErrInternal(err)
+	}
+	roomType.Id, err = strconv.Atoi(hit.Id_)
+	if err != nil {
+		return nil, common.ErrInternal(err)
+	}
+	roomType.Mask(false)
+	return &roomType, nil
 }

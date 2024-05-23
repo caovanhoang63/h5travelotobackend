@@ -79,7 +79,8 @@ func (engine *consumerEngine) Start() error {
 	if err := engine.startSubTopic(common.TopicPaymentSuccess, true,
 		UpdateBookingStateToPaid(engine.appCtx, context.Background()),
 		UpdateBookingTrackingToPaid(engine.appCtx, context.Background()),
-		UpdateTransactionDone(engine.appCtx, context.Background())); err != nil {
+		UpdateTransactionDone(engine.appCtx, context.Background()),
+		SendConfirmMail(engine.appCtx, context.Background())); err != nil {
 		log.Println("Err:", err)
 	}
 

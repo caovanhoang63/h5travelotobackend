@@ -2,10 +2,9 @@ package email
 
 import (
 	"bytes"
-	"encoding/base64"
 	"fmt"
+	"h5travelotobackend/common"
 	"html/template"
-	"io/ioutil"
 	"log"
 )
 
@@ -33,9 +32,7 @@ func NewEmail(sender, password, subject string, body []byte, recipient []string)
 
 func NewRecoverPasswordMail(recipient string, pinCode string) *Mail {
 	RecoverIcon := "https://d3jwhct9rpti9n.cloudfront.net/room_images/854725495.png"
-	//LogoImage := "https://d3jwhct9rpti9n.cloudfront.net/room_images/570773422.png"
 	subject := "Yêu cầu tạo lại mật khẩu"
-
 	t, err := template.ParseFiles("./email/static/reset-password-mail.html")
 	if err != nil {
 		log.Println(err)
@@ -43,10 +40,8 @@ func NewRecoverPasswordMail(recipient string, pinCode string) *Mail {
 	}
 
 	var body bytes.Buffer
-
 	mimeHeaders := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 	body.Write([]byte(fmt.Sprintf("Subject: %s \n%s\n\n", subject, mimeHeaders)))
-
 	t.Execute(&body, struct {
 		PinCode     string
 		RecoverIcon string
@@ -54,7 +49,6 @@ func NewRecoverPasswordMail(recipient string, pinCode string) *Mail {
 		PinCode:     pinCode,
 		RecoverIcon: RecoverIcon,
 	})
-
 	to := []string{
 		recipient,
 	}
@@ -63,12 +57,25 @@ func NewRecoverPasswordMail(recipient string, pinCode string) *Mail {
 		Subject:   subject,
 		Body:      body.Bytes(),
 	}
-
 }
-func imageToBase64(imgPath string) (string, error) {
-	imgData, err := ioutil.ReadFile(imgPath)
+
+func NewConfirmEmail(recipient string, bk common.ConfirmBooking) *Mail {
+	subject := "Đặt phòng thành công"
+	t, err := template.ParseFiles("./email/static/confirm-email.html")
 	if err != nil {
-		return "", err
+		log.Println(err)
+		return nil
 	}
-	return base64.StdEncoding.EncodeToString(imgData), nil
+	var body bytes.Buffer
+	mimeHeaders := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
+	body.Write([]byte(fmt.Sprintf("Subject: %s \n%s\n\n", subject, mimeHeaders)))
+	t.Execute(&body, bk)
+	to := []string{
+		recipient,
+	}
+	return &Mail{
+		Recipient: to,
+		Subject:   subject,
+		Body:      body.Bytes(),
+	}
 }
