@@ -46,7 +46,7 @@ Docker
 ## Usage
 
 1. Clone the repository:
-```git clone https://github.com/your-username/H5traveloto.git ```
+```git clone https://github.com/caovanhoang204/h5travelotobackend.git ```
 2. Navigate to the project directory:
 ``` cd h5travelotobackend ```
 3. Install the dependencies:
