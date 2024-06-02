@@ -24,15 +24,15 @@ The project provides the following key features:
 ### The backend system is implemented as a REST API, following the principles of Clean Architecture.
 Technologies Used
 The project utilizes the following technologies:
-Golang
-Docker
-MySQL
-MongoDB
-Redis
-Elastic Search
-Kafka Connect
-RabbitMQ
-Nginx
+Golang,
+Docker,
+MySQL,
+MongoDB,
+Redis,
+Elastic Search,
+Kafka-Connect,
+RabbitMQ,
+Nginx,
 ...
 
 ## Installation
@@ -40,7 +40,9 @@ Prerequisites
 Before setting up the project, ensure that you have the following prerequisites installed:
 
 Golang 1.22 or higher
-Docker
+
+Docker 26.0.2 or higher
+
 ...
 
 ## Usage
@@ -52,7 +54,7 @@ Docker
 3. Install the dependencies:
 ``` go mod download ```
 4. You need AWS S3 bucket to store images. Create a bucket and provide the necessary configuration values in the .env file. The tutorial can be found [here](https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-bucket.html).
-5. You need and VNPAY account to use the online payment feature. Provide the necessary configuration values in the .env file. The tutorial can be found [here](https://sandbox.vnpayment.vn/apis/).
+5. You need an VNPAY account to use the online payment feature. Provide the necessary configuration values in the .env file. The tutorial can be found [here](https://sandbox.vnpayment.vn/apis/).
 6. Configure the environment variables:
    + Create a .env file in the project root directory.
    + Provide the necessary configuration values in the .env file.
