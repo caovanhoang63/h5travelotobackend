@@ -6,6 +6,8 @@ H5traveloto is an integrated hotel management and booking system. It is a SaaS (
 ### [Web Management](https://github.com/caovanhoang63/h5traveloto-management)
 ### [Mobile Application](https://github.com/caovanhoang63/h5traveloto-booking)
 
+The Api documentation can be found [here](https://documenter.getpostman.com/view/29234273/2sA35G2MX4)
+
 ### Key Features Provided
 The project provides the following key features:
 + Hotel management: Hotels can manage their properties, including room types, room rates, and room availability.
@@ -60,6 +62,9 @@ Docker
    + You need to run the run.sh file in the [elastic-kafka-redis](/docker/elastic-kafka-redis) folder to start the docker-compose file to set up container to synchronize data from mysql to elastic search.
 9. + If you run in your local machine, you just need to build the Dockerfile [here](/Dockerfile) and run the container.
    + If you run in the server, you need to set up the nginx configuration file in  the server (you need to uncomment all the setup in this [sh file](/docker/mysql-mongo-rabbit/run-database.sh) ) to redirect the request to the backend server. Then you need to change all your host Ips in all config file and run [deploy.sh file](/deploy.sh) if you are  using an SSH tool.
-#### Note: If you encounter any issues with the Elasticsearch certificate, first ensure that you have provided all the necessary permissions for the certs folder. You can follow this [link](https://www.elastic.co/guide/en/elasticsearch/reference/8.13/encrypting-communications-certificates.html) for more information.
-####  If any unexpected errors occur or if you need further assistance, feel free to contact me via email at caovanhoang204@gmail.com or create an issue on the GitHub repository.
+#### Note: If you encounter any issues with the Elasticsearch certificate, first ensure that you have provided all the necessary permissions for the certs folder. You can follow this [link](https://www.elastic.co/guide/en/elasticsearch/reference/8.13/encrypting-communications-certificates.html) for more information. 
+#### If any unexpected errors occur or if you need further assistance, feel free to contact me via email at caovanhoang204@gmail.com or create an issue on the GitHub repository.
 
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](/LICENSE) file for details.
