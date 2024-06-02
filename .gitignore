@@ -3,9 +3,7 @@
 
 ### infrastructure
 *.conf*
-data/
 certs/
-docker/mysql-mongo-rabbit/data/mysql/
 
 ### dotenv ###
 .env
