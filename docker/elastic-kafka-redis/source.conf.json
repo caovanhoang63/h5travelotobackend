@@ -1,0 +1,23 @@
+{
+  "name": "mysql-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "database.hostname": "10.104.0.2",
+    "database.port": "3306",
+    "database.user": "root",
+    "database.password": "[password]",
+    "database.server.id": "42",
+    "database.server.name": "h5traveloto",
+    "table.whitelist": "h5traveloto.hotels,h5traveloto.hotel_details,h5traveloto.provinces,h5traveloto.districts,h5traveloto.wards,h5traveloto.hotel_facility_details,h5traveloto.room_types,h5traveloto.room_facility_details,h5traveloto.landmarks",
+    "database.allowPublicKeyRetrieval" : true,
+    "database.history.kafka.bootstrap.servers": "broker:29092",
+    "database.history.kafka.topic": "dbhistory.h5traveloto" ,
+    "decimal.handling.mode": "double",
+    "include.schema.changes": "true",
+    "transforms": "unwrap,addTopicPrefix",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.addTopicPrefix.type":"org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.addTopicPrefix.regex":"(.*)",
+    "transforms.addTopicPrefix.replacement":"mysql-debezium-$1"
+  }
+}

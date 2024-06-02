@@ -46,8 +46,7 @@ echo 'waiting to run ksqldb...'
 
 sleep 5
 
-#cat ./ksqldb-ddl.sql | docker exec -i ksqldb ksql http://localhost:8088
-
+cat ./ksqldb-ddl.sql | docker exec -i ksqldb ksql http://localhost:8088
 
 echo 'Done running ksqldb-ddl.sql'
 

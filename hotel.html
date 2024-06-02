@@ -15,7 +15,7 @@
     </div>
     <div id="room">
         <h1>Demo Socket IO</h1>
-        <input id="room-id" placeholder="room-id" value="664f2a47f8d5f22b7f44e881" />
+        <input id="room-id" placeholder="room-id" value="664fd37913be25e5cf4ae718" />
         <button id="join"> Join </button>
     </div>
 
@@ -33,12 +33,13 @@
             console.log('Client connected');
         })
 
+
         socket.on('disconnect', () => console.log('Socket is disconnected'))
         const sendButton = document.querySelector('#send');
         sendButton.addEventListener('click', () => {
             const message = {
                 message: document.getElementById('message').value,
-                room_id: "664f2a47f8d5f22b7f44e881",
+                room_id: document.getElementById("room-id").value,
             }
             socket.emit('message_sent',message)
         });
