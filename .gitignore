@@ -3,6 +3,7 @@
 
 ### infrastructure
 certs/
+docker/
 
 ### dotenv ###
 .env
