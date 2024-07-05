@@ -16,7 +16,7 @@ func CORSMiddleware() gin.HandlerFunc {
 			c.AbortWithStatus(http.StatusNoContent)
 			return
 		}
-
+		c.Request.Header.Del("Origin")
 		c.Next()
 	}
 }

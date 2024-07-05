@@ -38,7 +38,7 @@ func (biz *listRoomBiz) ListRoomWithCondition(
 	filter *roommodel.Filter,
 	paging *common.Paging) ([]roommodel.Room, error) {
 
-	data, err := biz.store.ListRoomWithCondition(ctx, filter, paging)
+	data, err := biz.store.ListRoomWithCondition(ctx, filter, paging, "RoomType")
 
 	if err != nil {
 		return nil, common.ErrCannotListEntity(roommodel.EntityName, err)

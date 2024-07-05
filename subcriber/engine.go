@@ -25,12 +25,14 @@ func NewEngine(appCtx appContext.AppContext) *consumerEngine {
 
 func (engine *consumerEngine) Start() error {
 	if err := engine.startSubTopic(common.TopicCreateNewRoom, true,
-		IncreaseTotalRoomWhenCreateNewRoom(engine.appCtx, context.Background())); err != nil {
+		IncreaseTotalRoomWhenCreateNewRoom(engine.appCtx, context.Background()),
+		IncreaseHotelTotalRoomWhenCreateNewRoom(engine.appCtx, context.Background())); err != nil {
 		log.Println("Err:", err)
 	}
 
 	if err := engine.startSubTopic(common.TopicDeleteRoom, true,
-		DecreaseTotalRoomWhenCreateNewRoom(engine.appCtx, context.Background())); err != nil {
+		DecreaseTotalRoomWhenCreateNewRoom(engine.appCtx, context.Background()),
+		DecreaseHotelTotalRoomWhenCreateNewRoom(engine.appCtx, context.Background())); err != nil {
 		log.Println("Err:", err)
 	}
 	if err := engine.startSubTopic(common.TopicCreateBooking, true,

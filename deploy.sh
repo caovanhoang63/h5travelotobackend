@@ -2,7 +2,7 @@
 
 APP_NAME=h5traveloto
 #root@1.1.1.1
-DEPLOY_CONNECT=root@34.126.114.208
+DEPLOY_CONNECT=root@34.142.159.81
 
 echo "Downloading packages..."
 go mod download

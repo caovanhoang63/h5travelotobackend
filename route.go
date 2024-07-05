@@ -119,7 +119,7 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	rooms.DELETE("rooms/:room-id", ginroom.DeleteRoom(appCtx))
 	rooms.POST("rooms/", ginroom.CreateRoom(appCtx))
 	rooms.GET("rooms/:room-id", ginroom.GetRoomById(appCtx))
-	rooms.GET("rooms/", ginroom.ListRoomWithCondition(appCtx))
+	rooms.GET("rooms", ginroom.ListRoomWithCondition(appCtx))
 
 	rooms.GET("/available-rooms", ginroom.GetAvailableRoomByDate(appCtx))
 	rooms.GET("rooms/bookings/:booking-id", ginroom.ListRoomOfBooking(appCtx))
@@ -147,7 +147,12 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	v1.GET("/users/:user-id/bookings", middleware.RequireAuth(appCtx),
 		ginbooking.ListBookingByUserId(appCtx))
 	v1.GET("/hotels/:hotel-id/bookings", middleware.RequireAuth(appCtx),
-		middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager), middleware.IsHotelWorker(appCtx),
+		middleware.RoleRequired(appCtx,
+			common.RoleAdmin,
+			common.RoleOwner,
+			common.RoleManager,
+			common.RoleStaff),
+		middleware.IsHotelWorker(appCtx),
 		ginbooking.ListBookingHotelId(appCtx))
 	// ===================== Booking =====================
 

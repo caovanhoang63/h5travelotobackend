@@ -38,7 +38,7 @@ func (biz *deleteRoomBiz) DeleteRoom(ctx context.Context, id int) error {
 
 	// Side effect : decrease room_type.total_room
 
-	roomType := common.DTORoomType{Id: oldData.RoomTypeID}
+	roomType := common.DTORoomType{Id: oldData.RoomType.Id}
 	mess := pubsub.NewMessage(roomType)
 	mess.SetChannel(common.TopicDeleteRoom)
 	err = biz.pb.Publish(ctx, common.TopicDeleteRoom, mess)

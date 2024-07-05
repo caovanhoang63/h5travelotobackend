@@ -1,15 +1,22 @@
 package roommodel
 
-import "h5travelotobackend/common"
+import (
+	"h5travelotobackend/common"
+)
 
 const EntityName = "Room"
+
+type RoomType struct {
+	common.SqlModel `json:",inline"`
+	Name            string `json:"name" gorm:"column:name;"`
+}
 
 type Room struct {
 	common.SqlModel `json:",inline"`
 	HotelFakeId     *common.UID `json:"hotel_id" gorm:"-"`
 	HotelId         int         `json:"-" gorm:"column:hotel_id;"`
-	RoomTypeFakeId  *common.UID `json:"room_type_id" gorm:"-"`
-	RoomTypeID      int         `json:"-" gorm:"column:room_type_id;"`
+	RoomTypeId      int         `json:"-" gorm:"column:room_type_id;"`
+	RoomType        *RoomType   `json:"room_type" gorm:"foreignKey:RoomTypeId;preload:false"`
 	Name            string      `json:"name" gorm:"column:name;"`
 	Floor           int         `json:"floor" gorm:"column:floor;"`
 }
@@ -21,9 +28,10 @@ func (Room) TableName() string {
 func (r *Room) Mask(isAdmin bool) {
 	r.GenUID(common.DbTypeRoom)
 	hotelUid := common.NewUID(uint32(r.HotelId), common.DbTypeHotel, 1)
-	roomTypeUid := common.NewUID(uint32(r.RoomTypeID), common.DbTypeRoomType, 1)
 	r.HotelFakeId = &hotelUid
-	r.RoomTypeFakeId = &roomTypeUid
+	if r.RoomType != nil {
+		r.RoomType.GenUID(common.DbTypeRoomType)
+	}
 }
 
 type RoomCreate struct {

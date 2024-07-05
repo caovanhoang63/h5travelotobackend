@@ -66,3 +66,21 @@ func (s *sqlStore) UpdateTotalRoomTypeAndAvgPriceWhenDeleteRoomType(ctx context.
 
 	return nil
 }
+
+func (s *sqlStore) IncreaseTotalRoom(ctx context.Context, id int) error {
+	db := s.db.Table(hotelmodel.Hotel{}.TableName()).Where("id = ?", id)
+	db = db.Update("total_room", gorm.Expr("total_room + ?", 1))
+	if err := db.Error; err != nil {
+		return common.ErrDb(err)
+	}
+	return nil
+}
+
+func (s *sqlStore) DecreaseTotalRoom(ctx context.Context, id int) error {
+	db := s.db.Table(hotelmodel.Hotel{}.TableName()).Where("id = ?", id)
+	db = db.Update("total_room", gorm.Expr("total_room - ?", 1))
+	if err := db.Error; err != nil {
+		return common.ErrDb(err)
+	}
+	return nil
+}
