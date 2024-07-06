@@ -9,6 +9,7 @@ import (
 	"h5travelotobackend/component/tokenprovider/jwt"
 	userbiz "h5travelotobackend/module/users/business"
 	userstorage "h5travelotobackend/module/users/storage"
+	workersqlstorage "h5travelotobackend/module/worker/storage/sqlstorage"
 	"net/http"
 )
 
@@ -24,7 +25,8 @@ func RenewToken(appCtx appContext.AppContext) gin.HandlerFunc {
 		tokenProvider := jwt.NewJWTProvider(appCtx.GetSecretKey()) //appctx.SecretKey()
 		store := userstorage.NewSqlStore(db)
 		sha256Hasher := hasher.NewSha256Hash()
-		biz := userbiz.NewLoginBiz(appCtx, store, tokenProvider, sha256Hasher, common.AccessTokenAliveTime, common.RefreshTokenAliveTime)
+		workerStorage := workersqlstorage.NewSqlStore(db)
+		biz := userbiz.NewLoginBiz(appCtx, store, tokenProvider, sha256Hasher, common.AccessTokenAliveTime, common.RefreshTokenAliveTime, workerStorage)
 
 		token, err := biz.Renew(c.Request.Context(), &refreshToken)
 		if err != nil {

@@ -71,6 +71,7 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	// ===================== Hotel =====================
 	hotels := v1.Group("hotels", middleware.RequireAuth(appCtx))
 	hotelsRead := hotels.Group("")
+	hotelsRead.GET("/current", middleware.IsWorker(appCtx), ginhotel.GetHotelByUser(appCtx))
 	hotelsRead.GET("/:hotel-id", middleware.CacheMiddleware(appCtx),
 		ginhotel.GetHotelById(appCtx))
 	hotelsRead.GET("/list", ginhotel.ListHotel(appCtx))
@@ -142,6 +143,10 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	booking := v1.Group("bookings/", middleware.RequireAuth(appCtx))
 	booking.POST("/checkdeal/:deal-id", ginbooking.CheckDeal(appCtx))
 	booking.POST("/", ginbooking.CreateBooking(appCtx))
+	v1.POST("hotels/:hotel-id/bookings/front-desk",
+		middleware.RequireAuth(appCtx),
+		middleware.IsHotelWorker(appCtx),
+		ginbooking.CreateFrontDeskBooking(appCtx))
 	booking.GET("/:booking-id", ginbooking.GetBookingById(appCtx))
 	booking.DELETE("/:booking-id", ginbooking.DeleteBookingById(appCtx))
 	v1.GET("/users/:user-id/bookings", middleware.RequireAuth(appCtx),
@@ -188,6 +193,8 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	bookingdetail.Use(middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner, common.RoleManager, common.RoleStaff))
 	bookingdetail.Use(middleware.IsHotelWorker(appCtx))
 	bookingdetail.POST("/details", ginbookingdetail.CreateBookingDetails(appCtx))
+	bookingdetail.GET("rooms", ginbookingdetail.ListRoomsOfBooking(appCtx))
+
 	// ===================== Booking Detail =====================
 
 	// ===================== Review =====================

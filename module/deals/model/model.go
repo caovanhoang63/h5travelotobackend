@@ -7,13 +7,19 @@ import (
 
 const EntityName = "Deal"
 
+type RoomType struct {
+	common.SqlModel `json:",inline"`
+	Name            string `json:"name" gorm:"column:name;"`
+}
+
 type Deal struct {
 	common.SqlModel   `json:",inline"`
 	Name              string            `json:"name" gorm:"column:name;"`
 	HotelId           int               `json:"-" gorm:"column:hotel_id;"`
 	HotelFakeId       *common.UID       `json:"hotel_id" gorm:"-"`
-	RoomTypeId        int               `json:"-" gorm:"column:room_type_id;"`
+	RoomTypeId        int               `json:"-" gorm:"column:room_type_id"`
 	RoomTypeFakeId    *common.UID       `json:"room_type_id" gorm:"-"`
+	RoomType          *RoomType         `json:"room_type" gorm:"foreignKey:RoomTypeId;preload:false"`
 	Image             *common.Image     `json:"image" gorm:"column:image;"`
 	Description       string            `json:"description" gorm:"column:description;"`
 	TotalQuantity     int               `json:"total_quantity" gorm:"column:total_quantity;"`
@@ -35,6 +41,9 @@ func (d *Deal) Mask(isAdmin bool) {
 	d.GenUID(common.DbTypeDeal)
 	d.HotelFakeId = common.NewUIDP(uint32(d.HotelId), common.DbTypeHotel, 0)
 	d.RoomTypeFakeId = common.NewUIDP(uint32(d.RoomTypeId), common.DbTypeRoomType, 0)
+	if d.RoomType != nil {
+		d.RoomType.GenUID(common.DbTypeRoomType)
+	}
 }
 
 func (d *Deal) UnMask() {

@@ -20,6 +20,12 @@ type Worker struct {
 func (Worker) TableName() string {
 	return "workers"
 }
+func (w *Worker) GetUserId() int {
+	return w.UserId
+}
+func (w *Worker) GetHotelId() int {
+	return w.HotelId
+}
 
 type WorkerCreate struct {
 	UserFakeId common.UID `json:"user_id" gorm:"-"`

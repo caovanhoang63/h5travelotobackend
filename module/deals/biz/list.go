@@ -24,7 +24,7 @@ func NewListDealBiz(store ListDealStore) *listDealBiz {
 }
 
 func (biz *listDealBiz) ListDeal(ctx context.Context, filter *dealmodel.Filter, paging *common.Paging) ([]dealmodel.Deal, error) {
-	deals, err := biz.store.ListWithCondition(ctx, nil, filter, paging)
+	deals, err := biz.store.ListWithCondition(ctx, nil, filter, paging, "RoomType")
 	if err != nil {
 		return nil, common.ErrInternal(err)
 	}

@@ -6,10 +6,17 @@ import (
 	"h5travelotobackend/component/appContext"
 	"h5travelotobackend/component/tokenprovider"
 	usermodel "h5travelotobackend/module/users/model"
+	workermodel "h5travelotobackend/module/worker/model"
 )
 
 type LoginStorage interface {
 	FindUser(ctx context.Context, conditions map[string]interface{}, moreInfo ...string) (*usermodel.User, error)
+}
+
+type WorkerStorage interface {
+	FindWithCondition(ctx context.Context,
+		condition map[string]interface{},
+		moreKeys ...string) (*workermodel.Worker, error)
 }
 
 type loginBiz struct {
@@ -17,11 +24,12 @@ type loginBiz struct {
 	loginStorage  LoginStorage
 	tokenProvider tokenprovider.Provider
 	hasher        Hasher
+	workerStorage WorkerStorage
 	accessExpiry  int
 	refreshExpiry int
 }
 
-func NewLoginBiz(appCtx appContext.AppContext, loginStorage LoginStorage, tokenProvider tokenprovider.Provider, hasher Hasher, accessExpiry, refreshExpiry int) *loginBiz {
+func NewLoginBiz(appCtx appContext.AppContext, loginStorage LoginStorage, tokenProvider tokenprovider.Provider, hasher Hasher, accessExpiry, refreshExpiry int, workerStorage WorkerStorage) *loginBiz {
 	return &loginBiz{
 		appCtx:        appCtx,
 		loginStorage:  loginStorage,
@@ -29,6 +37,7 @@ func NewLoginBiz(appCtx appContext.AppContext, loginStorage LoginStorage, tokenP
 		hasher:        hasher,
 		accessExpiry:  accessExpiry,
 		refreshExpiry: refreshExpiry,
+		workerStorage: workerStorage,
 	}
 }
 
@@ -64,6 +73,17 @@ func (biz *loginBiz) Login(ctx context.Context, data *usermodel.UserLogin) (*use
 	}
 
 	account := usermodel.NewAccount(accessToken, refreshToken)
+
+	if user.Role == common.RoleOwner ||
+		user.Role == common.RoleManager ||
+		user.Role == common.RoleStaff {
+		worker, err := biz.workerStorage.FindWithCondition(ctx, map[string]interface{}{
+			"user_id": user.Id,
+		})
+		if err == nil && worker != nil {
+			account.HotelFakeId = common.NewUIDP(uint32(worker.HotelId), common.DbTypeHotel, 0)
+		}
+	}
 
 	return account, nil
 }

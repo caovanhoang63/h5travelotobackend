@@ -9,6 +9,7 @@ import (
 	userbiz "h5travelotobackend/module/users/business"
 	usermodel "h5travelotobackend/module/users/model"
 	userstorage "h5travelotobackend/module/users/storage"
+	workersqlstorage "h5travelotobackend/module/worker/storage/sqlstorage"
 	"net/http"
 )
 
@@ -24,7 +25,8 @@ func UserLogin(appCtx appContext.AppContext) gin.HandlerFunc {
 		tokenProvider := jwt.NewJWTProvider(appCtx.GetSecretKey()) //appctx.SecretKey()
 		store := userstorage.NewSqlStore(db)
 		sha256Hasher := hasher.NewSha256Hash()
-		biz := userbiz.NewLoginBiz(appCtx, store, tokenProvider, sha256Hasher, common.AccessTokenAliveTime, common.RefreshTokenAliveTime)
+		workerStorage := workersqlstorage.NewSqlStore(db)
+		biz := userbiz.NewLoginBiz(appCtx, store, tokenProvider, sha256Hasher, common.AccessTokenAliveTime, common.RefreshTokenAliveTime, workerStorage)
 
 		account, err := biz.Login(c.Request.Context(), &userLogin)
 

@@ -8,6 +8,11 @@ import (
 
 const EntityName = "Booking"
 
+type RoomType struct {
+	common.SqlModel `json:",inline"`
+	Name            string `json:"name" gorm:"column:name;"`
+}
+
 type Booking struct {
 	common.SqlModel `json:",inline"`
 	HotelId         int               `json:"-" gorm:"column:hotel_id"`
@@ -16,7 +21,10 @@ type Booking struct {
 	UserId          int               `json:"-" gorm:"column:user_id"`
 	RoomTypeId      int               `json:"-" gorm:"column:room_type_id"`
 	RoomTypeFakeId  *common.UID       `json:"room_type_id" gorm:"-"`
+	RoomType        *RoomType         `json:"room_type" gorm:"foreignKey:RoomTypeId;preload:false"`
 	RoomQuantity    int               `json:"room_quantity" gorm:"column:room_quantity"`
+	Rooms           []int             `json:"-" gorm:"-"`
+	RoomFakeIds     []*common.UID     `json:"rooms" gorm:"-"`
 	Adults          int               `json:"adults" gorm:"column:adults"`
 	Children        int               `json:"children" gorm:"column:children"`
 	DealId          *int              `json:"deal_id" gorm:"column:deal_id"`
@@ -48,6 +56,14 @@ func (b *Booking) Mask(isAdmin bool) {
 	b.RoomTypeFakeId = common.NewUIDP(uint32(b.RoomTypeId), common.DbTypeRoomType, 0)
 	if b.Hotel != nil {
 		b.Hotel.Mask(isAdmin)
+	}
+	if b.RoomType != nil {
+		b.RoomType.GenUID(common.DbTypeRoomType)
+	}
+	if len(b.Rooms) > 0 {
+		for _, id := range b.Rooms {
+			b.RoomFakeIds = append(b.RoomFakeIds, common.NewUIDP(uint32(id), common.DbTypeRoom, 0))
+		}
 	}
 }
 

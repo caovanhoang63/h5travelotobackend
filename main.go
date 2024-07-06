@@ -38,7 +38,6 @@ func main() {
 	log := mylogger.NewLogger("h5traveloto", nil)
 	log.Println("Starting server...")
 	isDev := false
-
 	if isDev {
 		err := godotenv.Load(".dev.env")
 		if err != nil {

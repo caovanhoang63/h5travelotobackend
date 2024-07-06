@@ -131,6 +131,7 @@ func (u *UserChangePassword) Validate() error {
 type Account struct {
 	AccessToken  *tokenprovider.Token `json:"access_token"`
 	RefreshToken *tokenprovider.Token `json:"refresh_token""`
+	HotelFakeId  *common.UID          `json:"hotel_id,omitempty"`
 }
 
 func NewAccount(at, rt *tokenprovider.Token) *Account {

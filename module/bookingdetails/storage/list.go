@@ -11,6 +11,18 @@ import (
 
 const timeLayout = "2006-01-02T15:04:05.999999"
 
+func (s *sqlStore) ListRoomsOfBooking(ctx context.Context, bookingId int) ([]bookingdetailmodel.Room, error) {
+	var rooms []bookingdetailmodel.Room
+	db := s.db
+	if err := db.WithContext(ctx).
+		Joins("right join booking_details on booking_details.room_id = rooms.id").
+		Where("booking_id = ?", bookingId).
+		Find(&rooms).Error; err != nil {
+		return nil, common.ErrDb(err)
+	}
+	return rooms, nil
+}
+
 func (s *sqlStore) ListBookingRoomsWithCondition(
 	conditions map[string]interface{},
 	filter *bookingdetailmodel.Filter,
@@ -74,6 +86,17 @@ func (s *sqlStore) CountRoomOfBooking(ctx context.Context, bookingId int) (int, 
 		return 0, common.ErrDb(err)
 	}
 	return int(count), nil
+}
+
+func (s *sqlStore) ListRoomIdsOfBooking(ctx context.Context, bookingId int) ([]int, error) {
+	var ids []int
+
+	db := s.db.Table(bookingdetailmodel.BookingDetail{}.TableName()).Where("booking_id = ?", bookingId)
+	if err := db.Order("room_id desc").Pluck("room_id", &ids).Error; err != nil {
+		return nil, common.ErrDb(err)
+	}
+
+	return ids, nil
 }
 
 func (s *sqlStore) ListRoomOfBooking(ctx context.Context, bookingId int) ([]int, error) {

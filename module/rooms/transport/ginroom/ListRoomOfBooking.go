@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-// ListRoomOfBooking
+// ListRoomIdsOfBooking
 // url - /rooms/booking/:booking-id
 
 func ListRoomOfBooking(appCtx appContext.AppContext) gin.HandlerFunc {

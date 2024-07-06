@@ -16,12 +16,20 @@ type ListBookingStore interface {
 	) ([]bookingmodel.Booking, error)
 }
 
-type listBookingBiz struct {
-	store ListBookingStore
+type BookingDetailStore interface {
+	ListRoomIdsOfBooking(ctx context.Context, bookingId int) ([]int, error)
 }
 
-func NewListBookingBiz(store ListBookingStore) *listBookingBiz {
-	return &listBookingBiz{store: store}
+type listBookingBiz struct {
+	store   ListBookingStore
+	bdStore BookingDetailStore
+}
+
+func NewListBookingBiz(store ListBookingStore, bdStore BookingDetailStore) *listBookingBiz {
+	return &listBookingBiz{
+		store:   store,
+		bdStore: bdStore,
+	}
 }
 
 func (biz *listBookingBiz) ListBookingByUserId(

@@ -13,6 +13,7 @@ type CreateBookingStore interface {
 	Create(ctx context.Context, data *bookingmodel.BookingCreate) error
 	CountBookedRoom(ctx context.Context, rtId int,
 		startDate *common.CivilDate, endDate *common.CivilDate) (*int, error)
+	CreateFrontDeskBooking(ctx context.Context, data *bookingmodel.FrontDeskBookingCreate) error
 }
 
 type FindRoomTypeStore interface {
@@ -33,11 +34,7 @@ func NewCreateBookingBiz(store CreateBookingStore, typeStore FindRoomTypeStore, 
 	return &createBookingBiz{bookingStore: store, roomTypeStore: typeStore, pb: pb}
 }
 
-func (biz *createBookingBiz) Create(
-	ctx context.Context,
-	data *bookingmodel.BookingCreate,
-	requester common.Requester) error {
-
+func (biz *createBookingBiz) ValidateBooking(ctx context.Context, data *bookingmodel.BookingCreate) error {
 	if err := ValidateBooking(data); err != nil {
 		return common.ErrInvalidRequest(err)
 	}
@@ -73,8 +70,18 @@ func (biz *createBookingBiz) Create(
 	data.Currency = common.VND
 
 	data.FinalAmount = data.TotalAmount - data.DiscountAmount
+	return nil
+}
 
-	err = biz.bookingStore.Create(ctx, data)
+func (biz *createBookingBiz) Create(
+	ctx context.Context,
+	data *bookingmodel.BookingCreate,
+	requester common.Requester) error {
+	if err := biz.ValidateBooking(ctx, data); err != nil {
+		return err
+	}
+
+	err := biz.bookingStore.Create(ctx, data)
 	if err != nil {
 		return common.ErrCannotCreateEntity(bookingmodel.EntityName, err)
 	}

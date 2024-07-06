@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
+	bookingdetailstorage "h5travelotobackend/module/bookingdetails/storage"
 	bookingbiz "h5travelotobackend/module/bookings/biz"
 	"h5travelotobackend/module/bookings/model"
 	bookingsqlstorage "h5travelotobackend/module/bookings/storage"
@@ -31,7 +32,8 @@ func ListBookingByUserId(appCtx appContext.AppContext) gin.HandlerFunc {
 		requester := c.MustGet(common.CurrentUser).(common.Requester)
 
 		store := bookingsqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
-		biz := bookingbiz.NewListBookingBiz(store)
+		dbStore := bookingdetailstorage.NewSqlStore(appCtx.GetGormDbConnection())
+		biz := bookingbiz.NewListBookingBiz(store, dbStore)
 		data, err := biz.ListBookingByUserId(c.Request.Context(), requester, int(uid.GetLocalID()), &filter, &paging)
 		if err != nil {
 			panic(err)

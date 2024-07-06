@@ -7,7 +7,7 @@ import (
 )
 
 type ListBookingDetailStore interface {
-	ListRoomOfBooking(ctx context.Context, bookingId int) ([]int, error)
+	ListRoomIdsOfBooking(ctx context.Context, bookingId int) ([]int, error)
 }
 
 type listRoomOfBookingBiz struct {
@@ -31,7 +31,7 @@ func (biz *listRoomOfBookingBiz) ListRoomOfBooking(ctx context.Context, bookingI
 		return nil, common.ErrEntityDeleted("Booking", nil)
 	}
 
-	roomIds, err := biz.detailStore.ListRoomOfBooking(ctx, bookingId)
+	roomIds, err := biz.detailStore.ListRoomIdsOfBooking(ctx, bookingId)
 	if err != nil {
 		return nil, common.ErrInternal(err)
 	}

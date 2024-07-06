@@ -12,7 +12,7 @@ import (
 type CreateBookingDetailStorage interface {
 	Create(ctx context.Context, data []bookingdetailmodel.BookingDetailCreate, oldIds []int) error
 	CountRoomOfBooking(ctx context.Context, bookingId int) (int, error)
-	ListRoomOfBooking(ctx context.Context, bookingId int) ([]int, error)
+	ListRoomIdsOfBooking(ctx context.Context, bookingId int) ([]int, error)
 }
 
 type FindBookingStore interface {
@@ -69,7 +69,7 @@ func (biz *createBookingDetailBiz) CreateBookingDetail(ctx context.Context, data
 	}
 
 	// Get old data
-	oldIds, err := biz.store.ListRoomOfBooking(ctx, data.BookingId)
+	oldIds, err := biz.store.ListRoomIdsOfBooking(ctx, data.BookingId)
 	if err != nil {
 
 		return common.ErrEntityNotFound("BookingDetail", err)

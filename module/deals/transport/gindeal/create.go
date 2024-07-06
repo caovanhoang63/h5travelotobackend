@@ -18,6 +18,7 @@ func CreateDeal(appCtx appContext.AppContext) gin.HandlerFunc {
 			panic(common.ErrInvalidRequest(err))
 		}
 		hotelUid, err := common.FromBase58(c.Param("hotel-id"))
+		deal.UnMask()
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}

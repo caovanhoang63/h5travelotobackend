@@ -55,6 +55,11 @@ type Requester interface {
 	GetRole() string
 }
 
+type Worker interface {
+	GetUserId() int
+	GetHotelId() int
+}
+
 const RefreshTokenAliveTime = 24 * 30 * 60 * 60
 const AccessTokenAliveTime = 60 * 60
 

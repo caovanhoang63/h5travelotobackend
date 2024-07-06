@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
+	bookingdetailstorage "h5travelotobackend/module/bookingdetails/storage"
 	bookingbiz "h5travelotobackend/module/bookings/biz"
 	"h5travelotobackend/module/bookings/model"
 	bookingsqlstorage "h5travelotobackend/module/bookings/storage"
@@ -31,7 +32,8 @@ func ListBookingHotelId(appCtx appContext.AppContext) gin.HandlerFunc {
 		filter.HotelId = int(uid.GetLocalID())
 
 		store := bookingsqlstorage.NewSqlStore(appCtx.GetGormDbConnection())
-		biz := bookingbiz.NewListBookingBiz(store)
+		dbStore := bookingdetailstorage.NewSqlStore(appCtx.GetGormDbConnection())
+		biz := bookingbiz.NewListBookingBiz(store, dbStore)
 		data, err := biz.ListBookingByHotelId(c.Request.Context(), &filter, &paging)
 		if err != nil {
 			panic(err)

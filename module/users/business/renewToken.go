@@ -32,6 +32,17 @@ func (biz *loginBiz) Renew(ctx context.Context, token *tokenprovider.Token) (*to
 
 	newToken, err := biz.tokenProvider.Generate(*payload, biz.accessExpiry)
 
+	if user.Role == common.RoleOwner ||
+		user.Role == common.RoleManager ||
+		user.Role == common.RoleStaff {
+		worker, err := biz.workerStorage.FindWithCondition(ctx, map[string]interface{}{
+			"user_id": user.Id,
+		})
+		if err == nil && worker != nil {
+
+		}
+	}
+
 	if err != nil {
 		return nil, common.ErrInternal(err)
 	}
