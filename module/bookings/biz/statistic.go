@@ -9,6 +9,8 @@ import (
 type StatisticBookingStore interface {
 	OverviewByDate(ctx context.Context, hotelId int, date *common.CivilDate,
 	) (*bookingmodel.BookingStatistic, error)
+	RoomStatus(ctx context.Context, hotelId int, date *common.CivilDate,
+	) (*bookingmodel.RoomStatus, error)
 }
 type statisticBookingBiz struct {
 	store StatisticBookingStore
@@ -32,4 +34,21 @@ func (biz *statisticBookingBiz) OverviewByDate(ctx context.Context,
 
 	return data, nil
 
+}
+
+func (biz *statisticBookingBiz) RoomStatus(ctx context.Context,
+	hotelId int,
+	date *common.CivilDate) (
+	*bookingmodel.RoomStatus, error) {
+
+	result, err := biz.store.RoomStatus(ctx, hotelId, date)
+	if err != nil {
+		return nil, common.ErrInternal(err)
+	}
+
+	result.Available = result.Total - result.Booked
+	if result.Available < 0 {
+		result.Available = 0
+	}
+	return result, nil
 }

@@ -165,6 +165,7 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	bookingHotel.PATCH("/:booking-id/check-out", ginbooking.CheckOutBooking(appCtx))
 	bookingHotel.PATCH("/:booking-id/cancel", ginbooking.CancelBooking(appCtx))
 	bookingHotel.GET("/overview", ginbooking.OverviewByDate(appCtx))
+	bookingHotel.GET("/room-status", ginbooking.RoomStatus(appCtx))
 
 	// ===================== Booking =====================
 
