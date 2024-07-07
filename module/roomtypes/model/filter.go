@@ -1,8 +1,6 @@
 package roomtypemodel
 
-import (
-	"h5travelotobackend/common"
-)
+import "h5travelotobackend/common"
 
 type Filter struct {
 	HotelId     int         `json:"-" gorm:"column:hotel_id;" form:"-"`

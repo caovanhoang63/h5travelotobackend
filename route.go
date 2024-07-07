@@ -57,7 +57,8 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 
 	// ===================== Room Type =====================
 	roomTypes := v1.Group("/")
-	roomTypesWrite := roomTypes.Group("hotels/:hotel-id/room-types", middleware.RequireAuth(appCtx))
+	roomTypesWrite := roomTypes.Group("hotels/:hotel-id/room-types",
+		middleware.RequireAuth(appCtx))
 	roomTypesWrite.POST("", ginroomtype.CreateRoomType(appCtx))
 	roomTypesWrite.DELETE("/:room-type-id", ginroomtype.DeleteRoomType(appCtx))
 	roomTypesWrite.PATCH("/:room-type-id", ginroomtype.UpdateRoomType(appCtx))
@@ -151,14 +152,20 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	booking.DELETE("/:booking-id", ginbooking.DeleteBookingById(appCtx))
 	v1.GET("/users/:user-id/bookings", middleware.RequireAuth(appCtx),
 		ginbooking.ListBookingByUserId(appCtx))
-	v1.GET("/hotels/:hotel-id/bookings", middleware.RequireAuth(appCtx),
+
+	bookingHotel := v1.Group("/hotels/:hotel-id/bookings", middleware.RequireAuth(appCtx),
 		middleware.RoleRequired(appCtx,
 			common.RoleAdmin,
 			common.RoleOwner,
 			common.RoleManager,
 			common.RoleStaff),
-		middleware.IsHotelWorker(appCtx),
-		ginbooking.ListBookingHotelId(appCtx))
+		middleware.IsHotelWorker(appCtx))
+	bookingHotel.GET("/", ginbooking.ListBookingHotelId(appCtx))
+	bookingHotel.PATCH("/:booking-id/check-in", ginbooking.CheckInBooking(appCtx))
+	bookingHotel.PATCH("/:booking-id/check-out", ginbooking.CheckOutBooking(appCtx))
+	bookingHotel.PATCH("/:booking-id/cancel", ginbooking.CancelBooking(appCtx))
+	bookingHotel.GET("/overview", ginbooking.OverviewByDate(appCtx))
+
 	// ===================== Booking =====================
 
 	// ===================== Worker =====================

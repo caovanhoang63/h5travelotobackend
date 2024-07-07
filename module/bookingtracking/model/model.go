@@ -37,6 +37,7 @@ func (b *BookingTrackingCreate) UnMask() {
 
 func (b *BookingTrackingCreate) Mask(isAdmin bool) {
 	b.GenUID(common.DbTypeBookingTracking)
+	b.BookingFakeId = common.NewUID(uint32(b.BookingId), common.DbTypeBookingTracking, 0)
 }
 
 func (BookingTrackingCreate) TableName() string {

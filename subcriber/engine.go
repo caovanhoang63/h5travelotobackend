@@ -29,6 +29,10 @@ func (engine *consumerEngine) Start() error {
 		IncreaseHotelTotalRoomWhenCreateNewRoom(engine.appCtx, context.Background())); err != nil {
 		log.Println("Err:", err)
 	}
+	if err := engine.startSubTopic(common.TopicUpdateBookingState, true,
+		TrackingBookingStateUpdate(engine.appCtx, context.Background())); err != nil {
+		log.Println("Err:", err)
+	}
 
 	if err := engine.startSubTopic(common.TopicDeleteRoom, true,
 		DecreaseTotalRoomWhenCreateNewRoom(engine.appCtx, context.Background()),

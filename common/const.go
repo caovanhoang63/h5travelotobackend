@@ -24,6 +24,7 @@ const (
 	DbTypeDeal              = 16
 	DbTypeInvoice           = 17
 	DbTypeHotelCollection   = 18
+	DbTypeBookedGuest       = 19
 )
 
 // RecordStatus is a type to represent the status of a record
@@ -102,8 +103,8 @@ const (
 	BookingStatePending   = "pending"
 	BookingStatePaid      = "paid"
 	BookingStateCanceled  = "canceled"
-	BookingStateCheckIn   = "check-in"
-	BookingStateCheckOut  = "check-out"
+	BookingStateCheckIn   = "checked-in"
+	BookingStateCheckOut  = "checked-out"
 	BookingStateDeleted   = "deleted"
 	BookingStateExpired   = "expired"
 	BookingStateConfirmed = "confirmed"

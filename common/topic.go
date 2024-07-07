@@ -20,5 +20,6 @@ const (
 	TopicUserReviewHotel       = "TopicUserReviewHotel"
 	TopicUserDeleteReviewHotel = "TopicUserDeleteReviewHotel"
 
-	TopicPaymentSuccess = "TopicPaymentSuccess"
+	TopicPaymentSuccess     = "TopicPaymentSuccess"
+	TopicUpdateBookingState = "TopicUpdateBookingState"
 )

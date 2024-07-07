@@ -28,6 +28,7 @@ func (s *mongoStore) HandleNewMessage(ctx context.Context, message *chatroommode
 	}
 
 	_, err := coll.UpdateOne(ctx, filter, update)
+
 	if err != nil {
 		return common.ErrDb(err)
 	}

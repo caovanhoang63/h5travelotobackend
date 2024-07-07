@@ -122,6 +122,10 @@ type BookingUpdateDeal struct {
 	BookingId int `json:"booking_id"`
 }
 
+type BookingUpdateState struct {
+	State string `json:"state" gorm:"column:state"`
+}
+
 func (BookingUpdate) TableName() string {
 	return Booking{}.TableName()
 }
@@ -141,6 +145,11 @@ var (
 		nil,
 		"deal is invalid",
 		"ERR_INVALID_DEAL",
+	)
+	ErrStateAlreadyUpdate = common.NewCustomError(
+		nil,
+		"state is already update",
+		"ERR_STATE_ALREADY_UPDATE",
 	)
 )
 
