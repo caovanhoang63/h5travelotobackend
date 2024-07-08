@@ -13,6 +13,8 @@ func (biz *createBookingBiz) CreateFrontDeskBooking(ctx context.Context, data *b
 		return err
 	}
 
+	data.Booking.PayInHotel = true
+
 	err := biz.bookingStore.CreateFrontDeskBooking(ctx, data)
 	if err != nil {
 		return common.ErrCannotCreateEntity(bookingmodel.EntityName, err)

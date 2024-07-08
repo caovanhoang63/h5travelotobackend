@@ -13,3 +13,13 @@ type RoomStatus struct {
 	Dirty     int `json:"dirty" gorm:"column:dirty"`
 	Fixing    int `json:"fixing" gorm:"column:fixing"`
 }
+
+type OccupancyStatistic struct {
+	Day0 float64 `json:"day_0" gorm:"column:day_0"`
+	Day1 float64 `json:"day_1" gorm:"column:day_1"`
+	Day2 float64 `json:"day_2" gorm:"column:day_2"`
+	Day3 float64 `json:"day_3" gorm:"column:day_3"`
+	Day4 float64 `json:"day_4" gorm:"column:day_4"`
+	Day5 float64 `json:"day_5" gorm:"column:day_5"`
+	Day6 float64 `json:"day_6" gorm:"column:day_6"`
+}

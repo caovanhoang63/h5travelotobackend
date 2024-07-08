@@ -10,15 +10,13 @@ type Filter struct {
 	Status         int         `json:"status" form:"status"`
 }
 
-func (f *Filter) UnMask() *Filter {
+func (f *Filter) UnMask() {
 	if f.HotelFakeID != nil {
 		f.HotelId = int(f.HotelFakeID.GetLocalID())
 	}
 	if f.RoomTypeFakeId != nil {
 		f.RoomTypeId = int(f.RoomTypeFakeId.GetLocalID())
 	}
-	return f
-
 }
 
 func (f *Filter) SetDefault() {

@@ -11,6 +11,11 @@ import (
 
 type CreateHotelStore interface {
 	Create(ctx context.Context, data *hotelmodel.HotelCreate) error
+	FindDataWithCondition(
+		ctx context.Context,
+		condition map[string]interface{},
+		moreKeys ...string,
+	) (*hotelmodel.Hotel, error)
 }
 
 type createHotelBiz struct {
@@ -31,6 +36,15 @@ func (biz *createHotelBiz) CreateHotel(ctx context.Context, requester common.Req
 	}
 
 	data.OwnerID = requester.GetUserId()
+
+	hotel, err := biz.store.FindDataWithCondition(ctx, map[string]interface{}{"owner_id": requester.GetUserId()})
+	if err != nil {
+		if !errors.Is(err, common.RecordNotFound) {
+			return common.ErrInternal(err)
+		}
+	} else if hotel != nil {
+		return common.ErrInvalidRequest(errors.New("hotel already exists"))
+	}
 
 	if err := data.Validate(); err != nil {
 		return err

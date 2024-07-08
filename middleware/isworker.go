@@ -13,6 +13,7 @@ func IsWorker(appCtx appContext.AppContext) func(ctx *gin.Context) {
 		if user.GetRole() == common.RoleAdmin {
 			c.Set(common.CurrentUser, user)
 			c.Next()
+			return
 		}
 
 		userId := user.GetUserId()

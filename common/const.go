@@ -25,6 +25,7 @@ const (
 	DbTypeInvoice           = 17
 	DbTypeHotelCollection   = 18
 	DbTypeBookedGuest       = 19
+	DbTypeWallet            = 20
 )
 
 // RecordStatus is a type to represent the status of a record

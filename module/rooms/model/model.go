@@ -19,6 +19,7 @@ type Room struct {
 	RoomType        *RoomType   `json:"room_type" gorm:"foreignKey:RoomTypeId;preload:false"`
 	Name            string      `json:"name" gorm:"column:name;"`
 	Floor           int         `json:"floor" gorm:"column:floor;"`
+	Condition       string      `json:"condition" gorm:"column:condition;"`
 }
 
 func (Room) TableName() string {

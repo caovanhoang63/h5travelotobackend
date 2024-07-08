@@ -37,7 +37,7 @@ func main() {
 	// Set up log
 	log := mylogger.NewLogger("h5traveloto", nil)
 	log.Println("Starting server...")
-	isDev := true
+	isDev := false
 	if isDev {
 		err := godotenv.Load(".dev.env")
 		if err != nil {
@@ -45,7 +45,7 @@ func main() {
 		}
 	} else {
 		gin.SetMode(gin.ReleaseMode)
-		err := godotenv.Load(".dev.env")
+		err := godotenv.Load(".env")
 		if err != nil {
 			log.Fatal("Error loading .env file")
 		}

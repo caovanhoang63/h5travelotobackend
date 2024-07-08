@@ -2,6 +2,7 @@ package hotelstorage
 
 import (
 	"context"
+	"errors"
 	"gorm.io/gorm"
 	"h5travelotobackend/common"
 	hotelmodel "h5travelotobackend/module/hotels/model"
@@ -19,7 +20,7 @@ func (s *sqlStore) FindDataWithCondition(
 		db = db.Preload(moreKeys[i])
 	}
 	if err := db.Where(condition).First(&data).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, common.RecordNotFound
 		}
 		return nil, common.ErrDb(err)

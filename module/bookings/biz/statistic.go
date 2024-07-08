@@ -11,6 +11,9 @@ type StatisticBookingStore interface {
 	) (*bookingmodel.BookingStatistic, error)
 	RoomStatus(ctx context.Context, hotelId int, date *common.CivilDate,
 	) (*bookingmodel.RoomStatus, error)
+	OccupancyStatistic(ctx context.Context, hotelId int, date *common.CivilDate,
+	) (*bookingmodel.OccupancyStatistic, error)
+	GetHotelTotalRoom(ctx context.Context, hotelId int) (int, error)
 }
 type statisticBookingBiz struct {
 	store StatisticBookingStore
@@ -34,6 +37,28 @@ func (biz *statisticBookingBiz) OverviewByDate(ctx context.Context,
 
 	return data, nil
 
+}
+
+func (biz *statisticBookingBiz) OccupancyStatistic(ctx context.Context, hotelId int,
+	date *common.CivilDate) (*bookingmodel.OccupancyStatistic, error) {
+	data, err := biz.store.OccupancyStatistic(ctx, hotelId, date)
+	if err != nil {
+		return nil, common.ErrInternal(err)
+	}
+	total, err := biz.store.GetHotelTotalRoom(ctx, hotelId)
+	if err != nil {
+		return nil, common.ErrInternal(err)
+	}
+
+	data.Day0 = data.Day0 / float64(total)
+	data.Day1 = data.Day1 / float64(total)
+	data.Day2 = data.Day2 / float64(total)
+	data.Day3 = data.Day3 / float64(total)
+	data.Day4 = data.Day4 / float64(total)
+	data.Day5 = data.Day5 / float64(total)
+	data.Day6 = data.Day6 / float64(total)
+
+	return data, nil
 }
 
 func (biz *statisticBookingBiz) RoomStatus(ctx context.Context,

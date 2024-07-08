@@ -5,6 +5,7 @@ import (
 	"h5travelotobackend/common"
 	"h5travelotobackend/component/appContext"
 	workersqlstorage "h5travelotobackend/module/worker/storage/sqlstorage"
+	"log"
 )
 
 func IsHotelWorker(appCtx appContext.AppContext) func(ctx *gin.Context) {
@@ -12,8 +13,10 @@ func IsHotelWorker(appCtx appContext.AppContext) func(ctx *gin.Context) {
 	return func(c *gin.Context) {
 		user := c.MustGet(common.CurrentUser).(common.Requester)
 		if user.GetRole() == common.RoleAdmin {
+			log.Println("ADMIN")
 			c.Set(common.CurrentUser, user)
 			c.Next()
+			return
 		}
 
 		hotelUid, err := common.FromBase58(c.Param("hotel-id"))

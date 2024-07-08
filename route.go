@@ -28,14 +28,13 @@ import (
 	"h5travelotobackend/module/ward/transport/ginward"
 	"h5travelotobackend/module/worker/transport/ginworker"
 	"h5travelotobackend/payment/module/payin/transport/ginpayin"
+	"h5travelotobackend/payment/module/wallet/transport/ginwallet"
 	"h5travelotobackend/search/module/hotel/transport/ginhotelsearch"
 	"h5travelotobackend/search/module/roomtype/transport/ginrtsearch"
 	"h5travelotobackend/search/module/suggest/transport/ginsuggestion"
-	"time"
 )
 
 func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
-	v1.Use(middleware.CheckBannedToRequest(appCtx), middleware.RateLimitingByIp(appCtx, 500, time.Minute))
 
 	v1.POST("/upload", ginupload.UploadImage(appCtx))
 	v1.POST("/register", ginuser.RegisterUser(appCtx))
@@ -166,6 +165,7 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	bookingHotel.PATCH("/:booking-id/cancel", ginbooking.CancelBooking(appCtx))
 	bookingHotel.GET("/overview", ginbooking.OverviewByDate(appCtx))
 	bookingHotel.GET("/room-status", ginbooking.RoomStatus(appCtx))
+	bookingHotel.GET("/occupancy-statistic", ginbooking.OccupancyStatistic(appCtx))
 
 	// ===================== Booking =====================
 
@@ -287,5 +287,18 @@ func SetUpRoute(appCtx appContext.AppContext, v1 *gin.RouterGroup) {
 	paymentIPN := v1.Group("payment")
 	vnPayIPN := paymentIPN.Group("vnpay")
 	vnPayIPN.GET("/ipn", ginpayin.VnpIPN(appCtx))
+	// ===================== Payment  =====================
 
+	// ===================== Wallet ========================
+	wallet := v1.Group("wallets", middleware.RequireAuth(appCtx))
+	wallet.POST("", middleware.RoleRequired(appCtx, common.RoleAdmin), ginwallet.CreateWallet(appCtx))
+	wallet.GET("/:hotel-id",
+		middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner),
+		middleware.IsHotelWorker(appCtx),
+		ginwallet.GetHotelWalletByHotelId(appCtx))
+	wallet.POST("/:hotel-id/withdrawal",
+		middleware.RoleRequired(appCtx, common.RoleAdmin, common.RoleOwner),
+		middleware.IsHotelWorker(appCtx),
+		ginwallet.Withdrawal(appCtx))
+	// ===================== Wallet ========================
 }

@@ -18,7 +18,8 @@ func NewListHotelTypeBiz(store ListHotelTypeStore) *listHotelTypeBiz {
 	return &listHotelTypeBiz{store: store}
 }
 
-func (b *listHotelTypeBiz) ListAllHotelTypes(ctx context.Context) ([]hoteltypemodel.HotelType, error) {
+func (b *listHotelTypeBiz) ListAllHotelTypes(ctx context.Context,
+) ([]hoteltypemodel.HotelType, error) {
 	data, err := b.store.ListAllHotelTypes(ctx)
 	if err != nil {
 		return nil, common.ErrCannotListEntity(hoteltypemodel.EntityName, err)

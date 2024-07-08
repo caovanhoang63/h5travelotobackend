@@ -51,7 +51,9 @@ func (engine *consumerEngine) Start() error {
 
 	if err := engine.startSubTopic(common.TopicCreateHotel, true,
 		CreateOwnerWorker(engine.appCtx, context.Background()),
-		CreateHotelFacilityDetails(engine.appCtx, context.Background())); err != nil {
+		CreateHotelFacilityDetails(engine.appCtx, context.Background()),
+		CreateHotelWallet(engine.appCtx, context.Background()),
+	); err != nil {
 		log.Println("Err:", err)
 	}
 
@@ -86,6 +88,7 @@ func (engine *consumerEngine) Start() error {
 		UpdateBookingStateToPaid(engine.appCtx, context.Background()),
 		UpdateBookingTrackingToPaid(engine.appCtx, context.Background()),
 		UpdateTransactionDone(engine.appCtx, context.Background()),
+		UpdateWalletBalance(engine.appCtx, context.Background()),
 		SendConfirmMail(engine.appCtx, context.Background())); err != nil {
 		log.Println("Err:", err)
 	}

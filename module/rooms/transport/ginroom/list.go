@@ -33,7 +33,7 @@ func ListRoomWithCondition(appCtx appContext.AppContext) gin.HandlerFunc {
 			filter.Status = 1
 		}
 
-		if err := context.ShouldBindQuery(&paging); err != nil {
+		if err = context.ShouldBindQuery(&paging); err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
 

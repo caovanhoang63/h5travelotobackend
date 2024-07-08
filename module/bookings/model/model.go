@@ -82,6 +82,7 @@ type BookingCreate struct {
 	Adults          int               `json:"adults" gorm:"column:adults"`
 	Children        int               `json:"children" gorm:"column:children"`
 	TotalAmount     float64           `json:"total_amount" gorm:"column:total_amount"`
+	PayInHotel      bool              `json:"pay_in_hotel" gorm:"column:pay_in_hotel"`
 	DiscountAmount  float64           `json:"discount_amount" gorm:"column:discount_amount"`
 	FinalAmount     float64           `json:"final_amount" gorm:"column:final_amount"`
 	Currency        string            `json:"currency" gorm:"column:currency"`
